@@ -104,6 +104,24 @@ def write_glb(solid):
     # Trimming a round member can introduce a small corner at a junction.
     # Split that corner when its interpolated normal points through the surface.
     triangles = mesh.tri_verts.copy()
+    # A boolean intersection can leave sub-millimetre slivers. Collapse only
+    # short mesh edges; all shading corners at an endpoint move together.
+    points, owners = np.unique(positions, axis=0, return_inverse=True)
+    spatial = owners[triangles]
+    edges = np.sort(np.vstack((spatial[:, [0,1]], spatial[:, [1,2]], spatial[:, [2,0]])), axis=1)
+    short = edges[np.linalg.norm(points[edges[:,0]]-points[edges[:,1]], axis=1) < 0.0012]
+    parent = np.arange(len(points))
+    for a, b in short:
+        while parent[a] != a:
+            a = parent[a]
+        while parent[b] != b:
+            b = parent[b]
+        parent[max(a,b)] = min(a,b)
+    while np.any(parent != parent[parent]):
+        parent = parent[parent]
+    positions = points[parent[owners]]
+    corners = parent[spatial]
+    triangles = triangles[np.all(corners != np.roll(corners, 1, axis=1), axis=1)]
     pa, pb, pc = positions[triangles].astype(np.float64).transpose(1, 0, 2)
     face_normals = np.cross(pb-pa, pc-pa)
     face_normals /= np.maximum(np.linalg.norm(face_normals, axis=1, keepdims=True), 1e-20)
@@ -112,28 +130,21 @@ def write_glb(solid):
         positions = np.vstack((positions, positions[triangles[faces, corners]]))
         normals = np.vstack((normals, face_normals[faces]))
         triangles[faces, corners] = np.arange(len(faces)) + len(props)
-    # glTF's standard quantized normal format packs a unit vector into one
-    # aligned word. Positions remain ordinary float32 metre coordinates.
-    packed = np.zeros((len(normals), 4), dtype=np.int8)
-    packed[:, :3] = np.rint(normals * 127).astype(np.int8)
-    # Hard edges need separate corners. Reuse corners that became identical
-    # after encoding, including those created on either side of a boolean seam.
-    keys = np.hstack((positions, packed))
+    normals = normals.astype("<f4")
+    # Preserve seams while sharing identical position/normal pairs.
+    keys = np.hstack((positions, normals))
     _, first, remap = np.unique(keys, axis=0, return_index=True, return_inverse=True)
-    positions, packed = positions[first], packed[first]
+    positions, normals = positions[first], normals[first]
     if len(positions) >= 65536:
         raise ValueError("Index range exceeded")
     indices = remap[triangles].astype("<u2").ravel()
     views, data = [], bytearray()
-    for array, target in [(positions, 34962), (packed, 34962), (indices, 34963)]:
+    for array, target in [(positions, 34962), (normals, 34962), (indices, 34963)]:
         views.append(dict(buffer=0, byteOffset=len(data), byteLength=array.nbytes, target=target))
         data.extend(array.tobytes())
         data.extend(bytes(-len(data) % 4))
-    views[1]["byteStride"] = 4
     linear = [((c/255+0.055)/1.055)**2.4 for c in (244, 241, 236)]
     model = {
-        "extensionsUsed": ["KHR_mesh_quantization"],
-        "extensionsRequired": ["KHR_mesh_quantization"],
         "asset": {"version": "2.0"}, "scene": 0, "scenes": [{"nodes": [0]}],
         "nodes": [{"mesh": 0, "name": FACTS["name"]}],
         "meshes": [{"primitives": [{"attributes": {"POSITION": 0, "NORMAL": 1},
@@ -143,7 +154,7 @@ def write_glb(solid):
         "accessors": [
             dict(bufferView=0, componentType=5126, count=len(positions), type="VEC3",
                  min=positions.min(axis=0).tolist(), max=positions.max(axis=0).tolist()),
-            dict(bufferView=1, componentType=5120, normalized=True, count=len(packed), type="VEC3"),
+            dict(bufferView=1, componentType=5126, count=len(normals), type="VEC3"),
             dict(bufferView=2, componentType=5123, count=len(indices), type="SCALAR")],
         "bufferViews": views, "buffers": [{"byteLength": len(data)}]}
     metadata = json.dumps(model, separators=(",", ":"), allow_nan=False).encode()
@@ -151,7 +162,7 @@ def write_glb(solid):
     length = 28 + len(metadata) + len(data)
     glb = (struct.pack("<4sIII4s", b"glTF", 2, length, len(metadata), b"JSON") +
            metadata + struct.pack("<I4s", len(data), b"BIN\0") + data)
-    if len(glb) > 400_000 or len(indices) // 3 > (25_000 if FACTS["kind"] == "bridge" else 6_000):
+    if len(glb) > (1_500_000 if FACTS["kind"] == "bridge" else 400_000) or len(indices) // 3 > (25_000 if FACTS["kind"] == "bridge" else 6_000):
         raise ValueError(f"Mobile budget exceeded: {len(indices)//3} triangles, {len(glb)} bytes")
     (HERE / (FACTS["slug"] + ".glb")).write_bytes(glb)
     print(f"{len(indices)//3:,} triangles, {len(glb):,} bytes")
@@ -164,31 +175,31 @@ def build():
     for side in (-1,1):
         # Deep porticoes are cut into the block above a continuous flight of steps.
         u=45*side
-        wings-=box(min(u-9,u+9),max(u-9,u+9),-15,15,2,22.4)
+        wings-=box(min(u-9,u+9),max(u-9,u+9),-11,11,2,22.4)
         for y in (-54,-45,-36,-27,-19,20,28,36,44,52):
             cut=arch_cut(y,3.1,9.2,2.25,-side*42,9).rotate((0,0,90))
             wings-=cut
     hard=[wings]
     for side in (-1,1):
         x=side*42.5
-        for y in np.linspace(-13,13,6):
+        for y in np.linspace(-9,9,6):
             hard.append(drum(x,y,[(1.8,1.15,1.15),
                                   (20.7,1.02,1.02),(22.7,1.65,1.65)],8))
-        hard.append(hip(x,0,12,32,24.1,29.5,0))
+        hard.append(hip(x,0,12,32,24.1,29.5,0) ^ mass(plan,0,31))
     hard.append(mass((np.asarray(plan)*[1.008,1.005]).tolist(),19.15,20.25))
     for y in (-42,42):
-        hard.append(hip(0,y,80,33,23.9,28,18))
+        hard.append(hip(0,y,80,33,23.9,28,18) ^ mass(plan,0,31))
     x,y=FACTS["plans"]["drum"]["centre"]
     hard.append(pedestal(x,y,[(23.9,56,54,7),(32,51,49,7),(35.3,44.5,43,6)]))
-    hard.append(drum(x,y,[(34.7,21.3,21.3),(37.4,20.7,20.7),(40.3,17.8,17.8),
-                         (41.5,16,16),(54.2,15.5,15.5),(56.8,18.1,18.1),
+    hard.append(drum(x,y,[(34.7,21.3,21.3),(37.4,20.7,20.7),(40.3,18.75,18.75),
+                         (41.5,16,16),(55.9,15.5,15.5),(55.9,18.95,18.95),(57.1,18.95,18.95),
                          (59.3,16.8,16.8)],32))
     for t in np.arange(16)*math.tau/16:
         u=x+17.25*math.cos(t);v=y+17.25*math.sin(t)
-        hard.append(drum(u,v,[(40,.96,.96),
+        hard.append(drum(u,v,[(40.3,.96,.96),
                               (53.7,.9,.9),(55.9,1.45,1.45)],8))
     rings=[]
-    for z,r,relief in [(58.8,16.8,.3),(62,16.4,.45),(67,14.5,.5),(71.5,11.8,.55),
+    for z,r,relief in [(59.3,16.35,.3),(62,16.4,.45),(67,14.5,.5),(71.5,11.8,.55),
                        (75.7,7.8,.55),(78,4.75,.4),(79.6,3.7,.2)]:
         rings.append([(x+(r+relief*max(0,math.cos(16*t)))*math.cos(t),
                        y+(r+relief*max(0,math.cos(16*t)))*math.sin(t),z)

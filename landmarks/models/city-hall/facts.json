@@ -13,7 +13,8 @@
       "what": "Overall height above the base",
       "real": 93.726,
       "model": 93.726,
-      "source": "https://www.sf.gov/sites/default/files/2021-12/12746-DocentPresentation.pdf"
+      "source": "https://www.sf.gov/sites/default/files/2021-12/12746-DocentPresentation.pdf",
+      "bbox": "height"
     },
     {
       "what": "Width across local axis",
