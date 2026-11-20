@@ -239,10 +239,15 @@ def build():
     hard.append(box(-width/2,width/2,-half_anchor,half_anchor,crown-1.5,crown))
     for s in (w2-side,east-14.7):
         hard.append(pedestal(0,s,[(-1.5,32,29,3),(road(s)-3.3,25,25,2)]))
-    # The two-level roadway meets solid, grounded abutments on the flat map.
-    for s,direction in ((west,1),(east,-1)):
-        a,b=sorted((s,s+5*direction))
-        hard.append(box(-width/2,width/2,a,b,0,min(road(a),road(b))-.7))
+    # The cropped San Francisco approach has a braced terminal bent.
+    # On the island the two cable ends meet the grounded end anchorage.
+    station = west+2
+    cap = road(station)-depth+.8
+    for x in (-9,9):
+        hard.append(box(x-1.25,x+1.25,west,west+4,0,cap))
+    hard.append(box(-width/2,width/2,west,west+4,cap-2,cap))
+    hard.append(brace(-9,1,9,cap-2,1.8,station,2.0))
+    hard.append(box(-width/2,width/2,east-5,east,0,road(east)-.7))
     for s in (w2-side,east-7):
         for x in (-9.4,9.4):
             hard.append(box(x-1.55,x+1.55,s-2.2,s+2.2,road(s)-4.4,road(s)+2.15))
