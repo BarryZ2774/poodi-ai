@@ -179,6 +179,14 @@ def build():
         for y in (-54,-45,-36,-27,-19,20,28,36,44,52):
             cut=arch_cut(y,3.1,9.2,2.25,-side*42,9).rotate((0,0,90))
             wings-=cut
+    # Three treads are cut into the existing entrance footprint.
+    for face in (-1,1):
+        for distance, height in [(46.4,1.45),(47.75,.9),(49.1,.68)]:
+            ends=sorted((face*distance,face*54))
+            wings-=box(*ends,-10.8,10.8,height,2.05)
+        for u in (-29,-21,-13,-5,5,13,21,29):
+            ends=sorted((face*57.5,face*68))
+            wings-=box(u-1.9,u+1.9,*ends,12.2,17.9)
     hard=[wings]
     for side in (-1,1):
         x=side*42.5
@@ -186,7 +194,11 @@ def build():
             hard.append(drum(x,y,[(1.8,1.15,1.15),
                                   (20.7,1.02,1.02),(22.7,1.65,1.65)],8))
         hard.append(hip(x,0,12,32,24.1,29.5,0) ^ mass(plan,0,31))
-    hard.append(mass((np.asarray(plan)*[1.008,1.005]).tolist(),19.15,20.25))
+    belt=mass((np.asarray(plan)*[1.008,1.005]).tolist(),19.15,20.25)
+    for face in (-1,1):
+        ends=sorted((face*35.8,face*54))
+        belt-=box(*ends,-11,11,18.5,21)
+    hard.append(belt)
     for y in (-42,42):
         hard.append(hip(0,y,80,33,23.9,28,18) ^ mass(plan,0,31))
     x,y=FACTS["plans"]["drum"]["centre"]
