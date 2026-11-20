@@ -82,7 +82,7 @@ def hip(x, y, width, length, eave, ridge, ridge_length=0):
 def arch_cut(x, bottom, spring, radius, station, depth):
     """Round-headed opening in a wall normal to the station axis."""
     arc = [(x+radius*math.cos(t), spring+radius*math.sin(t))
-           for t in np.linspace(0, math.pi, 13)]
+           for t in np.linspace(0, math.pi, 8)]
     return front_plate([(x-radius,bottom),(x+radius,bottom)]+arc, station, depth)
 
 
@@ -171,7 +171,13 @@ def write_glb(solid):
 def build():
     plan=FACTS["plans"]["base"]["outline"]
     plan=section(plan).simplify(.48).to_polygons()[0]
-    wings=mass(plan,0,24.384)
+    terrace=mass(plan,0,1.35)
+    length=390*.3048
+    width=273.25*.3048
+    main=box(-width/2,width/2,-length/2,length/2,0,24.384)
+    porticoes=box(-46.4,46.4,-13,13,0,24.384)
+    wall_plan=main+porticoes
+    wings=(mass(plan,0,24.384) ^ wall_plan)+terrace
     for side in (-1,1):
         # Deep porticoes are cut into the block above a continuous flight of steps.
         u=45*side
@@ -187,37 +193,48 @@ def build():
         for u in (-29,-21,-13,-5,5,13,21,29):
             ends=sorted((face*57.5,face*68))
             wings-=box(u-1.9,u+1.9,*ends,12.2,17.9)
+            wings-=box(u-1.65,u+1.65,*ends,4.3,9.6)
+        end=face*(length/2)
+        bay=box(-7.15,7.15,min(end,end+face*1.25),max(end,end+face*1.25),1.3,21.0)
+        for u in (-4.4,0,4.4):
+            bay-=box(u-1.05,u+1.05,min(end-1.5,end+2),max(end-1.5,end+2),9.0,17.85)
+        wings+=bay
     hard=[wings]
     for side in (-1,1):
         x=side*42.5
         for y in np.linspace(-9,9,6):
             hard.append(drum(x,y,[(1.8,1.15,1.15),
                                   (20.7,1.02,1.02),(22.7,1.65,1.65)],8))
-        hard.append(hip(x,0,12,32,24.1,29.5,0) ^ mass(plan,0,31))
-    belt=mass((np.asarray(plan)*[1.008,1.005]).tolist(),19.15,20.25)
+        hard.append(hip(x,0,12,32,24.1,29.5,0) ^ wall_plan.scale((1,1,2)) ^ mass(plan,0,31))
+    belt=mass((np.asarray(plan)*[1.008,1.005]).tolist(),19.15,20.25) ^ wall_plan.scale((1.01,1.01,1))
     for face in (-1,1):
         ends=sorted((face*35.8,face*54))
         belt-=box(*ends,-11,11,18.5,21)
     hard.append(belt)
     for y in (-42,42):
-        hard.append(hip(0,y,80,33,23.9,28,18) ^ mass(plan,0,31))
+        hard.append(hip(0,y,80,33,23.9,28,18) ^ wall_plan.scale((1,1,2)) ^ mass(plan,0,31))
     x,y=FACTS["plans"]["drum"]["centre"]
     hard.append(pedestal(x,y,[(23.9,56,54,7),(32,51,49,7),(35.3,44.5,43,6)]))
     hard.append(drum(x,y,[(34.7,21.3,21.3),(37.4,20.7,20.7),(40.3,18.75,18.75),
                          (41.5,16,16),(55.9,15.5,15.5),(55.9,18.95,18.95),(57.1,18.95,18.95),
-                         (59.3,16.8,16.8)],32))
+                         (58.2168,13.1064,13.1064)],32))
     for t in np.arange(16)*math.tau/16:
-        u=x+17.25*math.cos(t);v=y+17.25*math.sin(t)
+        u=x+16.1*math.cos(t);v=y+16.1*math.sin(t)
         hard.append(drum(u,v,[(40.3,.96,.96),
                               (53.7,.9,.9),(55.9,1.45,1.45)],8))
     rings=[]
-    for z,r,relief in [(59.3,16.35,.3),(62,16.4,.45),(67,14.5,.5),(71.5,11.8,.55),
-                       (75.7,7.8,.55),(78,4.75,.4),(79.6,3.7,.2)]:
+    for z,r,relief in [(58.2168,12.8064,.3),(61.5,12.55,.45),(65,11.75,.5),(68.7,10.05,.55),
+                       (72.1,7.55,.5),(74.4,5.4,.35),(75.65,4.05,.2)]:
         rings.append([(x+(r+relief*max(0,math.cos(16*t)))*math.cos(t),
                        y+(r+relief*max(0,math.cos(16*t)))*math.sin(t),z)
                       for t in np.arange(48)*math.tau/48])
-    hard.append(drum(x,y,[(79,4.2,4.2),(80.3,4.2,4.2),(81,2,2),(86,1.8,1.8),
-                          (87.5,2.65,2.65),(90,1.05,1.05),(93.726,.38,.38)],16))
+    hard.append(drum(x,y,[(75.55,4.25,4.25),(76.65,4.25,4.25),(77.5,3.42,3.42),
+                          (78.35,3.42,3.42)],16))
+    for t in np.arange(8)*math.tau/8:
+        u=x+3.15*math.cos(t);v=y+3.15*math.sin(t)
+        hard.append(drum(u,v,[(78.3,.72,.72),(83.25,.68,.68)],8))
+    hard.append(drum(x,y,[(83.25,3.85,3.85),(84.15,3.85,3.85),(85.6,2.55,2.55),
+                          (87.75,1.35,1.35),(89.1,1.15,1.15),(93.726,.38,.38)],16))
     finish(hard,[(loft(rings),18)])
 
 
