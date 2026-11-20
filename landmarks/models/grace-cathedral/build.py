@@ -173,10 +173,25 @@ def build():
     hard=[body]
     nave=front_plate([(-7.0104,16.3),(7.0104,16.3),(7.0104,26.2),
                       (0,32.5),(-7.0104,26.2)],-2.5,85)
+    for side in (-1,1):
+        for pos in np.linspace(-6,29,7):
+            nave-=lancet(pos,18.05,22.1,2.5,2.5,-side*7,2.1).rotate((0,0,90))
+        for pos in np.linspace(-8.65,26.35,7):
+            # Stepped aisle buttresses follow the divisions between windows.
+            ends=sorted((side*12.8,side*14.7))
+            hard.append(box(*ends,pos-.64,pos+.64,0,10.2))
+            ends=sorted((side*12.8,side*14.1))
+            hard.append(box(*ends,pos-.64,pos+.64,9.9,15.4))
     hard.append(nave ^ mass(plan,0,38))
     x,y=p["spire"]["centre"]
     transept=front_plate([(-6.5,16.2),(6.5,16.2),(6.5,23.6),(0,30),(-6.5,23.6)],0,44)
-    hard.append(transept.rotate((0,0,90)).translate((0,y,0)) ^ mass(plan,0,35))
+    transept=transept.rotate((0,0,90)).translate((0,y,0)) ^ mass(plan,0,35)
+    for side in (-1,1):
+        cut=lancet(y,17.1,21.4,3.35,6.4,-side*21.6,4.0).rotate((0,0,90))
+        transept-=cut
+        ends=sorted((side*19.5,side*21.35))
+        hard.append(box(*ends,y-.46,y+.46,16.25,23.45))
+    hard.append(transept)
     for key in ("north","south"):
         u,v=p[key]["centre"]
         tower=box(u-4.05,u+4.05,v-5.25,v+5.25,15.7,49)
