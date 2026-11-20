@@ -162,9 +162,17 @@ def build():
     for t in np.arange(12)*math.tau/12:
         ux,uy=math.cos(t),math.sin(t)
         hard.append(bar((ux*5.0,uy*5.0,2.3),(ux*7.7,uy*7.7,5.8),.88))
+    outer=md.CrossSection.circle(7.95,16)
+    inner=md.CrossSection.circle(7.22,16)
+    hard.append((outer-inner).extrude(.68).translate((0,0,7.38)))
+    for t in np.arange(16)*math.tau/16:
+        u,v=7.55*math.cos(t),7.55*math.sin(t)
+        hard.append(box(u-.37,u+.37,v-.37,v+.37,6.34,7.60))
     cap=drum(0,0,[(18.55,3.6,3.7),(20.15,3.85,4.15),(21.7,2.85,3.45),
                    (22.5,1.45,2.25),(22.86,.55,.95)],20)
-    hub=md.Manifold.cylinder(3.4,1.15,circular_segments=16).rotate((90,0,0)).translate((0,-2.8,19.55))
+    hood=drum(0,-2.8,[(18.15,1.65,1.65),(20.55,1.65,1.65),(21.45,.92,.92)],12)
+    hard.append(hood)
+    hub=md.Manifold.cylinder(4.2,1.15,circular_segments=16).rotate((90,0,0)).translate((0,-2.8,19.55))
     hard.append(hub)
     span=31.0896/2
     for i in range(4):
@@ -172,7 +180,7 @@ def build():
         frame=box(-2.75,.1,-.39,.39,4.4,span)
         for z in np.linspace(5.18,13.4,5):
             frame-=box(-1.99,-.70,-1,1,z,z+1.29)
-        sail=(sail+frame).rotate((0,35+i*90,0)).translate((0,-5,19.55))
+        sail=(sail+frame).rotate((0,35+i*90,0)).rotate((-12,0,0)).translate((0,-6.15,19.55))
         hard.append(sail)
     finish(hard,[(cap,24)])
 

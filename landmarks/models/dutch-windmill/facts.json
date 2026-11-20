@@ -130,16 +130,17 @@
   "checkpoints": [
     {
       "what": "Highest sail at the displayed rotor angle",
-      "lat": 37.770371243,
-      "lon": -122.50944104,
-      "min_height_m": 33.5608898980289,
+      "lat": 37.770375499,
+      "lon": -122.509421027,
+      "min_height_m": 33.348,
       "within_m": 3,
       "source": "https://www.openstreetmap.org/way/287921407"
     }
   ],
   "simplified": [
     "The wider mapped ground envelope is retained as a low platform around the 33 ft tower foundation.",
-    "The cap faces the prevailing westerlies. The rotor is fixed at 35° from vertical; its upper sail rises above the measured cap. The open sails group the lattice into five broad bays per blade."
+    "The cap faces the prevailing westerlies. The rotor is fixed at 35° from vertical; its upper sail rises above the measured cap. The open sails group the lattice into five broad bays per blade.",
+    "A 12° tilt gives the lower sails clearance outside the gallery. The bearing housing, sixteen grouped gallery posts and one continuous rail are shown."
   ],
   "osm_attribution": "Ground outline from OpenStreetMap, © OpenStreetMap contributors, ODbL.",
   "origin_of_work": "Written from published measurements for this project. No third-party mesh used."
