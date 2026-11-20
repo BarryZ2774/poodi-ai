@@ -1,0 +1,357 @@
+{
+  "slug": "painted-ladies",
+  "name": "Painted Ladies",
+  "kind": "building",
+  "anchor": {
+    "lat": 37.776227679,
+    "lon": -122.432739088,
+    "what": "area-weighted centre of the combined mapped ground outlines at ground level"
+  },
+  "bearing_deg": 81.0649864327663,
+  "ground_keys": [
+    "710",
+    "712",
+    "714",
+    "716",
+    "718",
+    "720"
+  ],
+  "plans": {
+    "710": {
+      "outline": [
+        [
+          14.526,
+          -7.93
+        ],
+        [
+          20.897,
+          -7.924
+        ],
+        [
+          20.898,
+          -1.842
+        ],
+        [
+          21.404,
+          -1.841
+        ],
+        [
+          21.406,
+          7.959
+        ],
+        [
+          14.528,
+          7.953
+        ]
+      ],
+      "centre": [
+        17.873,
+        0.157
+      ],
+      "source": "https://www.openstreetmap.org/way/261412896"
+    },
+    "712": {
+      "outline": [
+        [
+          7.365,
+          -8.097
+        ],
+        [
+          13.928,
+          -8.086
+        ],
+        [
+          13.929,
+          -1.861
+        ],
+        [
+          14.29,
+          -1.855
+        ],
+        [
+          14.289,
+          7.999
+        ],
+        [
+          7.366,
+          7.991
+        ]
+      ],
+      "centre": [
+        10.76,
+        0.053
+      ],
+      "source": "https://www.openstreetmap.org/way/261412895"
+    },
+    "714": {
+      "outline": [
+        [
+          0.078,
+          -8.352
+        ],
+        [
+          6.607,
+          -8.344
+        ],
+        [
+          6.604,
+          -1.004
+        ],
+        [
+          6.997,
+          -1.003
+        ],
+        [
+          6.989,
+          7.809
+        ],
+        [
+          0.078,
+          7.799
+        ]
+      ],
+      "centre": [
+        3.45,
+        -0.157
+      ],
+      "source": "https://www.openstreetmap.org/way/261412900"
+    },
+    "716": {
+      "outline": [
+        [
+          0.078,
+          7.799
+        ],
+        [
+          -6.891,
+          7.78
+        ],
+        [
+          -6.868,
+          -8.08
+        ],
+        [
+          -0.54,
+          -8.067
+        ],
+        [
+          -0.558,
+          -2.036
+        ],
+        [
+          0.093,
+          -2.04
+        ]
+      ],
+      "centre": [
+        -3.511,
+        0.037
+      ],
+      "source": "https://www.openstreetmap.org/way/261412894"
+    },
+    "718": {
+      "outline": [
+        [
+          -6.891,
+          7.78
+        ],
+        [
+          -13.704,
+          7.754
+        ],
+        [
+          -13.691,
+          1.26
+        ],
+        [
+          -14.04,
+          1.261
+        ],
+        [
+          -14.03,
+          -8.113
+        ],
+        [
+          -7.747,
+          -8.094
+        ],
+        [
+          -7.758,
+          -1.947
+        ],
+        [
+          -6.87,
+          -1.944
+        ]
+      ],
+      "centre": [
+        -10.546,
+        -0.02
+      ],
+      "source": "https://www.openstreetmap.org/way/261412879"
+    },
+    "720": {
+      "outline": [
+        [
+          -14.058,
+          8.006
+        ],
+        [
+          -20.982,
+          7.989
+        ],
+        [
+          -20.956,
+          -8.139
+        ],
+        [
+          -14.03,
+          -8.113
+        ]
+      ],
+      "centre": [
+        -17.507,
+        -0.065
+      ],
+      "source": "https://www.openstreetmap.org/way/261412899"
+    }
+  },
+  "measurements_m": [
+    {
+      "what": "Highest roof above local grade",
+      "real": 12,
+      "model": 12,
+      "source": "https://www.openstreetmap.org/way/261412900",
+      "bbox": "height"
+    },
+    {
+      "what": "710 footprint width",
+      "real": 6.88,
+      "model": 6.88,
+      "source": "https://www.openstreetmap.org/way/261412896"
+    },
+    {
+      "what": "710 footprint length",
+      "real": 15.889,
+      "model": 15.889,
+      "source": "https://www.openstreetmap.org/way/261412896"
+    },
+    {
+      "what": "712 footprint width",
+      "real": 6.925,
+      "model": 6.925,
+      "source": "https://www.openstreetmap.org/way/261412895"
+    },
+    {
+      "what": "712 footprint length",
+      "real": 16.096,
+      "model": 16.096,
+      "source": "https://www.openstreetmap.org/way/261412895"
+    },
+    {
+      "what": "714 footprint width",
+      "real": 6.919,
+      "model": 6.919,
+      "source": "https://www.openstreetmap.org/way/261412900"
+    },
+    {
+      "what": "714 footprint length",
+      "real": 16.161,
+      "model": 16.161,
+      "source": "https://www.openstreetmap.org/way/261412900"
+    },
+    {
+      "what": "716 footprint width",
+      "real": 6.984,
+      "model": 6.984,
+      "source": "https://www.openstreetmap.org/way/261412894"
+    },
+    {
+      "what": "716 footprint length",
+      "real": 15.879,
+      "model": 15.879,
+      "source": "https://www.openstreetmap.org/way/261412894"
+    },
+    {
+      "what": "718 footprint width",
+      "real": 7.17,
+      "model": 7.17,
+      "source": "https://www.openstreetmap.org/way/261412879"
+    },
+    {
+      "what": "718 footprint length",
+      "real": 15.893,
+      "model": 15.893,
+      "source": "https://www.openstreetmap.org/way/261412879"
+    },
+    {
+      "what": "720 footprint width",
+      "real": 6.952,
+      "model": 6.952,
+      "source": "https://www.openstreetmap.org/way/261412899"
+    },
+    {
+      "what": "720 footprint length",
+      "real": 16.145,
+      "model": 16.145,
+      "source": "https://www.openstreetmap.org/way/261412899"
+    }
+  ],
+  "checkpoints": [
+    {
+      "what": "710 Steiner roof ridge",
+      "lat": 37.776068819,
+      "lon": -122.432705822,
+      "min_height_m": 11.78,
+      "within_m": 5,
+      "source": "https://www.openstreetmap.org/way/261412896"
+    },
+    {
+      "what": "712 Steiner roof ridge",
+      "lat": 37.776131989,
+      "lon": -122.432719526,
+      "min_height_m": 11.78,
+      "within_m": 5,
+      "source": "https://www.openstreetmap.org/way/261412895"
+    },
+    {
+      "what": "714 Steiner roof ridge",
+      "lat": 37.77619672,
+      "lon": -122.432734758,
+      "min_height_m": 11.78,
+      "within_m": 5,
+      "source": "https://www.openstreetmap.org/way/261412900"
+    },
+    {
+      "what": "716 Steiner roof ridge",
+      "lat": 37.77625896,
+      "lon": -122.432744851,
+      "min_height_m": 11.78,
+      "within_m": 5,
+      "source": "https://www.openstreetmap.org/way/261412894"
+    },
+    {
+      "what": "718 Steiner roof ridge",
+      "lat": 37.776321513,
+      "lon": -122.432757906,
+      "min_height_m": 11.78,
+      "within_m": 5,
+      "source": "https://www.openstreetmap.org/way/261412879"
+    },
+    {
+      "what": "720 Steiner roof ridge",
+      "lat": 37.776383388,
+      "lon": -122.432770673,
+      "min_height_m": 11.78,
+      "within_m": 5,
+      "source": "https://www.openstreetmap.org/way/261412899"
+    }
+  ],
+  "simplified": [
+    "Six houses share local grade. Each street-facing gable, angled bay and raised entry is modeled separately.",
+    "The steps use three broad treads. Individual sash bars, paint, shingles and gingerbread trim are omitted."
+  ],
+  "osm_attribution": "Building footprints and mapped dimensions © OpenStreetMap contributors, ODbL.",
+  "origin_of_work": "Written from published measurements for this project. No third-party mesh used.",
+  "architectural_source": "https://commissions.sfplanning.org/hpcpackets/2021-004327MLS.pdf"
+}
