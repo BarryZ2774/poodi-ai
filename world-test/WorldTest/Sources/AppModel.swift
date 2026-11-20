@@ -74,6 +74,12 @@ final class AppModel {
         forceFallback = defaults.bool(forKey: "forceFallback")
         let preset = CameraPreset(rawValue: defaults.string(forKey: "preset") ?? "") ?? .downtown
         camera = preset.camera
+        // Exact camera for screenshots: -camera "37.755,-122.49,12,30,50" (lat, lon, zoom, bearing, pitch).
+        // One string, because a separate negative value such as "-122.49" would be read as another flag.
+        if let values = defaults.string(forKey: "camera")?.split(separator: ",").compactMap({ Double($0.trimmingCharacters(in: .whitespaces)) }),
+           values.count == 5 {
+            camera = SharedCamera(latitude: values[0], longitude: values[1], zoom: values[2], bearing: values[3], pitch: values[4])
+        }
     }
 
     func go(to preset: CameraPreset) {

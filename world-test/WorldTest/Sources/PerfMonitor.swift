@@ -15,7 +15,7 @@ final class PerfMonitor {
     private(set) var isMoving = false
     private(set) var memoryMB = 0
     let maxFPS = UIScreen.main.maximumFramesPerSecond
-    @ObservationIgnored private let logToConsole = UserDefaults.standard.bool(forKey: "autoTour")
+    @ObservationIgnored private let logToConsole = UserDefaults.standard.bool(forKey: "autoTour") || UserDefaults.standard.bool(forKey: "orbit")
 
     @ObservationIgnored private var link: CADisplayLink?
     @ObservationIgnored private var framesInWindow = 0

@@ -1,14 +1,16 @@
 #!/usr/bin/env python3 -I
 """Writes WorldTest/Resources/places.json: sample landmark buildings for "Colour my places".
 
-Reads the bundled Overture buildings tiles (zoom 14) with tippecanoe-decode and,
-for each landmark below, records the Overture building id, the ids of its
-building parts and a centre point. Sample data only.
+Usage: make_places.py <building.geojsonseq> <building_part.geojsonseq>
+(the Overture downloads that tools/make-data.sh keeps in build/overture/).
+
+For each landmark below it records the Overture building id, the ids of its building
+parts, their numeric vector-tile feature ids (the line number in the download, the
+rule tools/prepare_buildings.py uses) and a centre point. Sample data only.
 """
-import json, subprocess, sys, os
+import json, sys, os
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-TILES = os.path.join(ROOT, "WorldTest/Resources/sf-buildings.pmtiles")
 OUT = os.path.join(ROOT, "WorldTest/Resources/places.json")
 
 # (label, Overture building ids)
@@ -36,22 +38,27 @@ def coords(g):
     walk(g["coordinates"])
     return out
 
+def read(path):
+    """Yields (line number, feature), numbered like prepare_buildings.py."""
+    with open(path) as f:
+        for n, line in enumerate(f, 1):
+            line = line.strip().lstrip("\x1e")
+            if line:
+                yield n, json.loads(line)
+
 def main():
-    raw = subprocess.run(["tippecanoe-decode", "-z14", "-Z14", TILES], check=True, capture_output=True).stdout
-    data = json.loads(raw)
+    buildings_path, parts_path = sys.argv[1:3]
     wanted = {bid: label for label, ids in PLACES for bid in ids}
     parts, pts, tile_ids = {}, {}, {}
-    for tile in data["features"]:
-        for layer in tile["features"]:
-            name = layer["properties"]["layer"]
-            for f in layer["features"]:
-                p = f["properties"]
-                bid = p.get("id") if name == "building" else p.get("building_id")
-                if bid not in wanted: continue
-                if name == "building_part": parts.setdefault(bid, set()).add(p["id"])
-                # Numeric vector-tile feature id: what MapLibre's feature state is keyed on.
-                if "id" in f: tile_ids.setdefault((name, bid), set()).add(str(f["id"]))
-                pts.setdefault(bid, []).extend(coords(f["geometry"]))
+    for name, path in (("building", buildings_path), ("building_part", parts_path)):
+        for n, f in read(path):
+            p = f["properties"]
+            bid = p.get("id") if name == "building" else p.get("building_id")
+            if bid not in wanted: continue
+            if name == "building_part": parts.setdefault(bid, set()).add(p["id"])
+            # Numeric vector-tile feature id: what MapLibre's feature state is keyed on.
+            tile_ids.setdefault((name, bid), set()).add(n)
+            pts.setdefault(bid, []).extend(coords(f["geometry"]))
     result = []
     for label, ids in PLACES:
         cs = [c for b in ids for c in pts.get(b, [])]
@@ -61,8 +68,8 @@ def main():
             "name": label,
             "buildingIds": ids,
             "partIds": sorted({x for b in ids for x in parts.get(b, ())}),
-            "buildingTileIds": sorted({x for b in ids for x in tile_ids.get(("building", b), ())}),
-            "partTileIds": sorted({x for b in ids for x in tile_ids.get(("building_part", b), ())}),
+            "buildingTileIds": [str(x) for x in sorted({x for b in ids for x in tile_ids.get(("building", b), ())})],
+            "partTileIds": [str(x) for x in sorted({x for b in ids for x in tile_ids.get(("building_part", b), ())})],
             "lon": round(sum(c[0] for c in cs) / len(cs), 6),
             "lat": round(sum(c[1] for c in cs) / len(cs), 6),
         })

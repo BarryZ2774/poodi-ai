@@ -167,7 +167,7 @@
       "layout": { "visibility": "none" },
       "filter": ["all",
         ["!=", ["get", "has_parts"], true],
-        ["in", ["get", "id"], ["literal", __VISITED_BUILDING_IDS__]]
+        ["in", ["id"], ["literal", __VISITED_BUILDING_TILE_IDS__]]
       ],
       "paint": {
         "fill-extrusion-color": "#D9825B",

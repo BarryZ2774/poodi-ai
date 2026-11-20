@@ -42,8 +42,10 @@ struct OursMapView: UIViewRepresentable {
               let glyphs = bundle.url(forResource: "glyphs", withExtension: nil) else {
             fatalError("Bundled map data is missing")
         }
-        let ids = Place.loadAll().flatMap(\.buildingIds)
-        let idsJSON = String(data: try! JSONEncoder().encode(ids), encoding: .utf8)!
+        let places = Place.loadAll()
+        let idsJSON = String(data: try! JSONEncoder().encode(places.flatMap(\.buildingIds)), encoding: .utf8)!
+        let tileIDsJSON = String(data: try! JSONEncoder().encode(places.flatMap(\.buildingTileIds).compactMap { Int($0) }),
+                                 encoding: .utf8)!
         var glyphsURL = glyphs.absoluteString
         if glyphsURL.hasSuffix("/") { glyphsURL.removeLast() }
         json = json
@@ -51,6 +53,7 @@ struct OursMapView: UIViewRepresentable {
             .replacingOccurrences(of: "__BUILDINGS__", with: buildings.absoluteString)
             .replacingOccurrences(of: "__GLYPHS__", with: glyphsURL)
             .replacingOccurrences(of: "__VISITED_BUILDING_IDS__", with: idsJSON)
+            .replacingOccurrences(of: "__VISITED_BUILDING_TILE_IDS__", with: tileIDsJSON)
         let out = FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask)[0]
             .appendingPathComponent("porcelain-style.json")
         try? json.write(to: out, atomically: true, encoding: .utf8)
@@ -120,14 +123,18 @@ struct OursMapView: UIViewRepresentable {
         /// Fallback: show the filtered terracotta layers and hide the same buildings from the pale layers,
         /// so the two never draw the same walls.
         private func setFallback(_ on: Bool, in style: MLNStyle) {
+            // Buildings carry only a numeric feature id in the tiles; building parts carry their building's Overture id.
+            let tileIDs = model.places.flatMap(\.buildingTileIds).compactMap { Int($0) }
             let ids = model.places.flatMap(\.buildingIds)
-            for (layerID, key) in [("buildings", "id"), ("building-parts", "building_id")] {
+            let exclusions = [
+                "buildings": NSPredicate(format: "NOT ($featureIdentifier IN %@)", tileIDs),
+                "building-parts": NSPredicate(format: "NOT (building_id IN %@)", ids),
+            ]
+            for (layerID, exclusion) in exclusions {
                 guard let layer = style.layer(withIdentifier: layerID) as? MLNVectorStyleLayer else { continue }
                 if basePredicates[layerID] == nil { basePredicates[layerID] = layer.predicate ?? NSPredicate(value: true) }
                 let base = basePredicates[layerID]!
-                layer.predicate = on
-                    ? NSCompoundPredicate(andPredicateWithSubpredicates: [base, NSPredicate(format: "NOT (%K IN %@)", key, ids)])
-                    : base
+                layer.predicate = on ? NSCompoundPredicate(andPredicateWithSubpredicates: [base, exclusion]) : base
             }
             for id in ["visited-fallback", "visited-parts-fallback"] {
                 style.layer(withIdentifier: id)?.isVisible = on
@@ -148,6 +155,26 @@ struct OursMapView: UIViewRepresentable {
             guard !styleLoaded else { return }
             styleLoaded = true
             setColourPlaces(model.colourPlaces)
+            startOrbitIfAsked()
+        }
+
+        // MARK: Orbit (launch argument "-orbit YES", for measuring fps)
+
+        private var orbiting = false
+
+        private func startOrbitIfAsked() {
+            guard UserDefaults.standard.bool(forKey: "orbit"), !orbiting else { return }
+            orbiting = true
+            orbitStep()
+        }
+
+        /// Turns the camera a quarter turn around the map centre in four seconds, forever.
+        private func orbitStep() {
+            guard let mapView, let camera = mapView.camera.copy() as? MLNMapCamera else { return }
+            camera.heading = (camera.heading + 90).truncatingRemainder(dividingBy: 360)
+            mapView.setCamera(camera, withDuration: 4, animationTimingFunction: CAMediaTimingFunction(name: .linear)) { [weak self] in
+                self?.orbitStep()
+            }
         }
 
         func mapView(_ mapView: MLNMapView, regionIsChangingWith reason: MLNCameraChangeReason) {

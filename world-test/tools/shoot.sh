@@ -20,3 +20,8 @@ shot ours-downtown -preset downtown -colour NO
 shot ours-bridge -preset bridge -colour NO
 shot ours-top -preset top -colour NO
 shot ours-downtown-coloured -preset downtown -colour YES
+# Zoom series (lat,lon,zoom,bearing,pitch): the city must look whole from zoom 11 to 14.
+for z in 11 12 13 14; do
+  shot ours-zoom-$z-downtown -camera "37.7915,-122.4040,$z,30,50"
+  shot ours-zoom-$z-sunset -camera "37.755,-122.49,$z,30,50"
+done
