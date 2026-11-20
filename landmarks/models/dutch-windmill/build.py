@@ -85,7 +85,7 @@ def write_glb(solid):
     props = mesh.vert_properties
     positions = (props[:, :3] @ basis.T).astype("<f4")
     normals = props[:, 3:6] @ basis.T
-    normals /= np.linalg.norm(normals, axis=1, keepdims=True)
+    normals /= np.maximum(np.linalg.norm(normals, axis=1, keepdims=True), 1e-20)
     # Trimming a round member can introduce a small corner at a junction.
     # Split that corner when its interpolated normal points through the surface.
     triangles = mesh.tri_verts.copy()
@@ -117,9 +117,10 @@ def write_glb(solid):
         triangles[faces, corners] = np.arange(len(faces)) + len(props)
     normals = normals.astype("<f4")
     # Preserve seams while sharing identical position/normal pairs.
-    keys = np.hstack((positions, normals))
+    used, triangles = np.unique(triangles, return_inverse=True)
+    keys = np.hstack((positions[used], normals[used]))
     _, first, remap = np.unique(keys, axis=0, return_index=True, return_inverse=True)
-    positions, normals = positions[first], normals[first]
+    positions, normals = keys[first,:3], keys[first,3:]
     if len(positions) >= 65536:
         raise ValueError("Index range exceeded")
     indices = remap[triangles].astype("<u2").ravel()
@@ -154,20 +155,22 @@ def write_glb(solid):
 
 
 def build():
-    hard=[mass(FACTS["plans"]["base"]["outline"],0,.72)]
-    tower=drum(0,0,[(.65,5.0292,5.0292),(3.6,5.0292,5.0292),(6.2,5.6,5.6),
-                    (10.5,4.95,4.95),(17.7,3.38,3.38),(18.9,3.2,3.2)],16)
-    hard.append(tower)
-    hard.append(drum(0,0,[(5.5,8.2,8.2),(6.38,8.2,8.2)],16))
+    # The 33 ft concrete footing stands below a wider cantilevered gallery.
+    # The published north-mill photograph shows a circular shingled cone.
+    tower=drum(0,0,[(0,5.0292,5.0292),(3.6,4.85,4.85),(6.2,4.68,4.68),
+                    (10.5,4.23,4.23),(17.7,3.38,3.38),(18.9,3.2,3.2)],32)
+    hard=[]
+    gallery=section(FACTS["plans"]["base"]["outline"])
+    hard.append(gallery.extrude(.88).translate((0,0,5.5)))
     for t in np.arange(12)*math.tau/12:
         ux,uy=math.cos(t),math.sin(t)
-        hard.append(bar((ux*5.0,uy*5.0,2.3),(ux*7.7,uy*7.7,5.8),.88))
-    outer=md.CrossSection.circle(7.95,16)
-    inner=md.CrossSection.circle(7.22,16)
-    hard.append((outer-inner).extrude(.68).translate((0,0,7.38)))
+        hard.append(bar((ux*4.52,uy*4.52,2.3),(ux*8.52,uy*8.52,5.8),.88))
+    outer=md.CrossSection.circle(8.96,32)
+    inner=md.CrossSection.circle(8.19,32)
+    hard.append((outer-inner).extrude(.72).translate((0,0,7.36)))
     for t in np.arange(16)*math.tau/16:
-        u,v=7.55*math.cos(t),7.55*math.sin(t)
-        hard.append(box(u-.37,u+.37,v-.37,v+.37,6.34,7.60))
+        u,v=8.56*math.cos(t),8.56*math.sin(t)
+        hard.append(box(u-.40,u+.40,v-.40,v+.40,6.34,7.60))
     cap=drum(0,0,[(18.55,3.6,3.7),(20.15,3.85,4.15),(21.7,2.85,3.45),
                    (22.5,1.45,2.25),(22.86,.55,.95)],20)
     hood=drum(0,-2.8,[(18.15,1.65,1.65),(20.55,1.65,1.65),(21.45,.92,.92)],12)
@@ -182,7 +185,7 @@ def build():
             frame-=box(-1.99,-.70,-1,1,z,z+1.29)
         sail=(sail+frame).rotate((0,35+i*90,0)).rotate((-12,0,0)).translate((0,-6.15,19.55))
         hard.append(sail)
-    finish(hard,[(cap,24)])
+    finish(hard,[(tower,18),(cap,24)])
 
 
 if __name__=="__main__":
