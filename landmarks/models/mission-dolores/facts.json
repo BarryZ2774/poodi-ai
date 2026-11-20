@@ -1,0 +1,237 @@
+{
+  "slug": "mission-dolores",
+  "name": "Mission Dolores and Basilica",
+  "kind": "building",
+  "anchor": {
+    "lat": 37.764314211,
+    "lon": -122.42691978,
+    "what": "area-weighted centre of the combined mapped ground outlines at ground level"
+  },
+  "bearing_deg": 85.06860625987122,
+  "ground_keys": [
+    "adobe",
+    "basilica"
+  ],
+  "plans": {
+    "adobe": {
+      "outline": [
+        [
+          22.464,
+          -14.286
+        ],
+        [
+          20.593,
+          19.412
+        ],
+        [
+          25.373,
+          19.689
+        ],
+        [
+          24.962,
+          27.189
+        ],
+        [
+          23.093,
+          27.085
+        ],
+        [
+          22.953,
+          29.6
+        ],
+        [
+          19.987,
+          29.431
+        ],
+        [
+          19.877,
+          31.395
+        ],
+        [
+          7.642,
+          30.709
+        ],
+        [
+          10.161,
+          -14.976
+        ]
+      ],
+      "centre": [
+        15.586,
+        9.342
+      ],
+      "source": "https://www.openstreetmap.org/way/256442765"
+    },
+    "basilica": {
+      "outline": [
+        [
+          12.375,
+          -29.344
+        ],
+        [
+          12.469,
+          -19.093
+        ],
+        [
+          6.482,
+          -19.142
+        ],
+        [
+          7.072,
+          6.286
+        ],
+        [
+          3.521,
+          6.319
+        ],
+        [
+          3.722,
+          20.01
+        ],
+        [
+          5.826,
+          19.996
+        ],
+        [
+          5.867,
+          26.661
+        ],
+        [
+          -18.869,
+          26.743
+        ],
+        [
+          -19.06,
+          20.401
+        ],
+        [
+          -17.04,
+          20.315
+        ],
+        [
+          -17.194,
+          6.39
+        ],
+        [
+          -20.758,
+          6.53
+        ],
+        [
+          -20.758,
+          -29.235
+        ],
+        [
+          -13.114,
+          -29.214
+        ],
+        [
+          -11.455,
+          -30.772
+        ],
+        [
+          -9.136,
+          -31.919
+        ],
+        [
+          -4.994,
+          -31.816
+        ],
+        [
+          -2.842,
+          -30.755
+        ],
+        [
+          -1.268,
+          -29.175
+        ]
+      ],
+      "centre": [
+        -6.269,
+        -3.747
+      ],
+      "source": "https://www.openstreetmap.org/way/256442760"
+    }
+  },
+  "measurements_m": [
+    {
+      "what": "Basilica high point above local ground",
+      "real": 39.04,
+      "model": 39.04,
+      "source": "https://data.sf.gov/resource/ynuv-fyni.json?sf16_bldgid=201006.0001563",
+      "bbox": "height",
+      "method": "DataSF hgt_maxcm field in centimetres."
+    },
+    {
+      "what": "adobe footprint width",
+      "real": 17.731,
+      "model": 17.731,
+      "source": "https://www.openstreetmap.org/way/256442765"
+    },
+    {
+      "what": "adobe footprint length",
+      "real": 46.371,
+      "model": 46.371,
+      "source": "https://www.openstreetmap.org/way/256442765"
+    },
+    {
+      "what": "basilica footprint width",
+      "real": 33.227,
+      "model": 33.227,
+      "source": "https://www.openstreetmap.org/way/256442760"
+    },
+    {
+      "what": "basilica footprint length",
+      "real": 58.662,
+      "model": 58.662,
+      "source": "https://www.openstreetmap.org/way/256442760"
+    },
+    {
+      "what": "Adobe chapel high point above local ground",
+      "real": 10.76,
+      "model": 10.76,
+      "source": "https://data.sf.gov/resource/ynuv-fyni.json?sf16_bldgid=201006.0005375",
+      "method": "DataSF hgt_maxcm field in centimetres."
+    },
+    {
+      "what": "Crossing dome drum diameter, LiDAR estimate",
+      "real": 16.3,
+      "model": 16.3,
+      "source": "https://www.fisheries.noaa.gov/inport/item/73386/full-list",
+      "method": "Across the step between the crossing drum and surrounding lower roof at cross-section y = −8.45 m; EPT levels 7 and 8. Rounded to 0.1 m."
+    },
+    {
+      "what": "Crossing cupola and cross above street datum, LiDAR estimate",
+      "real": 29.3,
+      "model": 29.3,
+      "source": "https://www.fisheries.noaa.gov/inport/item/73386/full-list",
+      "method": "The highest sampled crossing return was 52.85 m. Classified ground on the Dolores Street frontage was approximately 23.55 m."
+    }
+  ],
+  "checkpoints": [
+    {
+      "what": "North basilica tower cross",
+      "lat": 37.76446858,
+      "lon": -122.42667285,
+      "min_height_m": 38.8,
+      "within_m": 4,
+      "source": "https://www.openstreetmap.org/way/256442760"
+    }
+  ],
+  "simplified": [
+    "The chapel’s skewed adobe footprint meets the street elevation in a square corner. Four engaged columns, a projecting balcony and three open bell niches describe that elevation.",
+    "Two DataSF lidar footprint records supply the heights. The cemetery, adjacent school, tile pattern and statuary are omitted.",
+    "The basilica has recessed side openings, a domed crossing with a lantern and cross, and a separate lower apse dome. The profile groups the smaller windows, ribs and tile courses."
+  ],
+  "osm_attribution": "Building footprints and mapped dimensions © OpenStreetMap contributors, ODbL.",
+  "origin_of_work": "Written from published measurements for this project. No third-party mesh used.",
+  "architecture_source": "https://sfplanninggis.org/docs/DPRForms/3566001.pdf",
+  "aerial_reference": "https://irp.cdn-website.com/3f4675b8/dms3rep/multi/opt/74-1920w.jpg",
+  "front_reference": "https://commissions.sfplanning.org/hpcpackets/2019-005041COA.pdf",
+  "crossing_survey": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/CA_SanFrancisco_1_B23/ept.json",
+  "basilica_towers": {
+    "north_cross_model_m": 39.04,
+    "south_cross_model_m": 33.04,
+    "profile": "The frontal photograph from Dolores Street shows the additional open bell stage on the northern tower, at right. The southern tower height is a model estimate.",
+    "source": "https://upload.wikimedia.org/wikipedia/commons/8/87/Mission_San_Francisco_de_Asis_and_Dolores_Basilica_(2025).jpg"
+  }
+}
