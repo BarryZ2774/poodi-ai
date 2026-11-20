@@ -89,7 +89,9 @@ def tower(s):
         # The concrete fender stands clear of the south pier at the surface.
         outer = md.CrossSection.circle(1, 32).scale((45.72, 23.62))
         inner = md.CrossSection.circle(1, 32).scale((42.7, 20.6))
-        parts.append((outer - inner).extrude(7.57).translate((0, s, -3)))
+        parts.append((outer-inner).extrude(7.57).translate((0,s,-3)))
+        raised=(outer-inner.offset(1.0)).extrude(.9).translate((0,s,4.57))
+        parts.append(raised)
     levels = [(13.3, 10.0584, 16.4592, 1.5), (74, 10.0584, 16.4592, 1.5),
               (74, 8.7, 13.8, 1.3), (133, 8.7, 13.8, 1.3),
               (133, 7.4, 11.6, 1.2), (173, 7.4, 11.6, 1.2),
@@ -202,6 +204,8 @@ def approaches():
             parts.append(side_plate(ribbon([a,b], lambda s: road(s)-1.5-height+.2, lambda s: 0), -width/2+1,width/2-1))
         else:
             parts.append(pedestal(0,(a+b)/2,[(0,width-2,b-a-2,3),(upper-height+.2,width-2,b-a-2,3)]))
+            parts.append(pedestal(0,(a+b)/2,[(upper-1.2,width+1.8,b-a,3),
+                                                (upper,width+1.8,b-a,3)]))
             parts.append(pedestal(0, (a+b)/2, [(upper-height, width, b-a, 3),
                                                 (upper, width, b-a, 3)]))
     # Four shallow polygonal arch ribs over Fort Point, with open spandrels.
@@ -212,7 +216,7 @@ def approaches():
     rib = ribbon(arch_stations, lambda s: arch(s)+2, lambda s: arch(s)-2)
     for x in (-11.5, -4, 4, 11.5):
         parts.append(side_plate(rib, x-0.85, x+0.85))
-        for s in arch_stations[3:-1:3]:
+        for s in arch_stations[2:-1:2]:
             parts.append(box(x-0.85, x+0.85, s-0.8, s+0.8, arch(s), road(s)-1))
     for s in (south_outer, -PYLON):
         parts.append(box(-17, 17, s-8, s+8, 0, 11))
