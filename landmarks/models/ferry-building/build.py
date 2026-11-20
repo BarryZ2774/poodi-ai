@@ -190,11 +190,18 @@ def build():
         front=-31.45 if -20.7<s<22.4 else -22.55
         cut=arch_cut(s,0.8,6.2,2.25,-front-2.4,10).rotate((0,0,90))
         hall -= cut
+        hall-=box(front-1,front+1.5,s-1.28,s+1.28,10.5,13.45)
     hard=[hall,hip(3,0,28,201.168,15.25,20.2,192) ^ mass(base,0,25)]
     # Two shallow hipped roofs flank the centre of the raised skylit nave.
     for s in (-55,55):
         hard.append(hip(-14,s,14.5,82,15.2,17.8,73))
-    hard.append(box(x-6.2,x+6.2,y-6.2,y+6.2,14.9,46))
+    hard.append(hip(3,0,6.2,185,19.05,21.9,177))
+    shaft=box(-6.2,6.2,-6.2,6.2,14.9,46)
+    for k in range(4):
+        for u in (-2.1,2.1):
+            recess=arch_cut(u,22.2,38.2,1.05,-6.1,2)
+            shaft-=recess.rotate((0,0,k*90))
+    hard.append(shaft.translate((x,y,0)))
     hard.append(box(x-6.6,x+6.6,y-6.6,y+6.6,44.5,46.6))
     clock=box(-5.9,5.9,-5.9,5.9,45.9,55)
     for k in range(4):
