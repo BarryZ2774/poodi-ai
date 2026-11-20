@@ -13,7 +13,8 @@
       "what": "West crossing including approach trusses",
       "real": 3140,
       "model": 3140,
-      "source": "https://www.opacengineers.com/features/SFO-WBCseismic"
+      "source": "https://www.opacengineers.com/features/SFO-WBCseismic",
+      "bbox": "length"
     },
     {
       "what": "Western main span",
@@ -56,6 +57,13 @@
       "real": 67,
       "model": 67,
       "source": "https://www.openstreetmap.org/way/236374789"
+    },
+    {
+      "what": "Main cable diameter",
+      "real": 0.73,
+      "model": 1.7,
+      "thickened": true,
+      "source": "https://www.opacengineers.com/features/SFO-WBCseismic"
     }
   ],
   "checkpoints": [

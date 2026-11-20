@@ -117,28 +117,40 @@ def write_glb(solid):
     positions = (props[:, :3] @ basis.T).astype("<f4")
     normals = props[:, 3:6] @ basis.T
     normals /= np.linalg.norm(normals, axis=1, keepdims=True)
-    # glTF's standard quantized normal format packs a unit vector into one
-    # aligned word. Positions remain ordinary float32 metre coordinates.
-    packed = np.zeros((len(normals), 4), dtype=np.int8)
-    packed[:, :3] = np.rint(normals * 127).astype(np.int8)
-    # Hard edges need separate corners. Reuse corners that became identical
-    # after encoding, including those created on either side of a boolean seam.
-    keys = np.hstack((positions, packed))
+    triangles = mesh.tri_verts.copy()
+    # A boolean intersection can leave sub-millimetre slivers. Collapse only
+    # short mesh edges; all shading corners at an endpoint move together.
+    points, owners = np.unique(positions, axis=0, return_inverse=True)
+    spatial = owners[triangles]
+    edges = np.sort(np.vstack((spatial[:, [0,1]], spatial[:, [1,2]], spatial[:, [2,0]])), axis=1)
+    short = edges[np.linalg.norm(points[edges[:,0]]-points[edges[:,1]], axis=1) < 0.0012]
+    parent = np.arange(len(points))
+    for a, b in short:
+        while parent[a] != a:
+            a = parent[a]
+        while parent[b] != b:
+            b = parent[b]
+        parent[max(a,b)] = min(a,b)
+    while np.any(parent != parent[parent]):
+        parent = parent[parent]
+    positions = points[parent[owners]]
+    corners = parent[spatial]
+    triangles = triangles[np.all(corners != np.roll(corners, 1, axis=1), axis=1)]
+    normals = normals.astype("<f4")
+    # Preserve seams while sharing identical position/normal pairs.
+    keys = np.hstack((positions, normals))
     _, first, remap = np.unique(keys, axis=0, return_index=True, return_inverse=True)
-    positions, packed = positions[first], packed[first]
+    positions, normals = positions[first], normals[first]
     if len(positions) >= 65536:
         raise ValueError("Index range exceeded")
-    indices = remap[mesh.tri_verts].astype("<u2").ravel()
+    indices = remap[triangles].astype("<u2").ravel()
     views, data = [], bytearray()
-    for array, target in [(positions, 34962), (packed, 34962), (indices, 34963)]:
+    for array, target in [(positions, 34962), (normals, 34962), (indices, 34963)]:
         views.append(dict(buffer=0, byteOffset=len(data), byteLength=array.nbytes, target=target))
         data.extend(array.tobytes())
         data.extend(bytes(-len(data) % 4))
-    views[1]["byteStride"] = 4
     linear = [((c/255+0.055)/1.055)**2.4 for c in (244, 241, 236)]
     model = {
-        "extensionsUsed": ["KHR_mesh_quantization"],
-        "extensionsRequired": ["KHR_mesh_quantization"],
         "asset": {"version": "2.0"}, "scene": 0, "scenes": [{"nodes": [0]}],
         "nodes": [{"mesh": 0, "name": FACTS["name"]}],
         "meshes": [{"primitives": [{"attributes": {"POSITION": 0, "NORMAL": 1},
@@ -148,7 +160,7 @@ def write_glb(solid):
         "accessors": [
             dict(bufferView=0, componentType=5126, count=len(positions), type="VEC3",
                  min=positions.min(axis=0).tolist(), max=positions.max(axis=0).tolist()),
-            dict(bufferView=1, componentType=5120, normalized=True, count=len(packed), type="VEC3"),
+            dict(bufferView=1, componentType=5126, count=len(normals), type="VEC3"),
             dict(bufferView=2, componentType=5123, count=len(indices), type="SCALAR")],
         "bufferViews": views, "buffers": [{"byteLength": len(data)}]}
     metadata = json.dumps(model, separators=(",", ":"), allow_nan=False).encode()
@@ -156,7 +168,7 @@ def write_glb(solid):
     length = 28 + len(metadata) + len(data)
     glb = (struct.pack("<4sIII4s", b"glTF", 2, length, len(metadata), b"JSON") +
            metadata + struct.pack("<I4s", len(data), b"BIN\0") + data)
-    if len(glb) > 400_000 or len(indices) // 3 > (25_000 if FACTS["kind"] == "bridge" else 6_000):
+    if len(glb) > (1_500_000 if FACTS["kind"] == "bridge" else 400_000) or len(indices) // 3 > (25_000 if FACTS["kind"] == "bridge" else 6_000):
         raise ValueError(f"Mobile budget exceeded: {len(indices)//3} triangles, {len(glb)} bytes")
     (HERE / (FACTS["slug"] + ".glb")).write_bytes(glb)
     print(f"{len(indices)//3:,} triangles, {len(glb):,} bytes")
@@ -180,7 +192,7 @@ def build():
         hard.append(side_plate(section(slab), -width/2, width/2))
     # A single folded web on either edge reveals both traffic levels.
     ys = np.linspace(west+1,east-1,63)
-    for x in (-9.5,9.5):
+    for x in (-9.10,9.10):
         for i, (a,b) in enumerate(zip(ys,ys[1:])):
             z1, z2 = (0.9, depth-0.9) if i%2 else (depth-0.9, 0.9)
             hard.append(bar((x,a,road(a)-z1),(x,b,road(b)-z2),1.15))
@@ -196,11 +208,11 @@ def build():
                        [road(s)-depth,road(s)+1,top-42,top-20,top-3]):
             for sign in (-1,1):
                 hard.append(brace(sign*leg_x(a),a,-sign*leg_x(b),b,2.1,s,3.2))
-        hard.append(box(-12,12,s-2.7,s+2.7,top-3.5,top))
+        hard.append(box(-13,13,s-4.4,s+4.4,top-4.5,top))
     # Centre anchor rises between the two independent pairs of cables.
     hard.append(pedestal(0,0,[(-3,34,72,6),(14,34,72,6),(52,29,61,4)]))
     for x in (-12,12):
-        hard.append(pedestal(x,0,[(50,6,61,2),(67,5,2*half_anchor,1.2)]))
+        hard.append(pedestal(x,0,[(50,5,55,2),(67,5,2*half_anchor,1.2)]))
     for s in (w2-side,east-14.7):
         hard.append(pedestal(0,s,[(-1.5,32,29,3),(road(s)-3.3,25,25,2)]))
     for s in np.linspace(west+2,w2-side,5)[:-1]:
