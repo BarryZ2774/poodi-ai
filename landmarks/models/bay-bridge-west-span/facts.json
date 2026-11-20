@@ -1,0 +1,117 @@
+{
+  "slug": "bay-bridge-west-span",
+  "name": "San Francisco–Oakland Bay Bridge, West Span",
+  "kind": "bridge",
+  "anchor": {
+    "lon": -122.37786045,
+    "lat": 37.79818985,
+    "what": "centre of the mid-channel anchorage, at mean sea level"
+  },
+  "bearing_deg": 40.35934,
+  "measurements_m": [
+    {
+      "what": "West crossing including approach trusses",
+      "real": 3140,
+      "model": 3140,
+      "source": "https://www.opacengineers.com/features/SFO-WBCseismic"
+    },
+    {
+      "what": "Western main span",
+      "real": 704,
+      "model": 704.09601,
+      "source": "https://www.opacengineers.com/features/SFO-WBCseismic"
+    },
+    {
+      "what": "Eastern main span",
+      "real": 704,
+      "model": 704.3468,
+      "source": "https://www.opacengineers.com/features/SFO-WBCseismic"
+    },
+    {
+      "what": "Roadway width on each deck",
+      "real": 20.1168,
+      "model": 20.1168,
+      "source": "https://tile.loc.gov/storage-services/master/pnp/habshaer/ca/ca1300/ca1352/data/ca1352data.pdf"
+    },
+    {
+      "what": "Depth of double-deck stiffening trusses",
+      "real": 10.668,
+      "model": 10.668,
+      "source": "https://tile.loc.gov/storage-services/master/pnp/habshaer/ca/ca1300/ca1352/data/ca1352data.pdf"
+    },
+    {
+      "what": "Outer tower steel height above base plates",
+      "real": 126.1872,
+      "model": 126.1872,
+      "source": "https://tile.loc.gov/storage-services/master/pnp/habshaer/ca/ca1300/ca1352/data/ca1352data.pdf"
+    },
+    {
+      "what": "Inner tower steel height above base plates",
+      "real": 139.5984,
+      "model": 139.5984,
+      "source": "https://tile.loc.gov/storage-services/master/pnp/habshaer/ca/ca1300/ca1352/data/ca1352data.pdf"
+    },
+    {
+      "what": "Centre anchorage height above water",
+      "real": 67,
+      "model": 67,
+      "source": "https://www.openstreetmap.org/way/236374789"
+    }
+  ],
+  "checkpoints": [
+    {
+      "what": "W2 tower",
+      "lon": -122.385823118,
+      "lat": 37.790753139,
+      "min_height_m": 130,
+      "within_m": 5,
+      "source": "https://www.openstreetmap.org/way/432712476"
+    },
+    {
+      "what": "W3 tower",
+      "lon": -122.38064765,
+      "lat": 37.79558805,
+      "min_height_m": 145,
+      "within_m": 5,
+      "source": "https://www.openstreetmap.org/way/432712477"
+    },
+    {
+      "what": "W4 centre anchorage",
+      "lon": -122.37786045,
+      "lat": 37.79818985,
+      "min_height_m": 65,
+      "within_m": 5,
+      "source": "https://www.openstreetmap.org/way/236374789"
+    },
+    {
+      "what": "W5 tower",
+      "lon": -122.37507965,
+      "lat": 37.8007874,
+      "min_height_m": 145,
+      "within_m": 5,
+      "source": "https://www.openstreetmap.org/way/432712478"
+    },
+    {
+      "what": "W6 tower",
+      "lon": -122.369899758,
+      "lat": 37.805622293,
+      "min_height_m": 130,
+      "within_m": 5,
+      "source": "https://www.openstreetmap.org/way/432712479"
+    }
+  ],
+  "simplified": [
+    "The approach and six suspended bays follow one azimuth. The roadway rises toward the central anchorage in broad grades.",
+    "Each pentagonal suspender represents a pair of ropes. The cable bundles and steel bracing use enlarged sections for phone-scale visibility. Hanger stations are approximately 28 m apart.",
+    "The two roadways and outer diagonals retain the double-deck outline. Lane markings, railings, lights, individual rivets and underwater caissons are omitted."
+  ],
+  "osm_attribution": "© OpenStreetMap contributors, ODbL",
+  "origin_of_work": "Written from published measurements for this project. No third-party mesh used.",
+  "tower_stations_m": [
+    -1083.11151,
+    -379.0155,
+    0,
+    378.29104,
+    1082.63784
+  ]
+}

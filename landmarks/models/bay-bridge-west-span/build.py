@@ -1,0 +1,236 @@
+"""Generate the landmark in metres. Local coordinates are across, along and up."""
+
+from __future__ import annotations
+
+import json
+import math
+import struct
+from pathlib import Path
+
+import manifold3d as md
+import numpy as np
+
+HERE = Path(__file__).resolve().parent
+FACTS = json.loads((HERE / "facts.json").read_text())
+
+def union(parts):
+    return md.Manifold.batch_boolean(parts, md.OpType.Add)
+
+
+def box(x0, x1, s0, s1, bottom, top):
+    return md.Manifold.cube((x1 - x0, s1 - s0, top - bottom)).translate((x0, s0, bottom))
+
+
+def section(outline):
+    return md.CrossSection([outline], md.FillRule.EvenOdd)
+
+
+def side_plate(shape, left, right):
+    """Extrude a station/elevation section across the bridge."""
+    return shape.extrude(right - left).transform(((0, 0, 1, left), (1, 0, 0, 0), (0, 1, 0, 0)))
+
+
+def front_plate(outline, station, depth):
+    return section(outline).extrude(depth).rotate((90, 0, 0)).translate((0, station + depth / 2, 0))
+
+
+def loft(rings, cap=None):
+    """Skin aligned rings, CCW about the sweep axis. Convex caps can use a fan."""
+    n = len(rings[0])
+    if cap is None:
+        cap = [(0, i, i+1) for i in range(1, n-1)]
+    faces = [(c, b, a) for a, b, c in cap]
+    for k in range(len(rings) - 1):
+        for i in range(n):
+            a, b = k * n + i, k * n + (i + 1) % n
+            faces.extend([(a, b, b + n), (a, b + n, a + n)])
+    end = n * (len(rings) - 1)
+    faces.extend((end+a, end+b, end+c) for a, b, c in cap)
+    return md.Manifold(md.Mesh64(np.vstack(rings), np.array(faces, dtype=np.uint64)))
+
+
+def pedestal(x, s, levels):
+    """Clipped-corner courses. Equal elevations produce horizontal setbacks."""
+    rings = []
+    for z, width, depth, chamfer in levels:
+        w, d, c = width / 2, depth / 2, chamfer
+        corners = [(-w+c, -d), (w-c, -d), (w, -d+c), (w, d-c),
+                   (w-c, d), (-w+c, d), (-w, d-c), (-w, -d+c)]
+        rings.append([(x + u, s + v, z) for u, v in corners])
+    return loft(rings)
+
+
+def brace(x0, z0, x1, z1, width, station, depth):
+    length = math.hypot(x1 - x0, z1 - z0)
+    dx, dz = (z0 - z1) * width / (2 * length), (x1 - x0) * width / (2 * length)
+    return front_plate([(x0+dx, z0+dz), (x0-dx, z0-dz),
+                        (x1-dx, z1-dz), (x1+dx, z1+dz)], station, depth)
+
+
+def map_axes():
+    a = math.radians(FACTS["bearing_deg"])
+    c, s = math.cos(a), math.sin(a)
+    return np.array([[c, s, 0], [0, 0, 1], [s, -c, 0]])
+
+
+def bar(start, end, width, depth=None):
+    """Rectangular member joining two points."""
+    if depth is None:
+        depth = width
+    a, b = np.asarray(start), np.asarray(end)
+    u = (b-a)/np.linalg.norm(b-a)
+    side = np.cross(u, (0, 0, 1) if abs(u[2]) < 0.9 else (0, 1, 0))
+    side /= np.linalg.norm(side)
+    other = np.cross(u, side)
+    matrix = np.column_stack((side, other, u, (a+b)/2))
+    return md.Manifold.cube((width, depth, np.linalg.norm(b-a)), center=True).transform(matrix)
+
+
+def tube(path, radius, sides=8):
+    """Sweep a round cable along a station/elevation path at a fixed offset."""
+    rings = []
+    for i, (x, y, z) in enumerate(path):
+        v = np.subtract(path[min(i+1, len(path)-1)], path[max(i-1, 0)])
+        v = v/np.linalg.norm(v)
+        across = np.cross(v, (0, 0, 1))
+        if np.linalg.norm(across) < 1e-8:
+            across = np.array([1., 0., 0.])
+        across /= np.linalg.norm(across)
+        normal = np.cross(v, across)
+        angles = np.arange(sides)*math.tau/sides
+        rings.append([np.array([x,y,z])+radius*(math.cos(t)*across+math.sin(t)*normal) for t in angles])
+    return loft(rings)
+
+
+def finish(hard, curved):
+    base = union(hard).as_original().simplify(0.002).calculate_normals(0, 0.5)
+    round_parts = [s.calculate_normals(0, angle) for s, angle in curved]
+    write_glb(union([base, *round_parts]).simplify(0.002))
+
+
+def write_glb(solid):
+    if solid.status() != md.Error.NoError or solid.volume() <= 0:
+        raise ValueError("Solid failed its manifold check")
+    mesh = solid.to_mesh64()
+    basis = map_axes()
+    props = mesh.vert_properties
+    positions = (props[:, :3] @ basis.T).astype("<f4")
+    normals = props[:, 3:6] @ basis.T
+    normals /= np.linalg.norm(normals, axis=1, keepdims=True)
+    # glTF's standard quantized normal format packs a unit vector into one
+    # aligned word. Positions remain ordinary float32 metre coordinates.
+    packed = np.zeros((len(normals), 4), dtype=np.int8)
+    packed[:, :3] = np.rint(normals * 127).astype(np.int8)
+    # Hard edges need separate corners. Reuse corners that became identical
+    # after encoding, including those created on either side of a boolean seam.
+    keys = np.hstack((positions, packed))
+    _, first, remap = np.unique(keys, axis=0, return_index=True, return_inverse=True)
+    positions, packed = positions[first], packed[first]
+    if len(positions) >= 65536:
+        raise ValueError("Index range exceeded")
+    indices = remap[mesh.tri_verts].astype("<u2").ravel()
+    views, data = [], bytearray()
+    for array, target in [(positions, 34962), (packed, 34962), (indices, 34963)]:
+        views.append(dict(buffer=0, byteOffset=len(data), byteLength=array.nbytes, target=target))
+        data.extend(array.tobytes())
+        data.extend(bytes(-len(data) % 4))
+    views[1]["byteStride"] = 4
+    linear = [((c/255+0.055)/1.055)**2.4 for c in (244, 241, 236)]
+    model = {
+        "extensionsUsed": ["KHR_mesh_quantization"],
+        "extensionsRequired": ["KHR_mesh_quantization"],
+        "asset": {"version": "2.0"}, "scene": 0, "scenes": [{"nodes": [0]}],
+        "nodes": [{"mesh": 0, "name": FACTS["name"]}],
+        "meshes": [{"primitives": [{"attributes": {"POSITION": 0, "NORMAL": 1},
+                                     "indices": 2, "material": 0}]}],
+        "materials": [{"name": "body", "pbrMetallicRoughness": {
+            "baseColorFactor": linear+[1], "metallicFactor": 0, "roughnessFactor": 1}}],
+        "accessors": [
+            dict(bufferView=0, componentType=5126, count=len(positions), type="VEC3",
+                 min=positions.min(axis=0).tolist(), max=positions.max(axis=0).tolist()),
+            dict(bufferView=1, componentType=5120, normalized=True, count=len(packed), type="VEC3"),
+            dict(bufferView=2, componentType=5123, count=len(indices), type="SCALAR")],
+        "bufferViews": views, "buffers": [{"byteLength": len(data)}]}
+    metadata = json.dumps(model, separators=(",", ":"), allow_nan=False).encode()
+    metadata += b" " * (-len(metadata) % 4)
+    length = 28 + len(metadata) + len(data)
+    glb = (struct.pack("<4sIII4s", b"glTF", 2, length, len(metadata), b"JSON") +
+           metadata + struct.pack("<I4s", len(data), b"BIN\0") + data)
+    if len(glb) > 400_000 or len(indices) // 3 > (25_000 if FACTS["kind"] == "bridge" else 6_000):
+        raise ValueError(f"Mobile budget exceeded: {len(indices)//3} triangles, {len(glb)} bytes")
+    (HERE / (FACTS["slug"] + ".glb")).write_bytes(glb)
+    print(f"{len(indices)//3:,} triangles, {len(glb):,} bytes")
+
+
+def build():
+    w2, w3, _, w5, w6 = FACTS["tower_stations_m"]
+    side = 1160 * 0.3048
+    half_anchor = (abs(w3)+w5)/2 - side
+    east = w6 + side
+    west = east - 3140
+    stations = [west, w2-side, w2, w3, -half_anchor, half_anchor, w5, w6, east]
+    grades = [47, 50, 58, 67, 67, 67, 67, 58, 51]
+    width, depth = 66*0.3048, 35*0.3048
+    def road(s):
+        return float(np.interp(s, stations, grades))
+    hard, curved = [], []
+    for down in (0, depth-1.5):
+        slab = [(s,road(s)-down) for s in stations]
+        slab += [(s,road(s)-down-1.5) for s in reversed(stations)]
+        hard.append(side_plate(section(slab), -width/2, width/2))
+    # A single folded web on either edge reveals both traffic levels.
+    ys = np.linspace(west+1,east-1,63)
+    for x in (-9.5,9.5):
+        for i, (a,b) in enumerate(zip(ys,ys[1:])):
+            z1, z2 = (0.9, depth-0.9) if i%2 else (depth-0.9, 0.9)
+            hard.append(bar((x,a,road(a)-z1),(x,b,road(b)-z2),1.15))
+    for i,s in enumerate((w2,w3,w5,w6)):
+        base = 12.2
+        top = base + (414 if i in (0,3) else 458)*0.3048
+        hard.append(pedestal(0,s,[(-3,42,23,5),(base,37,19,4)]))
+        def leg_x(z):
+            return 15.1 - (z-base)/(top-base)*4.3
+        for sign in (-1,1):
+            hard.append(bar((sign*leg_x(base),s,base-0.3),(sign*leg_x(top),s,top-1.6),3.7,6))
+        for a,b in zip([base+1,road(s)-depth,road(s)+1,top-42,top-20],
+                       [road(s)-depth,road(s)+1,top-42,top-20,top-3]):
+            for sign in (-1,1):
+                hard.append(brace(sign*leg_x(a),a,-sign*leg_x(b),b,2.1,s,3.2))
+        hard.append(box(-12,12,s-2.7,s+2.7,top-3.5,top))
+    # Centre anchor rises between the two independent pairs of cables.
+    hard.append(pedestal(0,0,[(-3,34,72,6),(14,34,72,6),(52,29,61,4)]))
+    for x in (-12,12):
+        hard.append(pedestal(x,0,[(50,6,61,2),(67,5,2*half_anchor,1.2)]))
+    for s in (w2-side,east-14.7):
+        hard.append(pedestal(0,s,[(-1.5,32,29,3),(road(s)-3.3,25,25,2)]))
+    for s in np.linspace(west+2,w2-side,5)[:-1]:
+        for sign in (-1,1):
+            hard.append(bar((sign*12.8,s,0),(sign*9.5,s,road(s)-1),2.1,3))
+            hard.append(brace(sign*11,3,-sign*10,road(s)-depth,1.6,s,2.2))
+    for a,b,c,d in [(w2-side,w2,w3,-half_anchor),(half_anchor,w5,w6,east)]:
+        tower_z = lambda s: 12.2 + (414 if s in (w2,w6) else 458)*0.3048 - 1.4
+        nodes = [a,b,c,d]
+        heights = [road(a)-1,tower_z(b),tower_z(c),road(d)-1]
+        pts = []
+        for i,(u,v) in enumerate(zip(nodes,nodes[1:])):
+            n = 14 if i==1 else 6
+            sag = (min(heights[1:3])+max(heights[1:3]))/2-road((u+v)/2)-3 if i==1 else 8
+            for t in np.linspace(0,1,n+1)[0 if i==0 else 1:]:
+                pts.append((u+(v-u)*t,(1-t)*heights[i]+t*heights[i+1]-4*sag*t*(1-t)))
+        if d == east:
+            pts[-1] = (east-7, road(east)-8)
+        for x in (-9.4,9.4):
+            curved.append((tube([(x,s,z) for s,z in pts],0.85,6),73))
+            for u,v in zip(nodes,nodes[1:]):
+                hangers=np.linspace(u,v,round((v-u)/28)+1)[1:-1]
+                for s in hangers:
+                    z=np.interp(s,*zip(*pts))
+                    bottom=road(s)-0.4
+                    if z-bottom>0.8:
+                        curved.append((md.Manifold.cylinder(z-bottom,0.5,circular_segments=5)
+                                       .translate((x,s,bottom)),78))
+    finish(hard, curved)
+
+
+if __name__ == "__main__":
+    build()
