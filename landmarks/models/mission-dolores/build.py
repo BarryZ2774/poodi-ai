@@ -177,6 +177,10 @@ def build():
     adobe-=arch_cut(13.9,.65,3.15,1.35,30.4,3.8)
     for u in (-2.35,0,2.35):
         adobe-=arch_cut(13.9+u,6.1 if u else 7.15,7.0 if u else 8.2,.68,30.3,3.4)
+    for u in (9.6,11.05,16.75,18.2):
+        column=drum(u,30.68,[(0,.68,.72),(.95,.68,.72),(1.05,.48,.56),
+                             (5.5,.48,.56),(5.85,.68,.76),(6.55,.68,.76)],10)
+        adobe+=column
     hard=[adobe]
     plan=p["basilica"]["outline"]
     body=mass(plan,0,12.2)
@@ -189,6 +193,14 @@ def build():
     for u,r in [(-10.9,1.2),(-6.5,1.85),(-2.1,1.2)]:
         body-=arch_cut(u,.6,4.1,r,26.5,4.3)
     body-=arch_cut(-6.5,12.6,15.8,1.75,26.2,3.6)
+    for station in (-22,-14,-6,2,11,17):
+        left=-20.76 if station<6 else -17.1
+        right=12.42 if station<-19 else (6.75 if station<6 else 3.6)
+        for wall in (left,right):
+            body-=arch_cut(station,4.15,8.4,1.68,-wall,3.8).rotate((0,0,90))
+    apse=drum(-7.2,-26.7,[(11.95,7.45,5.58),(12.95,7.2,5.35),
+                          (15.45,3.05,2.55),(15.95,1.05,.95)],12)
+    body+=apse ^ mass(plan,0,22)
     hard.append(body)
     for x,tall in [(-15.2,True),(2.35,False)]:
         y=23.15
