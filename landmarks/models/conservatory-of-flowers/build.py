@@ -170,17 +170,33 @@ def build():
             hard.append(band.translate((1.95,0,0)) ^ clip)
         end=front_plate(roof_profile(5.5,4.7,5.35),-6.45,20.5)
         hard.append(end.rotate((0,0,90)).translate((0,sign*31.6+.3,0)) ^ clip)
+        for station in (-.9,2.8,6.6,10.4,14.15):
+            rib=front_plate(roof_profile(5.17,5.52,5.1),-station,1)
+            hard.append(rib.rotate((0,0,90)).translate((0,sign*31.6+.3,0)) ^ clip)
         hard.append(drum(9.4,sign*31.6+.3,[(9.55,1.4,1.4),(10.9,.9,.9),(12.3,.38,.38)],8))
     # The low octagonal palm house gives way to a second raised dome.
     x,y=2.0,.3
     hard.append(pedestal(x,y,[(3,17.4,17.1,4.15),(6.6,17.4,17.1,4.15),
                               (9.4,15.8,15.6,3.9),(11.2,13.4,13.4,3.65)]))
-    dome=drum(x,y,[(10.8,6.9,6.9),(12.0,6.6,6.6),(14.1,5.25,5.25),
-                   (15.8,4.8,4.8),(17.2,3.85,3.85),(18.45,2.35,2.35),
-                   (19,1.1,1.1),(19.7,1.1,1.1),(20.7264,.37,.37)],24)
+    rings=[]
+    for z,r in [(10.3,6.48),(12,6.6),(14.1,5.25),(15.8,4.8),(17.2,3.85),
+                (18.45,2.35),(19,1.1),(19.7,1.1),(20.7264,.37)]:
+        ring=[]
+        for i in range(64):
+            t=i*math.tau/64
+            radius=r+(min(.42,r*.075) if 11<z<19 and i%8 in (0,1) else 0)
+            ring.append((x+radius*math.cos(t),y+radius*math.sin(t),z))
+        rings.append(ring)
+    dome=loft(rings)
     porch=front_plate(roof_profile(3.9,4.2,3.6),-13,12).rotate((0,0,90)).translate((0,y,0))
     hard.append(porch ^ clip)
-    finish(hard,[(dome,24)])
+    crest=front_plate([(-2.8,.1),(2.8,.1),(2.8,6.65),(1.55,6.65),
+                       (.9,7.65),(-.9,7.65),(-1.55,6.65),(-2.8,6.65)],-17.9,1.6)
+    hard.append(crest.rotate((0,0,90)).translate((0,y,0)))
+    arch=[(-.94,.72),(.94,.72)]+[(.94*math.cos(t),3.6+.94*math.sin(t))
+                                      for t in np.linspace(0,math.pi,11)]
+    entry=front_plate(arch,-18.4,5).rotate((0,0,90)).translate((0,y,0))
+    finish([union(hard)-entry],[(dome,18)])
 
 
 if __name__=="__main__":
