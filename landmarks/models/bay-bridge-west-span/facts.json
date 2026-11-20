@@ -138,7 +138,7 @@
       "what": "W4 centre anchorage",
       "lon": -122.37786045,
       "lat": 37.79818985,
-      "min_height_m": 65,
+      "min_height_m": 79,
       "within_m": 5,
       "source": "https://www.openstreetmap.org/way/236374789"
     },
@@ -164,7 +164,7 @@
     "Each pentagonal suspender represents a pair of ropes. The cable bundles and steel bracing use enlarged sections for phone-scale visibility. Hanger stations are approximately 28 m apart.",
     "The two roadways and outer diagonals retain the double-deck outline. Lane markings, railings, lights, individual rivets and underwater caissons are omitted.",
     "The model stops at a grounded, open terminal bent on the San Francisco approach and the solid end anchorage on Yerba Buena Island. The W4 cable entry is scaled from the exterior elevation.",
-    "West of transition pier W1, the main cables descend through and below the double deck into two grouped land-side housings. The outermost ends of the San Francisco anchorage are cropped."
+    "The exposed San Francisco main cables stop at their W1 saddles. The cable tails and land-side housings beneath the approach are omitted at this scale."
   ],
   "osm_attribution": "© OpenStreetMap contributors, ODbL",
   "origin_of_work": "Written from published measurements for this project. No third-party mesh used.",
