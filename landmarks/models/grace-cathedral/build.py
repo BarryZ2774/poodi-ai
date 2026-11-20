@@ -217,10 +217,11 @@ def build():
     face=front_plate([(-5.15,0),(5.15,0),(5.15,30.8),(0,37.2),(-5.15,30.8)],41.6,7)
     face-=lancet(0,2.2,7.4,4.4,6.4,44.1,3.8)
     rose=md.Manifold.cylinder(2.2,3.81,circular_segments=24).rotate((90,0,0)).translate((0,46,22.5))
-    hard.append(face-rose)
+    hard.append(face)
     hard.append(drum(x,y,[(28.5,2.35,2.35),(39.4,2.35,2.35),(42,1.55,1.55),
                           (52,1.5,1.5),(54,2.0,2.0),(57,1.35,1.35),(75.2856,.38,.38)],8))
-    finish(hard,[])
+    # Cut through both the facade and the aisle where they meet.
+    finish([union(hard) - rose],[])
 
 
 if __name__=="__main__":

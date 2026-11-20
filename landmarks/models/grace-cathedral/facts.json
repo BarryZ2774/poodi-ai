@@ -49,32 +49,32 @@
       "method": "247 ft at the crossing cross less its 117 ft rise above the roof ridge."
     },
     {
-      "what": "Nave eave height, survey estimate",
+      "what": "Nave eave height, own reading of USGS survey",
       "real": 29.4,
       "model": 29.4,
       "source": "https://www.fisheries.noaa.gov/inport/item/73386/full-list",
       "method": "2023 USGS roof transect about local y=0; median eave elevation near 122.0 m, referred to the street datum derived from the surveyed ridge and published ridge height."
     },
     {
-      "what": "Aisle roof height, survey estimate",
+      "what": "Aisle roof height, own reading of USGS survey",
       "real": 20.8,
       "model": 20.8,
       "source": "https://www.fisheries.noaa.gov/inport/item/73386/full-list",
       "method": "Upper roof returns near x=11–13 m gave about 113.4 m absolute. Street datum approximately 92.6 m."
     },
     {
-      "what": "Transept ridge above street, survey estimate",
+      "what": "Transept ridge above street, own reading of USGS survey",
       "real": 37.1,
       "model": 37.1,
       "source": "https://www.fisheries.noaa.gov/inport/item/73386/full-list",
       "method": "Cross-axis ridge well clear of the fleche at local y≈−15.5 m is about 129.7 m absolute. Street datum approximately 92.6 m."
     },
     {
-      "what": "East rose glazing diameter",
+      "what": "East rose glazing diameter (own reading of cathedral video)",
       "real": 7.62,
       "model": 7.62,
       "source": "https://www.youtube.com/watch?v=n_mEBhK6qdw",
-      "method": "The cathedral gives a 25 ft diameter for the east rose."
+      "method": "Own reading of the cathedral video: the stated diameter is 25 ft, equal to 7.62 m."
     }
   ],
   "plans": {
