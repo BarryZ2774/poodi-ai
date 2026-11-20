@@ -58,10 +58,11 @@ def drum(x, y, levels, sides=32):
     return loft(rings)
 
 
-def hip(x, y, width, length, eave, ridge, ridge_length=0):
-    pts = [(x+i*width/2, y+j*length/2, eave) for i in (-1,1) for j in (-1,1)]
-    pts.extend([(x,y-ridge_length/2,ridge),(x,y+ridge_length/2,ridge)])
-    return md.Manifold.hull_points(pts)
+def hip(x, y, width, length, eave, ridge, ridge_length=0, ridge_width=0):
+    corners = [(i, j) for i in (-1, 1) for j in (-1, 1)]
+    points = [(x + i*width/2, y + j*length/2, eave) for i, j in corners]
+    points.extend((x + i*ridge_width/2, y + j*ridge_length/2, ridge) for i, j in corners)
+    return md.Manifold.hull_points(points)
 
 
 def arch_cut(x, bottom, spring, radius, station, depth):
@@ -171,10 +172,12 @@ def build():
             cut=arch_cut(y,3.1,6.7,1.65,-sign*29.8,3.7)
             galleries-=cut.rotate((0,0,90))
         axis=sign*24
-        hard.append(hip(axis,6.4,11.4,86.3,12.3,16.3,76))
-        # A low hipped cover carries raised runs of gallery skylights.
-        for centre,length in [(-21,16.5),(.5,19.0),(23,17),(39.1,10.0)]:
-            hard.append(hip(axis,centre,4.3,length,13.25,17.0,length-2.7))
+        roof_height = 16.5
+        hard.append(hip(axis, 6.4, 11.4, 86.3, 12.3, roof_height, 76, ridge_width=1.4))
+        # Each skylight sits on the level roof crest, with the full cap width at both ends.
+        for centre, length in [(-21, 16.5), (.5, 19.0), (23, 17), (39.1, 10.0)]:
+            hard.append(box(axis - .6, axis + .6, centre - length/2, centre + length/2,
+                            roof_height, roof_height + .5))
     hard.append(galleries)
     hard.append(hip(0,-15.7,12.2,38.4,12.3,17.35,32))
     cx,cy=plans["rotunda"]["centre"]
