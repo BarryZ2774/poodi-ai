@@ -10,16 +10,18 @@
   "bearing_deg": -44.16671,
   "measurements_m": [
     {
-      "what": "Island extent along the cellhouse axis",
-      "real": 537.311,
-      "model": 537.311,
-      "source": "https://www.openstreetmap.org/way/295140461"
+      "what": "Island length on the long axis of its minimum bounding rectangle",
+      "real": 541.481,
+      "model": 541.481,
+      "source": "https://www.openstreetmap.org/way/295140461",
+      "bbox": "length"
     },
     {
-      "what": "Island extent across the cellhouse axis",
-      "real": 234.695,
-      "model": 234.695,
-      "source": "https://www.openstreetmap.org/way/295140461"
+      "what": "Island width perpendicular to its long axis",
+      "real": 205.373,
+      "model": 205.373,
+      "source": "https://www.openstreetmap.org/way/295140461",
+      "bbox": "width"
     },
     {
       "what": "Main prison footprint length",
@@ -34,10 +36,10 @@
       "source": "https://www.openstreetmap.org/way/24617219"
     },
     {
-      "what": "Rise from dock to cellhouse crest",
-      "real": 39.624,
-      "model": 39.624,
-      "source": "https://www.nps.gov/alca/faqs.htm"
+      "what": "Height of the levelled cellhouse crest above water",
+      "real": 40.8432,
+      "model": 40.8432,
+      "source": "https://irma.nps.gov/DataStore/FileSource/Get/2186800?filename=GOGA_Alcatraz_Island_CLI.pdf"
     },
     {
       "what": "Historic lighthouse structure height",
@@ -50,6 +52,12 @@
       "real": 28.6512,
       "model": 28.6512,
       "source": "https://www.nps.gov/places/000/alcatraz-water-tower.htm"
+    },
+    {
+      "what": "Powerhouse chimney above its terrace",
+      "real": 27.7368,
+      "model": 27.7368,
+      "source": "https://www.nps.gov/goga/learn/historyculture/upload/Alcatraz-Historic-Resource-Study.pdf"
     }
   ],
   "checkpoints": [
@@ -89,7 +97,9 @@
   "simplified": [
     "The shoreline follows the OSM coastline. Sloped rock faces and broad terraces stand in for individual cliffs, seawalls and paths.",
     "The prison, dining hall, administration wing, barracks and industrial buildings use their mapped plans. Repeated roof bays and a raised cellhouse roof convey the blocks at map scale.",
-    "The lighthouse uses the 84-foot structure in the National Park Service landscape inventory. The water tank is supported on four enlarged legs. Handrails, windows, lettering and vegetation are omitted."
+    "The lighthouse uses the 84-foot structure in the National Park Service landscape inventory. The water tank is supported on four enlarged legs. Handrails, windows, lettering and vegetation are omitted.",
+    "Near-vertical cliff bands support the crest plateau, the parade ground, factory terraces, and a separate 4.8 m dock cut open to the water. The dimensioned island boundary includes later shoreline works.",
+    "A perimeter wall encloses the mapped exercise yard. Broad roof monitors and a tapered chimney distinguish the northwestern workshops."
   ],
   "osm_attribution": "© OpenStreetMap contributors, ODbL",
   "origin_of_work": "Written from published measurements for this project. No third-party mesh used.",
@@ -835,6 +845,233 @@
         225.396
       ],
       "source": "https://www.openstreetmap.org/way/27996721"
+    },
+    "yard": {
+      "source": "https://www.openstreetmap.org/way/151291054",
+      "centre": [
+        -21.913,
+        92.56
+      ],
+      "outline": [
+        [
+          -7.44,
+          84.476
+        ],
+        [
+          0.054,
+          130.983
+        ],
+        [
+          -31.46,
+          136.635
+        ],
+        [
+          -44.839,
+          59.342
+        ],
+        [
+          -16.074,
+          52.818
+        ],
+        [
+          -16.487,
+          32.454
+        ],
+        [
+          -11.096,
+          32.432
+        ],
+        [
+          -11.093,
+          77.24
+        ],
+        [
+          -7.436,
+          77.215
+        ]
+      ]
+    },
+    "parade": {
+      "source": "https://www.openstreetmap.org/way/27996842",
+      "centre": [
+        34.531,
+        -149.773
+      ],
+      "outline": [
+        [
+          -21.698,
+          -117.451
+        ],
+        [
+          -6.089,
+          -132.148
+        ],
+        [
+          -0.276,
+          -155.125
+        ],
+        [
+          5.818,
+          -154.297
+        ],
+        [
+          7.801,
+          -161.392
+        ],
+        [
+          3.018,
+          -164.963
+        ],
+        [
+          5.761,
+          -179.867
+        ],
+        [
+          3.132,
+          -185.328
+        ],
+        [
+          -6.545,
+          -191.866
+        ],
+        [
+          -16.963,
+          -190.551
+        ],
+        [
+          -3.315,
+          -200.002
+        ],
+        [
+          6.625,
+          -205.525
+        ],
+        [
+          10.025,
+          -193.71
+        ],
+        [
+          14.427,
+          -187.65
+        ],
+        [
+          17.574,
+          -179.457
+        ],
+        [
+          26.051,
+          -176.226
+        ],
+        [
+          36.637,
+          -176.156
+        ],
+        [
+          51.648,
+          -183.573
+        ],
+        [
+          53.923,
+          -187.422
+        ],
+        [
+          56.515,
+          -196.176
+        ],
+        [
+          65.104,
+          -189.014
+        ],
+        [
+          67.689,
+          -176.005
+        ],
+        [
+          65.347,
+          -157.313
+        ],
+        [
+          75.552,
+          -114.941
+        ],
+        [
+          74.269,
+          -115.149
+        ],
+        [
+          67.844,
+          -102.255
+        ],
+        [
+          65.427,
+          -104.983
+        ],
+        [
+          32.261,
+          -112.441
+        ],
+        [
+          37.426,
+          -127.454
+        ],
+        [
+          13.468,
+          -136.692
+        ],
+        [
+          1.058,
+          -117.613
+        ],
+        [
+          -13.667,
+          -117.762
+        ],
+        [
+          -14.407,
+          -113.81
+        ],
+        [
+          -21.957,
+          -116.024
+        ]
+      ]
+    },
+    "chimney": {
+      "source": "https://www.openstreetmap.org/way/1056707165",
+      "centre": [
+        32.497,
+        220.807
+      ],
+      "outline": [
+        [
+          32.803,
+          219.247
+        ],
+        [
+          33.998,
+          220.174
+        ],
+        [
+          34.091,
+          221.23
+        ],
+        [
+          32.462,
+          222.472
+        ],
+        [
+          31.459,
+          222.084
+        ],
+        [
+          30.905,
+          220.641
+        ],
+        [
+          31.779,
+          219.406
+        ]
+      ]
     }
   }
 }

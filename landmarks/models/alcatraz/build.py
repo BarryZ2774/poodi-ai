@@ -91,7 +91,7 @@ def write_glb(solid):
     props = mesh.vert_properties
     positions = (props[:, :3] @ basis.T).astype("<f4")
     normals = props[:, 3:6] @ basis.T
-    normals /= np.linalg.norm(normals, axis=1, keepdims=True)
+    normals /= np.maximum(np.linalg.norm(normals, axis=1, keepdims=True),1e-12)
     triangles = mesh.tri_verts.copy()
     # A boolean intersection can leave sub-millimetre slivers. Collapse only
     # short mesh edges; all shading corners at an endpoint move together.
@@ -111,7 +111,19 @@ def write_glb(solid):
     positions = points[parent[owners]]
     corners = parent[spatial]
     triangles = triangles[np.all(corners != np.roll(corners, 1, axis=1), axis=1)]
-    normals = normals.astype("<f4")
+    # Clipping a plateau on a shared edge can cancel an interpolated corner
+    # normal. Give that corner the normal of its actual exported triangle.
+    pa,pb,pc=positions[triangles].astype(float).transpose(1,0,2)
+    fn=np.cross(pb-pa,pc-pa)
+    fn/=np.maximum(np.linalg.norm(fn,axis=1,keepdims=True),1e-12)
+    faces,corner=np.where(np.einsum("ij,ikj->ik",fn,normals[triangles])<.02)
+    new_ids=np.arange(len(faces))+len(positions)
+    positions=np.vstack((positions,positions[triangles[faces,corner]]))
+    normals=np.vstack((normals,fn[faces])).astype("<f4")
+    triangles[faces,corner]=new_ids
+    used,idx=np.unique(triangles,return_inverse=True)
+    triangles=idx.reshape(-1,3)
+    positions,normals=positions[used],normals[used]
     # Preserve seams while sharing identical position/normal pairs.
     keys = np.hstack((positions, normals))
     _, first, remap = np.unique(keys, axis=0, return_index=True, return_inverse=True)
@@ -155,23 +167,35 @@ def build():
         return np.asarray(plans[name]["outline"])
     def centre(name):
         return plans[name]["centre"]
-    summit = 39.624
+    summit = 134*.3048
     coast = points("coast")
     crest = np.vstack([points(k) for k in ("cellhouse","mess","administration","lighthouse")])
-    # Clip a convex rock mass to the surveyed shoreline. The summit and intermediate
-    # benches control the relief, with a low wharf terrace to the east.
-    relief = [(x*1.08,y*1.08,-2) for x,y in coast]
-    relief += [(x*1.04,y*1.04,4+1.5*math.cos(y/29)) for x,y in coast]
-    relief += [(x*1.07+0.6,y*1.04,summit) for x,y in crest]
-    relief += [(x+0.2,y+1.1,29.4) for x,y in points("tank")]
-    relief += [(x+1.1,y+0.7,12.4) for x,y in points("new_industries")]
-    island = md.Manifold.hull_points(relief) ^ mass(coast, 0, summit+2)
-    # Cut the low dock and factory benches into the hillside so the long
-    # waterfront elevations stand clear of the rock.
-    for limits in [(66,155,-122,-21,4.8,55),(-120,-17,122,226,12.5,55),
-                   (-120,0,226,310,9.5,55),(-11,85,202,310,6,55)]:
-        island -= box(*limits)
-    hard = [island]
+    # Flat benches and abrupt cliff bands follow the mapped shoreline. The
+    # eastern wharf has an uninterrupted opening to water at the barracks.
+    shore=section(coast)
+    dock=section([(59,-128),(158,-128),(158,-16),(62,-16)])
+    factories=section([(-120,123),(-17,123),(-16,207),(60,200),(65,310),(-120,310)])
+    def layer(plan,low,high):
+        return plan.extrude(high-low).translate((0,0,low))
+    land=[layer(shore,0,4.8)]
+    cliff=shore.offset(-3,md.JoinType.Square).simplify(1)-dock
+    land.append(layer(cliff,4.8,13))
+    shore_bench=cliff.offset(-7,md.JoinType.Square).simplify(1)-factories
+    land.append(layer(shore_bench,13,19.2))
+    parade=section(points("parade")).offset(8,md.JoinType.Square)
+    hillside=shore_bench.offset(-12,md.JoinType.Square).simplify(1)-parade
+    land.append(layer(hillside,19.2,28.7))
+    upper=md.CrossSection.hull_points(np.vstack((crest,points("yard"),points("tank"))))
+    land.append(layer((upper.offset(10,md.JoinType.Square)^hillside)-parade,28.7,31.2))
+    plateau=md.CrossSection.hull_points(crest).offset(4.5,md.JoinType.Square)
+    land.append(layer(plateau,31.2,summit))
+    hard=land
+    yard=section(points("yard"))
+    yard_floor=32.6
+    hard.append(layer(yard,27.8,yard_floor))
+    hard.append(layer(yard-yard.offset(-1.2,md.JoinType.Square),yard_floor,yard_floor+4.9))
+    cx,cy=centre("chimney")
+    hard.append(drum(cx,cy,[(12.8,1.65,1.65),(13+91*.3048,.74,.74)],12))
     for name, roof in [("cellhouse",55.5),("mess",51.5),("administration",54),
                        ("barracks",20),("new_industries",21.5),("model_industries",20.5),
                        ("powerhouse",18)]:
@@ -185,6 +209,13 @@ def build():
             x,y=centre(name)
             # A shallow projecting cornice preserves the long eave line.
             hard.append(mass((outline-[x,y])*1.018+[x,y],roof-1,roof+0.7))
+    # Roof monitors articulate the long factory frontage above its own terrace.
+    for station in (141,164,187,209):
+        band=section(points("new_industries")) ^ section([(-120,station-1),(-5,station-1),(-5,station+1),(-120,station+1)])
+        x0,_,x1,_=band.bounds()
+        x=(x0+x1)/2
+        hard.append(box(x-3.5,x+3.5,station-4.5,station+4.5,22.1,23.1))
+        hard.append(hip(x,station,7,9,23.1,24.5,7))
     hard.append(box(-14,14,-28,28,55,58))
     hard.append(hip(0,0,27,55,57.7,60.1,48))
     for y in (-22,-7,8,23):
@@ -198,7 +229,7 @@ def build():
                              (base+h-1.6,1.55,1.55),(base+h-1.6,2,2),(base+h-.85,2,2),
                              (base+h,0.35,0.35)],8))
     x,y=centre("tank")
-    foot,top=29,29+94*0.3048
+    foot,top=31.2,31.2+94*.3048
     for a,b in [(-1,-1),(-1,1),(1,-1),(1,1)]:
         u,v=x+a*4.45,y+b*4.45
         hard.append(box(u-.66,u+.66,v-.66,v+.66,foot-1.4,top-8))
