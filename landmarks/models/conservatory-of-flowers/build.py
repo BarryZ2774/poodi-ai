@@ -153,47 +153,68 @@ def write_glb(solid):
 
 def roof_profile(radius,eave,rise):
     # Curved glasshouse rafters rise steeply at the eaves then flatten.
-    return [(-radius,2), (radius,2)]+[(radius*math.cos(t),eave+rise*math.sin(t))
+    return [(-radius,.9), (radius,.9)]+[(radius*math.cos(t),eave+rise*math.sin(t))
             for t in np.linspace(0,math.pi,13)]
 
 
 def build():
     p=FACTS["plans"]["base"]["outline"]
-    base=mass(p,0,3.25)
+    base=mass(p,0,1.42)
     clip=mass(p,0,25)
     hard=[base]
     for sign in (-1,1):
-        wing=front_plate(roof_profile(5.65,4.3,4.2),sign*18.2,25)
+        wing=front_plate(roof_profile(5.65,1.42,3.96),sign*18.2,25)
         hard.append(wing.translate((1.95,.3,0)) ^ clip)
-        for y in (11.3,16.2,21.2,25.8):
-            band=front_plate(roof_profile(5.77,4.3,4.5),sign*y+.3,.84)
+        for y in (11.3,16.2,21.2,24.5):
+            band=front_plate(roof_profile(5.77,1.42,4.08),sign*y+.3,.84)
             hard.append(band.translate((1.95,0,0)) ^ clip)
-        end=front_plate(roof_profile(5.5,4.7,5.35),-6.45,20.5)
+        end=front_plate(roof_profile(5.5,1.42,3.93),-6.45,20.5)
         hard.append(end.rotate((0,0,90)).translate((0,sign*31.6+.3,0)) ^ clip)
         for station in (-.9,2.8,6.6,10.4,14.15):
-            rib=front_plate(roof_profile(5.17,5.52,5.1),-station,1)
+            rib=front_plate(roof_profile(5.5,1.42,4.08),-station,1)
             hard.append(rib.rotate((0,0,90)).translate((0,sign*31.6+.3,0)) ^ clip)
-        hard.append(drum(9.4,sign*31.6+.3,[(9.55,1.4,1.4),(10.9,.9,.9),(12.3,.38,.38)],8))
-    # The low octagonal palm house gives way to a second raised dome.
-    x,y=2.0,.3
-    hard.append(pedestal(x,y,[(3,17.4,17.1,4.15),(6.6,17.4,17.1,4.15),
-                              (9.4,15.8,15.6,3.9),(11.2,13.4,13.4,3.65)]))
+        end_tip = 9.09 if sign > 0 else 8.67
+        end_y = 32.17 if sign > 0 else -30.41
+        hard.append(drum(2.35,end_y,[(4.9,2,2),(5.8,2,2),(6.9,1.1,1.1),
+                                     (end_tip,.36,.36)],8))
+    # The palm house steps through a shoulder roof to a recessed glazed drum.
+    x,y=2.35,.85
+    lower=pedestal(x,y,[(1.1,17.3736,17.3736,3.9),(5.7,17.3736,17.3736,3.9),
+                        (7.55,15.6,15.6,3.8),(9.60,11.3,11.3,3.1)])
+    # Recess broad groups of glazing, preserving the uprights between them.
+    for angle in range(0,360,90):
+        for u in (-2.45,0,2.45):
+            cut=md.Manifold.cube((1.55,2.1,3.32)).translate((u-.775,-9.18,1.61))
+            lower-=cut.rotate((0,0,angle)).translate((x,y,0))
+    for angle in (45,135,225,315):
+        for u in (-1.14,1.14):
+            light=md.Manifold.cube((1.5,2.4,3.32)).translate((u-.75,-10.03,1.61))
+            lower-=light.rotate((0,0,angle)).translate((x,y,0))
+    hard.append(lower)
+    hard.append(drum(x,y,[(9.36,5.68,5.68),(10.06,5.68,5.68)],8))
+    for t in np.arange(8)*math.tau/8:
+        hard.append(drum(x+4.81*math.cos(t),y+4.81*math.sin(t),
+                         [(9.9,.57,.57),(12.35,.57,.57)],8))
+    # Inset glazing gives the raised lantern deep shadow between the main ribs.
+    hard.append(drum(x,y,[(9.95,3.55,3.55),(12.1,3.55,3.55)],8))
     rings=[]
-    for z,r in [(10.3,6.48),(12,6.6),(14.1,5.25),(15.8,4.8),(17.2,3.85),
-                (18.45,2.35),(19,1.1),(19.7,1.1),(20.7264,.37)]:
+    for z,r in [(11.75,5.47),(12.46,5.47),(14.1,4.77),(15.55,3.53),
+                (16.65,1.58),(17.25,.77),(18.85,.77),(19.3,.54),(20.7264,.32)]:
         ring=[]
         for i in range(64):
             t=i*math.tau/64
-            radius=r+(min(.42,r*.075) if 11<z<19 and i%8 in (0,1) else 0)
+            radius=r+(min(.23,r*.025) if 12.46<z<17.25 and i%8 in (0,1) else 0)
             ring.append((x+radius*math.cos(t),y+radius*math.sin(t),z))
         rings.append(ring)
     dome=loft(rings)
-    porch=front_plate(roof_profile(3.9,4.2,3.6),-13,12).rotate((0,0,90)).translate((0,y,0))
+    # Centre the entrance on its own mapped apron, which is offset from the dome.
+    y = .26
+    porch=front_plate(roof_profile(3.9,3.35,2.05),-13,12).rotate((0,0,90)).translate((0,y,0))
     hard.append(porch ^ clip)
-    crest=front_plate([(-2.8,.1),(2.8,.1),(2.8,6.65),(1.55,6.65),
-                       (.9,7.65),(-.9,7.65),(-1.55,6.65),(-2.8,6.65)],-17.9,1.6)
+    crest=front_plate([(-2.8,0),(2.8,0),(2.8,4.48),(1.55,4.48),
+                       (.9,5.48),(-.9,5.48),(-1.55,4.48),(-2.8,4.48)],-17.9,1.6)
     hard.append(crest.rotate((0,0,90)).translate((0,y,0)))
-    arch=[(-.94,.72),(.94,.72)]+[(.94*math.cos(t),3.6+.94*math.sin(t))
+    arch=[(-.94,.72),(.94,.72)]+[(.94*math.cos(t),3.20+.94*math.sin(t))
                                       for t in np.linspace(0,math.pi,11)]
     entry=front_plate(arch,-18.4,5).rotate((0,0,90)).translate((0,y,0))
     finish([union(hard)-entry],[(dome,18)])
