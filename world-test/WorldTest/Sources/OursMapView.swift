@@ -157,28 +157,51 @@ struct OursMapView: UIViewRepresentable {
         /// Landmark models drawn by our own Metal layer, above the buildings and below the labels.
         private func addModels(to style: MLNStyle) {
             modelLayers = []
+            // Debug: "-noModels YES" leaves all models out, to compare with the map's own buildings.
+            guard !UserDefaults.standard.bool(forKey: "noModels") else { return }
             // Debug: "-testModelAt 37.7936,-122.3966" moves the test model, e.g. next to tall buildings.
             var testAnchor = CLLocationCoordinate2D(latitude: 37.8267, longitude: -122.4230)
             if let v = UserDefaults.standard.string(forKey: "testModelAt")?.split(separator: ",").compactMap({ Double($0) }), v.count == 2 {
                 testAnchor = CLLocationCoordinate2D(latitude: v[0], longitude: v[1])
             }
-            let models: [(id: String, file: String, anchor: CLLocationCoordinate2D, heading: Double, altitude: Double)] = [
+            var models: [(id: String, url: URL?, anchor: CLLocationCoordinate2D, heading: Double, altitude: Double)] = [
                 // Test model from tools/make_test_glb.py, standing on Alcatraz.
-                ("model-test-tower", "test-tower", testAnchor, 0, 0),
+                ("model-test-tower", Bundle.main.url(forResource: "test-tower", withExtension: "glb"), testAnchor, 0, 0),
             ]
+            // Landmark models from the landmark builders: landmarks/<slug>/<slug>.glb, anchored by facts.json.
+            // Their origin is at mean sea level, which is the map's ground level.
+            models += Self.landmarkModels().map { ("model-\($0.slug)", $0.url, $0.anchor, 0, 0) }
             let below = style.layer(withIdentifier: "label-water")
             for m in models {
-                guard let url = Bundle.main.url(forResource: m.file, withExtension: "glb") else { continue }
+                guard let url = m.url else { continue }
                 do {
                     let model = try GLBModel(url: url)
                     let layer = ModelLayer(identifier: m.id, model: model, anchor: m.anchor, heading: m.heading, altitude: m.altitude)
                     layer.highlighted = self.model.colourPlaces
                     if let below { style.insertLayer(layer, below: below) } else { style.addLayer(layer) }
                     modelLayers.append(layer)
-                    print("[WorldTest] Model \(m.file): \(model.triangleCount) triangles, \(model.maxY - model.minY) m tall")
+                    print("[WorldTest] Model \(m.id): \(model.triangleCount) triangles, \(model.maxY - model.minY) m tall")
                 } catch {
-                    print("[WorldTest] Model \(m.file) not shown: \(error)")
+                    print("[WorldTest] Model \(m.id) not shown: \(error)")
                 }
+            }
+        }
+
+        /// The landmark folders bundled in Resources/landmarks, with the anchor from each facts.json.
+        static func landmarkModels() -> [(slug: String, url: URL, anchor: CLLocationCoordinate2D)] {
+            struct Facts: Decodable { struct Anchor: Decodable { let lat: Double; let lon: Double }; let anchor: Anchor }
+            guard let root = Bundle.main.url(forResource: "landmarks", withExtension: nil),
+                  let folders = try? FileManager.default.contentsOfDirectory(at: root, includingPropertiesForKeys: nil) else { return [] }
+            return folders.sorted { $0.lastPathComponent < $1.lastPathComponent }.compactMap { folder in
+                let slug = folder.lastPathComponent
+                let glb = folder.appendingPathComponent("\(slug).glb")
+                guard FileManager.default.fileExists(atPath: glb.path),
+                      let data = try? Data(contentsOf: folder.appendingPathComponent("facts.json")),
+                      let facts = try? JSONDecoder().decode(Facts.self, from: data) else {
+                    print("[WorldTest] Landmark \(slug) skipped: needs \(slug).glb and facts.json with anchor.lat/lon")
+                    return nil
+                }
+                return (slug, glb, CLLocationCoordinate2D(latitude: facts.anchor.lat, longitude: facts.anchor.lon))
             }
         }
 

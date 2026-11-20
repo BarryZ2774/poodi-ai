@@ -10,6 +10,7 @@
 		2A91219D1F7DF5D563B5369B /* OursMapView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3642E753C10207F4ADF86C99 /* OursMapView.swift */; };
 		2D0C8893A363E2A8C9731F1C /* test-tower.glb in Resources */ = {isa = PBXBuildFile; fileRef = 4622403D3DC456EBBC91C333 /* test-tower.glb */; };
 		32616867EC71E1F623583F1F /* AppModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0854681344BF751FB89989FC /* AppModel.swift */; };
+		328805B6A0C7C4E55B186BBC /* landmarks in Resources */ = {isa = PBXBuildFile; fileRef = 788889E34CD71EF528907F6B /* landmarks */; };
 		407A88955A9B55E4B46BC76A /* ModelLayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3DD7A4BCECEA9DC2373A227 /* ModelLayer.swift */; };
 		5ABC833BFB7E811BF861BA54 /* MapboxMaps in Frameworks */ = {isa = PBXBuildFile; productRef = C9F6D7A91EDBCDFA2208C3A2 /* MapboxMaps */; };
 		64407643F1D0AB2D3EFF1C33 /* GLBModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 024DAA083B74E24F32D52086 /* GLBModel.swift */; };
@@ -36,6 +37,7 @@
 		41D811A7ED2DB9E05CC6F7E3 /* WorldTestApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorldTestApp.swift; sourceTree = "<group>"; };
 		4622403D3DC456EBBC91C333 /* test-tower.glb */ = {isa = PBXFileReference; path = "test-tower.glb"; sourceTree = "<group>"; };
 		4FFD9D80ED21C5CE920F9C8A /* porcelain-style.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "porcelain-style.json"; sourceTree = "<group>"; };
+		788889E34CD71EF528907F6B /* landmarks */ = {isa = PBXFileReference; lastKnownFileType = folder; name = landmarks; path = WorldTest/Resources/landmarks; sourceTree = SOURCE_ROOT; };
 		7BFF53732DAF819918A32908 /* MapboxTab.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapboxTab.swift; sourceTree = "<group>"; };
 		7FA9079A1E81BD03A1BF1139 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		9166B99409355E32157ECA1B /* sf-buildings.pmtiles */ = {isa = PBXFileReference; path = "sf-buildings.pmtiles"; sourceTree = "<group>"; };
@@ -112,6 +114,7 @@
 			isa = PBXGroup;
 			children = (
 				361090864FDABD3F130587BA /* glyphs */,
+				788889E34CD71EF528907F6B /* landmarks */,
 				296F340CD9163745761745F6 /* places.json */,
 				4FFD9D80ED21C5CE920F9C8A /* porcelain-style.json */,
 				3AC7A8EA14A85EA9A40B66B1 /* sf-base.pmtiles */,
@@ -188,6 +191,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				C3F86301CDF31485D96968FE /* glyphs in Resources */,
+				328805B6A0C7C4E55B186BBC /* landmarks in Resources */,
 				DF0F3C129869B3E45F1B657D /* places.json in Resources */,
 				755B95F8C9CFE2F5CA575BAA /* porcelain-style.json in Resources */,
 				E6B2DE474CEE0757D6496F33 /* sf-base.pmtiles in Resources */,
