@@ -23,6 +23,22 @@
       "min_height_m": 200,
       "within_m": 5,
       "source": "https://www.openstreetmap.org/way/1330832666"
+    },
+    {
+      "what": "East leg of Pylon S2",
+      "lat": 37.809954009,
+      "lon": -122.477231794,
+      "min_height_m": 60,
+      "within_m": 5,
+      "source": "https://www.openstreetmap.org/way/1560010164"
+    },
+    {
+      "what": "South anchorage centre",
+      "lat": 37.80941468,
+      "lon": -122.477358222,
+      "min_height_m": 34.5,
+      "within_m": 5,
+      "source": "https://www.openstreetmap.org/way/1560010167"
     }
   ],
   "position_method": "Area centroids of the named OpenStreetMap building footprints. The tower axis follows their WGS84 local bearing. The 1,280 m District span is centred on their geographic midpoint. Footprints © OpenStreetMap contributors.",
@@ -84,21 +100,22 @@
       "source": "https://www.goldengate.org/bridge/history-research/statistics-data/design-construction-stats/"
     },
     {
-      "what": "Midspan clearance above mean higher high water",
-      "real": 67,
-      "model": 67,
-      "source": "https://www.goldengate.org/bridge/history-research/statistics-data/design-construction-stats/"
+      "what": "Midspan clearance above mean higher high water (231 ft, Coast Pilot)",
+      "real": 70.4088,
+      "model": 70.3902,
+      "source": "https://nauticalcharts.noaa.gov/publications/coast-pilot/files/cp7/CPB7_WEB.pdf",
+      "district_source": "https://www.goldengate.org/bridge/history-research/statistics-data/design-construction-stats/"
     },
     {
       "what": "Tower leg base, transverse",
-      "real": 10,
-      "model": 10,
+      "real": 10.0584,
+      "model": 10.0584,
       "source": "https://www.goldengate.org/bridge/history-research/statistics-data/design-construction-stats/"
     },
     {
       "what": "Tower leg base, longitudinal",
-      "real": 16,
-      "model": 16,
+      "real": 16.4592,
+      "model": 16.4592,
       "source": "https://www.goldengate.org/bridge/history-research/statistics-data/design-construction-stats/"
     },
     {
@@ -109,7 +126,7 @@
       "profile_source": "https://www.goldengate.org/assets/1/6/ggb_plan_elevation_drawing.jpg"
     },
     {
-      "what": "Fort Point Arch span between pylon centrelines",
+      "what": "Fort Point arch rib span between springings",
       "real": 97.536,
       "model": 97.536,
       "source": "https://www.goldengate.org/assets/1/6/suicide-deterrent-historic-resources-evaluation-report.pdf"
@@ -179,7 +196,32 @@
       "real": 0.92,
       "model": 1.64,
       "source": "https://www.goldengate.org/bridge/history-research/statistics-data/design-construction-stats/",
-      "exception": "Rule 8 requires at least 1.2 m for display. Diameter is across opposite vertices of the octagon.",
+      "exception": "Rule 8 enlargement. Measured across the transverse cable section.",
+      "thickened": true
+    },
+    {
+      "what": "Depth of stiffening truss",
+      "real": 7.62,
+      "model": 7.62,
+      "source": "https://www.goldengate.org/exhibits/hanging-the-roadway-deck/"
+    },
+    {
+      "what": "Truss panel and suspender pitch",
+      "real": 15.24,
+      "model": 15.24,
+      "source": "https://www.goldengate.org/exhibits/hanging-the-roadway-deck/"
+    },
+    {
+      "what": "Main cable spacing",
+      "real": 27.432,
+      "model": 27.44,
+      "source": "https://www.goldengate.org/assets/1/6/suicide-deterrent-historic-resources-evaluation-report.pdf"
+    },
+    {
+      "what": "Suspender rope diameter",
+      "real": 0.06826,
+      "model": 1.1,
+      "source": "https://www.goldengate.org/bridge/history-research/statistics-data/design-construction-stats/",
       "thickened": true
     }
   ],
@@ -198,11 +240,18 @@
     }
   ],
   "simplified": [
-    "Main cables use smooth octagonal sections, enlarged from 0.92 to 1.64 m. Each group of suspender wires reads as one 0.96 m rope, repeated every 19.1 to 19.4 m.",
-    "The deck follows a segmented crown. Open triangular panels and occasional transverse beams stand in for the full stiffening truss. Sidewalks and curbs share one raised strip per side.",
-    "Tower legs use stepped, chamfered sections. Each portal keeps its stepped brackets and a broad central rib. Plate seams, individual cells and rivets are omitted.",
-    "The four Fort Point ribs and their posts are retained. Anchorage housings, pylon caps and approach bents use simplified sections. The foundations stop 3 m below mean sea level.",
+    "Main cables use a smoothed six-sided section, enlarged to 1.64 m across. Suspenders use a square 1.10 m display section at 15.24 m intervals.",
+    "A 7.62 m deep stiffening web uses 15.24 m panels and alternating 45° diagonals. The profile uses a simplified 1.5 m crown-to-upper-chord allowance.",
+    "Legs step back on their outer faces with vertical inner jambs. Recessed channels replace finer fluting on the legs and cross struts. Each cable seats between a pair of saddle cheeks.",
+    "Vertical plinths run under the land anchorages to mean sea level. Both end abutments and approach bents reach the flat map. Four Fort Point ribs retain their separate springings.",
     "Lights, guardrail pickets, safety netting, road markings, terrain and water are omitted."
   ],
-  "origin_of_work": "Written from published measurements for this project. No third-party mesh used."
+  "origin_of_work": "Written from published measurements for this project. No third-party mesh used.",
+  "clearance_reconciliation": {
+    "what": "Corrected the former use of the District’s general 67 m clearance as a midspan measurement. Its roadway drawing gives the crown as 81.290 m MLLW. With a 1.50 m deck assembly, the 7.620 m truss and tides converted to MSL, the centre has 70.390 m above MHHW, matching the Coast Pilot’s 231 ft (70.409 m).",
+    "district": "https://www.goldengate.org/bridge/history-research/statistics-data/design-construction-stats/",
+    "crown": "https://www.goldengate.org/assets/1/6/suicide-deterrent-historic-resources-evaluation-report.pdf",
+    "clearance": "https://nauticalcharts.noaa.gov/publications/coast-pilot/files/cp7/CPB7_WEB.pdf",
+    "deck_offset": "Simplified crown-to-upper-chord allowance, inferred from the independently published crown and centre clearance."
+  }
 }

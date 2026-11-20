@@ -22,10 +22,11 @@ SOUTH_END = NORTH_END - 2737
 MLLW_TO_MSL = FACTS["water_datum"]["msl_above_mllw_m"]
 MID_ROAD = 266.70 * 0.3048 - MLLW_TO_MSL
 TOWER_ROAD = 246.08 * 0.3048 - MLLW_TO_MSL
-TRUSS_DEPTH = MID_ROAD - (67 + FACTS["water_datum"]["mhhw_above_msl_m"])
-CABLE_X = 13.0
-MAIN_RADIUS = 0.82
-HANGER_RADIUS = 0.48
+TRUSS_DEPTH = 25 * 0.3048
+TRUSS_DROP = 1.5   # deck crown to the upper chord
+CABLE_X = 13.72
+PANEL = 50 * 0.3048
+S2 = -1094.6
 
 
 def union(parts):
@@ -89,14 +90,29 @@ def tower(s):
         outer = md.CrossSection.circle(1, 32).scale((45.72, 23.62))
         inner = md.CrossSection.circle(1, 32).scale((42.7, 20.6))
         parts.append((outer - inner).extrude(7.57).translate((0, s, -3)))
-    levels = [(13.3, 10, 16, 1.5), (74, 10, 16, 1.5),
+    levels = [(13.3, 10.0584, 16.4592, 1.5), (74, 10.0584, 16.4592, 1.5),
               (74, 8.7, 13.8, 1.3), (133, 8.7, 13.8, 1.3),
               (133, 7.4, 11.6, 1.2), (173, 7.4, 11.6, 1.2),
               (173, 6.3, 9.4, 1), (201, 6.3, 9.4, 1),
-              (201, 5.1, 7.4, 0.9), (224.2, 5.1, 7.4, 0.9),
-              (224.2, 3.5, 6.1, 0.7), (227, 3.5, 6.1, 0.7)]
-    for x in (-13.72, 13.72):
-        parts.append(pedestal(x, s, levels))
+              (201, 5.6, 7.4, 0.9), (223.3, 5.6, 7.4, 0.9)]
+    for sign in (-1,1):
+        # A common inner face preserves vertical jambs. Only the outside steps.
+        inner=CABLE_X-2.8
+        for start,stop in zip(levels,levels[1:]):
+            z,w,d,ch=start
+            if stop[0]==z:
+                continue
+            x=sign*(inner+w/2)
+            leg=pedestal(x,s,[start,stop])
+            for face in (-1,1):
+                v=s+face*d/2
+                leg-=box(x-.48,x+.48,v-.78,v+.78,z+.9,stop[0]-.9)
+            parts.append(leg)
+        # Raised cheeks contain the cable. The bearing follows its crest.
+        x=sign*CABLE_X
+        parts.append(pedestal(x,s,[(223.3,4.9,6.9,.7),(225.32,4.9,3.6,.7)]))
+        for offset in (-1.68,1.68):
+            parts.append(box(x+offset-.66,x+offset+.66,s-1.25,s+1.25,224.8,227))
     for bottom, top in [(15, 40), (40, 66)]:
         for sign in (-1, 1):
             parts.append(brace(sign*12, bottom, -sign*12, top, 2.7, s, 5.2))
@@ -105,7 +121,11 @@ def tower(s):
         half = [(0, top-height), (7, top-height), (7, top-height-1.5),
                 (9.5, top-height-1.5), (9.5, top-height-3.5), (13.9, top-height-3.5)]
         soffit = [(-x, z) for x, z in reversed(half[1:])] + half
-        parts.append(front_plate(soffit + [(13.9, top), (-13.9, top)], s, depth))
+        strut=front_plate(soffit + [(13.9, top), (-13.9, top)], s, depth)
+        for u in (-5.5,5.5):
+            for v in (s-depth/2,s+depth/2):
+                strut-=box(u-.55,u+.55,v-.78,v+.78,top-height,top)
+        parts.append(strut)
         # The proud middle face catches light and marks the tower centre.
         parts.append(pedestal(0, s, [(top-height, 6.8, depth+1.5, 1.2),
                                      (top, 6.8, depth+1.5, 1.2)]))
@@ -135,34 +155,32 @@ def deck():
     cap = [(0, 1, 2), (0, 2, 3), (0, 3, 4), (0, 4, 7), (7, 4, 5), (7, 5, 6)]
     crown = [s for s in stations if abs(s) <= PYLON or s in (SOUTH_END, NORTH_END)]
     parts = [loft([[(x, s, road(s)+z) for x, z in profile] for s in crown], cap)]
-    bottom = lambda s: road(s) - TRUSS_DEPTH
-    web = ribbon(crown, lambda s: road(s)-1.3, bottom)
-    openings = []
-    # Alternate upright and inverted openings. Adjacent openings share a diagonal.
-    for i, (a, b, c) in enumerate(zip(bays, bays[1:], bays[2:])):
-        base, tip = (-TRUSS_DEPTH+1.5, -2.2) if i%2 == 0 else (-2.2, -TRUSS_DEPTH+1.5)
-        openings.append([(a+4.8, road(a+4.8)+base), (c-4.8, road(c-4.8)+base),
-                         (b, road(b)+tip)])
-    web -= md.CrossSection(openings, md.FillRule.EvenOdd)
-    # The north housing carries its own road. Over Fort Point the four arch
-    # ribs carry the slab directly. Neither needs a deep suspension truss.
-    for a, b in [(-PYLON-ARCH_SPAN, -PYLON), (PYLON, PYLON+NORTH_HOUSING)]:
-        web -= section([(a, 0), (b, 0), (b, 100), (a, 100)])
+    bottom = lambda s: road(s)-TRUSS_DROP-TRUSS_DEPTH
+    top = lambda s: road(s)-TRUSS_DROP
+    web = ribbon(crown, top, bottom)
+    # Each 50 ft bay contains a V with a 25 ft half-run and a 25 ft rise.
+    # Profile ordinates use the same piecewise grade as the slab.
+    openings=[]
+    for i in range(math.ceil(-PYLON/(PANEL/2)),math.floor(PYLON/(PANEL/2))-1):
+        a=i*PANEL/2
+        b,c=a+PANEL/2,a+PANEL
+        high,low=(top,bottom) if i%2==0 else (bottom,top)
+        tri=section([(a,high(a)),(c,high(c)),(b,low(b))]).offset(-(.73+.045*(i%3)),md.JoinType.Miter)
+        openings.extend(tri.to_polygons())
+    # The shorter approach viaducts use plain plate girders.
+    web-=md.CrossSection(openings,md.FillRule.EvenOdd)
+    for a,b in [(S2,-PYLON),(PYLON,PYLON+NORTH_HOUSING)]:
+        web-=section([(a,0),(b,0),(b,100),(a,100)])
     for x in (-12.1, 10.8):
         parts.append(side_plate(web, x, x+1.3))
     # Transverse floor bracing gives the underside its full navigational depth.
-    for s in stations[3:-2:6]:
-        if abs(s) >= PYLON:
-            continue
-        z = bottom(s)
-        parts.append(box(-11.5, 11.5, s-0.8, s+0.8, z+0.05, z+1.4))
     parts.append(box(-11.6, 11.6, -0.8, 0.8, bottom(0), bottom(0)+1.5))
     return parts
 
 
 def approaches():
     parts = []
-    south_outer = -PYLON - ARCH_SPAN
+    south_outer = S2
     north_outer = PYLON + NORTH_HOUSING
     for s in (south_outer, -PYLON, PYLON, north_outer):
         z = road(s)
@@ -181,11 +199,13 @@ def approaches():
             # The roof is the deck. Both exterior faces follow its grade.
             housing = ribbon([a, b], lambda s: road(s)-1.5, lambda s: road(s)-1.5-height)
             parts.append(side_plate(housing, -width/2, width/2))
+            parts.append(side_plate(ribbon([a,b], lambda s: road(s)-1.5-height+.2, lambda s: 0), -width/2+1,width/2-1))
         else:
+            parts.append(pedestal(0,(a+b)/2,[(0,width-2,b-a-2,3),(upper-height+.2,width-2,b-a-2,3)]))
             parts.append(pedestal(0, (a+b)/2, [(upper-height, width, b-a, 3),
                                                 (upper, width, b-a, 3)]))
     # Four shallow polygonal arch ribs over Fort Point, with open spandrels.
-    arch_stations = np.linspace(south_outer, -PYLON, 13)
+    arch_stations = np.linspace((south_outer-PYLON-ARCH_SPAN)/2, (south_outer-PYLON+ARCH_SPAN)/2, 13)
     arch_mid = (south_outer-PYLON)/2
     def arch(s):
         return 9 + 38 * (1 - ((s-arch_mid)/(ARCH_SPAN/2))**2)
@@ -195,22 +215,19 @@ def approaches():
         for s in arch_stations[3:-1:3]:
             parts.append(box(x-0.85, x+0.85, s-0.8, s+0.8, arch(s), road(s)-1))
     for s in (south_outer, -PYLON):
-        parts.append(box(-17, 17, s-4, s+4, 0, 11))
-    # Shorter bents climb with the two shorelines; terrain is not part of the asset.
+        parts.append(box(-17, 17, s-8, s+8, 0, 11))
+    # Ground the approach bents on the flat map.
     for a, b, count in [(SOUTH_END, south_outer, 7), (north_outer, NORTH_END, 5)]:
-        for s in np.linspace(a, b, count+1)[1:-1]:
+        for i,s in enumerate(np.linspace(a,b,count+1)[1:-1]):
             top = road(s)-2
-            shore = (s-a)/(b-a)
-            ground = 15 + 22 * (1-shore if s < 0 else shore)
-            if south_outer-370*0.3048 < s < south_outer:
-                ground = 35
+            ground = 0
             for x in (-10.9, 10.9):
                 parts.append(box(x-1.5, x+1.5, s-2.4, s+2.4, ground, top+1))
-            for sign in (-1, 1):
-                parts.append(brace(sign*10.9, ground+1, -sign*10.9, top-2, 1.6, s, 2.6))
+            sign = 1 if i % 2 else -1
+            parts.append(brace(sign*10.9,ground+1,-sign*10.9,top-2,1.6,s,2.6))
     for s, inward in [(SOUTH_END, 1), (NORTH_END, -1)]:
         a, b = sorted([s, s+inward*5])
-        parts.append(box(-13.2, 13.2, a, b, road(s)-17, road(s)-1))
+        parts.append(box(-13.2, 13.2, a, b, 0, road(s)-1))
     return parts
 
 
@@ -224,11 +241,8 @@ def cable_height(s):
 
 def cables():
     parts = []
-    # Sample the smooth cable less densely than its regular suspender spacing.
-    stations = np.unique(np.concatenate([np.linspace(-PYLON, -TOWER, 19),
-                                         np.linspace(-TOWER, TOWER, 67),
-                                         np.linspace(TOWER, PYLON, 19)]))
-    path = [(-PYLON-583*0.3048, 27), (-PYLON-ARCH_SPAN, road(-PYLON-ARCH_SPAN)-4)]
+    stations = np.arange(-64,65)*PANEL
+    path = [(S2-70,27),(S2,road(S2)-4)]
     curve_stations = np.r_[np.linspace(-PYLON, -TOWER, 7)[:-1],
                           np.linspace(-TOWER, TOWER, 25)[:-1], np.linspace(TOWER, PYLON, 7)]
     path.extend((s, cable_height(s)) for s in curve_stations)
@@ -239,20 +253,21 @@ def cables():
         for i, (s, z) in enumerate(path):
             direction = np.subtract(path[min(i+1, len(path)-1)], path[max(i-1, 0)])
             ds, dz = direction/np.linalg.norm(direction)
-            rings.append([(x + MAIN_RADIUS*math.cos(t), s + MAIN_RADIUS*math.sin(t)*dz,
-                           z - MAIN_RADIUS*math.sin(t)*ds) for t in np.arange(8)*math.tau/8])
+            # Broad soffit facet gives each vertical suspender a clean joint.
+            outline=[(.82,0),(.60,.78),(-.60,.78),(-.82,0),(-.60,-.78),(.60,-.78)]
+            rings.append([(x+u,s+v*dz,z-v*ds) for u,v in outline])
         parts.append(loft(rings).calculate_normals(0, 65))
-        for s in stations[1:-1]:
-            if abs(s) == TOWER:
+        for s in stations:
+            if abs(abs(s)-TOWER) < 4:
                 continue
             low, high = road(s), np.interp(s, curve_stations, cable_height_samples)
-            rope = md.Manifold.cylinder(high-low, HANGER_RADIUS, circular_segments=5)
-            parts.append(rope.calculate_normals(0, 78).translate((x, s, low)))
+            rope=box(x-.55,x+.55,s-.55,s+.55,low-.45,high)
+            parts.append(rope.calculate_normals(0,1))
     return parts
 
 
 def map_axes():
-    south, north = FACTS["checkpoints"]
+    south, north = FACTS["checkpoints"][:2]
     phi = math.radians(FACTS["anchor"]["lat"])
     # WGS84 tangent-plane scale at the midpoint, then rotate the actual vertices.
     e2 = 0.00669437999014
@@ -323,7 +338,7 @@ def write_glb(solid):
     glb = (struct.pack("<4sIII4s", b"glTF", 2, length, len(metadata), b"JSON") +
            metadata + struct.pack("<I4s", len(data), b"BIN\0") + data)
     if len(glb) > (1_500_000 if FACTS["kind"] == "bridge" else 400_000) or len(indices) // 3 > 25_000:
-        raise ValueError("Bridge exceeds the mobile asset budget")
+        raise ValueError(f"Bridge exceeds the mobile asset budget: {len(indices)//3} triangles, {len(glb)} bytes")
     (HERE / "golden-gate-bridge.glb").write_bytes(glb)
     print(f"{len(indices)//3:,} triangles, {len(glb):,} bytes")
 
