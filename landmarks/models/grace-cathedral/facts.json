@@ -1,0 +1,294 @@
+{
+  "slug": "grace-cathedral",
+  "name": "Grace Cathedral",
+  "kind": "building",
+  "anchor": {
+    "lat": 37.791849722,
+    "lon": -122.413472099,
+    "what": "centre of the mapped ground outline at ground level"
+  },
+  "bearing_deg": 81.14805942032385,
+  "measurements_m": [
+    {
+      "what": "Overall height above the base",
+      "real": 75.2856,
+      "model": 75.2856,
+      "source": "https://sfplanninggis.org/docs/landmarks_and_districts/LM170.pdf",
+      "bbox": "height"
+    },
+    {
+      "what": "Width across local axis",
+      "real": 43.546,
+      "model": 43.546,
+      "source": "https://www.openstreetmap.org/way/32946942"
+    },
+    {
+      "what": "Length along local axis",
+      "real": 95.855,
+      "model": 95.855,
+      "source": "https://www.openstreetmap.org/way/32946942"
+    },
+    {
+      "what": "Overall east façade tower height above Taylor Street",
+      "real": 53.0352,
+      "model": 53.0352,
+      "source": "https://gracecathedral.org/architecture/",
+      "method": "The cathedral specifies 174 ft above the street and 154 ft above the entry floor. The designation drawing shows a near-level parapet, with small corner caps. The main wall reaches 52.55 m, the caps 53.04 m."
+    },
+    {
+      "what": "Central nave width",
+      "real": 14.0208,
+      "model": 14.0208,
+      "source": "https://gracecathedral.org/architecture/"
+    },
+    {
+      "what": "Exterior nave roof ridge above adjacent street",
+      "real": 39.624,
+      "model": 39.624,
+      "source": "https://gracecathedral.org/architecture/",
+      "method": "247 ft at the crossing cross less its 117 ft rise above the roof ridge."
+    },
+    {
+      "what": "Nave eave height, own reading of USGS survey",
+      "real": 29.4,
+      "model": 29.4,
+      "source": "https://www.fisheries.noaa.gov/inport/item/73386/full-list",
+      "method": "2023 USGS roof transect about local y=0; median eave elevation near 122.0 m, referred to the street datum derived from the surveyed ridge and published ridge height."
+    },
+    {
+      "what": "Aisle roof height, own reading of USGS survey",
+      "real": 20.8,
+      "model": 20.8,
+      "source": "https://www.fisheries.noaa.gov/inport/item/73386/full-list",
+      "method": "Upper roof returns near x=11–13 m gave about 113.4 m absolute. Street datum approximately 92.6 m."
+    },
+    {
+      "what": "Transept ridge above street, own reading of USGS survey",
+      "real": 37.1,
+      "model": 37.1,
+      "source": "https://www.fisheries.noaa.gov/inport/item/73386/full-list",
+      "method": "Cross-axis ridge well clear of the fleche at local y≈−15.5 m is about 129.7 m absolute. Street datum approximately 92.6 m."
+    },
+    {
+      "what": "East rose glazing diameter (own reading of cathedral video)",
+      "real": 7.62,
+      "model": 7.62,
+      "source": "https://www.youtube.com/watch?v=n_mEBhK6qdw",
+      "method": "Own reading of the cathedral video: the stated diameter is 25 ft, equal to 7.62 m."
+    }
+  ],
+  "plans": {
+    "base": {
+      "outline": [
+        [
+          -22.359,
+          -21.906
+        ],
+        [
+          -8.384,
+          -21.898
+        ],
+        [
+          -8.408,
+          -42.967
+        ],
+        [
+          -5.967,
+          -47.707
+        ],
+        [
+          -2.797,
+          -49.858
+        ],
+        [
+          0.086,
+          -50.53
+        ],
+        [
+          3.274,
+          -50.037
+        ],
+        [
+          5.747,
+          -48.515
+        ],
+        [
+          7.69,
+          -46.134
+        ],
+        [
+          9.274,
+          -42.815
+        ],
+        [
+          9.303,
+          -22.219
+        ],
+        [
+          21.166,
+          -22.212
+        ],
+        [
+          21.187,
+          -9.094
+        ],
+        [
+          13.403,
+          -9.094
+        ],
+        [
+          13.446,
+          32.734
+        ],
+        [
+          13.617,
+          43.493
+        ],
+        [
+          5.121,
+          43.542
+        ],
+        [
+          5.118,
+          45.325
+        ],
+        [
+          -5.206,
+          45.319
+        ],
+        [
+          -5.207,
+          43.51
+        ],
+        [
+          -13.425,
+          43.47
+        ],
+        [
+          -13.406,
+          -9.278
+        ],
+        [
+          -22.359,
+          -9.283
+        ]
+      ],
+      "centre": [
+        -0.006,
+        0.007
+      ],
+      "source": "https://www.openstreetmap.org/way/32946942"
+    },
+    "north": {
+      "outline": [
+        [
+          -13.382,
+          32.633
+        ],
+        [
+          -5.214,
+          32.644
+        ],
+        [
+          -5.207,
+          43.51
+        ],
+        [
+          -13.425,
+          43.47
+        ]
+      ],
+      "centre": [
+        -9.305,
+        38.07
+      ],
+      "source": "https://www.openstreetmap.org/way/939433956"
+    },
+    "south": {
+      "outline": [
+        [
+          5.121,
+          43.542
+        ],
+        [
+          5.111,
+          32.73
+        ],
+        [
+          13.446,
+          32.734
+        ],
+        [
+          13.617,
+          43.493
+        ]
+      ],
+      "centre": [
+        9.321,
+        38.142
+      ],
+      "source": "https://www.openstreetmap.org/way/939433957"
+    },
+    "spire": {
+      "outline": [
+        [
+          -0.232,
+          -19.103
+        ],
+        [
+          0.815,
+          -18.08
+        ],
+        [
+          0.974,
+          -16.554
+        ],
+        [
+          -0.043,
+          -15.87
+        ],
+        [
+          -1.354,
+          -15.853
+        ],
+        [
+          -2.301,
+          -16.81
+        ],
+        [
+          -2.436,
+          -18.18
+        ],
+        [
+          -1.357,
+          -19.115
+        ]
+      ],
+      "centre": [
+        -0.732,
+        -17.451
+      ],
+      "source": "https://www.openstreetmap.org/way/939433955"
+    }
+  },
+  "checkpoints": [
+    {
+      "what": "Crossing flèche",
+      "lat": 37.791832043,
+      "lon": -122.413669147,
+      "min_height_m": 74.9856,
+      "within_m": 5,
+      "source": "https://www.openstreetmap.org/way/939433955"
+    }
+  ],
+  "simplified": [
+    "The two street datum elevations use one level base. The seven nave bays, projecting transepts, polygonal apse and flèche retain their silhouettes.",
+    "Grouped lancets, a recessed east rose and shallow corner caps on the front parapets replace glazing, tracery and carving.",
+    "Seven recessed clerestory lights on each side, stepped aisle buttresses and a broad divided transept light stand in for finer Gothic masonry."
+  ],
+  "osm_attribution": "Ground outline from OpenStreetMap, © OpenStreetMap contributors, ODbL.",
+  "origin_of_work": "Written from published measurements for this project. No third-party mesh used.",
+  "apse_reference": "https://imagery.nationalmap.gov/arcgis/rest/services/USGSNAIPImagery/ImageServer/exportImage?bbox=-122.41423%2C37.79138%2C-122.41271%2C37.79231&bboxSR=4326&imageSR=3857&size=770%2C610&format=jpg&f=image",
+  "tower_reference": "https://sfplanninggis.org/docs/landmarks_and_districts/LM170.pdf#page=16",
+  "roof_survey": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/CA_SanFrancisco_1_B23/ept.json"
+}
