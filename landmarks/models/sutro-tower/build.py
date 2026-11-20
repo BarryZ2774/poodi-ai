@@ -166,22 +166,31 @@ def build():
         return waist+(top-waist)*(z-knee)/(platform-knee)
     hard=[]
     for i,name in enumerate(names):
-        outline=np.array(plans[name]["outline"])
-        hard.append(mass(outline,0,2))
+        pier_half = 14*.3048/2
+        x, y = feet[i]
+        hard.append(md.Manifold.cube((2*pier_half,2*pier_half,2)).translate((x-pier_half,y-pier_half,0)))
         # The main leg envelopes bend inward at the waist and flare to the aerial heads.
-        shape=np.array([[-1.1,-1.1],[1.1,-1.1],[1.1,1.1],[-1.1,1.1]])
+        radial = feet[i] / np.linalg.norm(feet[i])
+        tangent = np.array([-radial[1],radial[0]])
+        # S1.0 shows a triangular section with a broad clad exterior face.
+        shape = np.array([radial*.61-tangent*2.275, radial*.61+tangent*2.275,
+                          -radial*.12+tangent*2.275, -radial*1.2188+tangent*.48,
+                          -radial*1.2188-tangent*.48, -radial*.12-tangent*2.275])
         rings=[]
-        for z in (2,knee,platform):
+        for z in (0,knee,platform):
             rings.append([(*uv,z) for uv in locations(z)[i]+shape])
         hard.append(loft(rings))
         x,y=top[i]
+        tip = .93 if name == "west" else 1.025
         hard.append(drum(x,y,[(platform-.45,1.95,1.95),(platform+3.5,1.95,1.95),
-                              (platform+6.8,1.35,1.35),(257,1.35,1.35),(257,.93,.93),
-                              (279,.93,.93),(279,.68,.68),(297.7896,.68,.68)],12))
+                              (platform+6.8,1.35,1.35),(257,1.35,1.35),(257,1.025,1.025),
+                              (279,1.025,1.025),(279,tip,tip),(297.7896,tip,tip)],12))
     previous=2.
     for height in (180,375,550,650,755):
         centre=height*.3048
         bottom,upper=centre-1.5,centre+1.5
+        if height == 755:
+            upper = platform-.75
         for i in range(3):
             j=(i+1)%3
             if height in (180,375,550):
@@ -193,6 +202,8 @@ def build():
                 hard.append(bar((*(p[i]-3.6*direction),upper),
                                 (*(p[j]+3.6*direction),upper),1.5))
             for z in (bottom,upper):
+                if height == 755 and z == upper:
+                    continue  # The full outrigger already includes this chord.
                 p=locations(z)
                 hard.append(bar((*p[i],z),(*p[j],z),1.25))
             a,b=locations(bottom),locations(upper)
