@@ -100,7 +100,15 @@
       "source": "https://www.goldengate.org/bridge/history-research/statistics-data/design-construction-stats/"
     },
     {
-      "what": "Midspan clearance above mean higher high water (231 ft, Coast Pilot)",
+      "what": "Clearance under the roadway above MHHW, with a traveler in the central span",
+      "real": 67,
+      "model": 66.7326,
+      "source": "https://www.goldengate.org/bridge/history-research/statistics-data/design-construction-stats/",
+      "component_source": "https://nauticalcharts.noaa.gov/publications/coast-pilot/files/cp7/CPB7_WEB.pdf",
+      "method": "District nominal clearance, compared with the underside of the modeled movable platform. Coast Pilot 7, chapter 7 paragraph 56 gives a 231 ft bare center clearance and about 12 ft reduction at a traveler."
+    },
+    {
+      "what": "Clearance to the fixed center-span structure above MHHW (231 ft, Coast Pilot)",
       "real": 70.4088,
       "model": 70.3902,
       "source": "https://nauticalcharts.noaa.gov/publications/coast-pilot/files/cp7/CPB7_WEB.pdf",
@@ -245,14 +253,16 @@
     "Legs step back on their outer faces with vertical inner jambs. Recessed channels replace finer fluting on the legs and cross struts. Each cable seats between a pair of saddle cheeks.",
     "Vertical plinths run under the land anchorages to mean sea level. Both end abutments and approach bents reach the flat map. Four Fort Point ribs retain their separate springings.",
     "Lights, guardrail pickets, safety netting, road markings, terrain and water are omitted.",
-    "A raised fender rim, grouped arch posts and a cap course on the southern housing distinguish the shore supports at map scale."
+    "A raised fender rim, grouped arch posts and a cap course on the southern housing distinguish the shore supports at map scale.",
+    "One movable maintenance traveler is shown at midspan for the clearance comparison. Its location varies in service."
   ],
   "origin_of_work": "Written from published measurements for this project. No third-party mesh used.",
   "clearance_reconciliation": {
-    "what": "Corrected the former use of the District’s general 67 m clearance as a midspan measurement. Its roadway drawing gives the crown as 81.290 m MLLW. With a 1.50 m deck assembly, the 7.620 m truss and tides converted to MSL, the centre has 70.390 m above MHHW, matching the Coast Pilot’s 231 ft (70.409 m).",
+    "what": "The District publishes 220 ft (67 m) and records that figure as the permitted midspan clearance. NOAA separately reports 231 ft for the fixed center span and a roughly 12 ft reduction beneath a movable traveler. The model gives 70.390 m to the fixed truss and 66.733 m to a traveler positioned at center; the precise historical basis of the District figure is unspecified.",
     "district": "https://www.goldengate.org/bridge/history-research/statistics-data/design-construction-stats/",
-    "crown": "https://www.goldengate.org/assets/1/6/suicide-deterrent-historic-resources-evaluation-report.pdf",
+    "permit": "https://www.goldengate.org/bridge/history-research/bridge-construction/construction/",
+    "crown": "https://www.goldengate.org/assets/1/6/ggb_plan_elevation_drawing.jpg",
     "clearance": "https://nauticalcharts.noaa.gov/publications/coast-pilot/files/cp7/CPB7_WEB.pdf",
-    "deck_offset": "Simplified crown-to-upper-chord allowance, inferred from the independently published crown and centre clearance."
+    "deck_offset": "The 1.50 m simplified crown-to-upper-chord allowance reconciles the District elevation drawing with the charted fixed center-span clearance."
   }
 }
