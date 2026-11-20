@@ -13,7 +13,8 @@
       "what": "Overall height above the base",
       "real": 74.676,
       "model": 74.676,
-      "source": "https://www.ferrybuildingmarketplace.com/about/"
+      "source": "https://www.ferrybuildingmarketplace.com/about/",
+      "bbox": "height"
     },
     {
       "what": "Width across local axis",
