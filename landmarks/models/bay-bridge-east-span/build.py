@@ -197,7 +197,13 @@ def build():
             hard.append(box(sign*w-1.1,sign*w+1.1,-w,w,z,z+2.4))
     hard.append(pedestal(0,0,[(151,11,11,1.4),(155,11,11,1.4),
                               (155,8.7,8.7,1.1),(160,6.4,6.4,1)]))
-    for y in [-180,385,520,665,810,end[0]-4]:
+    # Support both carriageways at the clipped ends of the displayed span.
+    for y,direction in ((guide[0,0],1),(end[0],-1)):
+        a,b=sorted((y,y+5*direction))
+        for sign in (-1,1):
+            x=offset(y)+sign*19.4
+            hard.append(box(x-10.0,x+10.0,a,b,0,min(road(a),road(b))-3.7))
+    for y in [-180,385,520,665,810]:
         z=road(y)
         for sign in (-1,1):
             x=offset(y)+sign*19.4
