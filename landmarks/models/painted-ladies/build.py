@@ -142,21 +142,32 @@ def build():
         w = right - left - .7
         facade = front + 1.5
         eaves = 8.65 + .12 * (int(address) % 3)
-        body = front_plate([(x-w/2,.8), (x+w/2,.8), (x+w/2,eaves),
+        body = front_plate([(x-w/2,-grade-.02), (x+w/2,-grade-.02), (x+w/2,eaves),
                             (x,ridge), (x-w/2,eaves)], (facade+back)/2, back-facade)
         # Recess the entry and attic window into the solid elevations.
-        body -= box(x+w/2-2.25, x+w/2-.65, facade-.5, facade+1.1, 2.4, 5.3)
-        body -= box(x-.66,x+.66,facade-.4,facade+.8,9.25,10.35)
+        body -= box(x-w/2+.75, x-w/2+2.22, facade-.5, facade+1.1, 2.4, 5.3)
+
         parts.append(body)
         # A small stack interrupts each roof slope near the rear of the house.
         parts.append(box(x+1.25,x+2.13,back-5.1,back-3.8,eaves-.2,peak-.75))
         parts.append(box(x+1.12,x+2.26,back-5.22,back-3.68,peak-.75,peak))
-        parts.append(box(x-1.26,x+1.26,facade-.78,facade+.2,10.4,11.22))
-        bay_x = x-1.05
-        bay = [(bay_x-1.63,facade+.25),(bay_x-1.63,front+.45),
-               (bay_x-1.30,front-.28),(bay_x+1.30,front-.28),
-               (bay_x+1.63,front+.45),(bay_x+1.63,facade+.25)]
-        bay_solid=mass(bay,1.8,eaves-.35)
+        # The near-frontal survey photograph shows a full-width pediment
+        # over both the recess on the north and the polygonal bay on the south.
+        half = w / 2 + .18
+        pediment = front_plate([(x-half,eaves-.1),(x+half,eaves-.1),
+                                (x+half,eaves+.62),(x,ridge),(x-half,eaves+.62)],
+                               front+.85,2.34)
+        pediment -= box(x-.66,x+.66,front-.55,front+.65,eaves+.95,eaves+2.15)
+        parts.append(pediment)
+        porch_left = x-w/2+.08
+        parts.append(box(porch_left,porch_left+.75,front,front+.78,-grade,6.05))
+        parts.append(box(porch_left,x+.15,front-.05,facade+.2,5.65,6.45))
+        parts.append(box(porch_left,x+.15,front-.05,front+.75,6.4,7.16))
+        bay_x = x+1.02
+        bay = [(bay_x-1.90,facade+.25),(bay_x-1.90,front+.52),
+               (bay_x-1.10,front-.28),(bay_x+1.10,front-.28),
+               (bay_x+1.90,front+.52),(bay_x+1.90,facade+.25)]
+        bay_solid=mass(bay,-grade,eaves-.35)
         for z in (2.5,5.65):
             bay_solid-=box(bay_x-.59,bay_x+.59,front-.5,front+.55,z,z+1.75)
         parts.append(bay_solid)
@@ -164,12 +175,12 @@ def build():
         parts.append(cap.extrude(1.04,scale_top=(.72,.65))
                      .translate((bay_x,facade,eaves-.49)))
         for level in range(3):
-            parts.append(box(x+w/2-2.4,x+w/2-.45,
+            parts.append(box(x-w/2+.26,x-w/2+2.25,
                               front-.90+level*.74,facade+.2,-grade,1.05+level*.70))
         if grade>0:
             houses.append(mass(plan,0,grade+.81))
         houses.append(union(parts).as_original().translate((0,0,grade)))
-    finish(houses,[])
+    finish([union(houses).trim_by_plane((0,0,1),0)],[])
 
 
 if __name__ == "__main__":

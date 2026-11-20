@@ -332,6 +332,12 @@
       "real": 16.145,
       "model": 16.145,
       "source": "https://www.openstreetmap.org/way/261412899"
+    },
+    {
+      "what": "Typical street bay width, scaled from the 714 front photograph",
+      "real": 3.8,
+      "model": 3.8,
+      "source": "https://commissions.sfplanning.org/hpcpackets/2021-004327MLS.pdf#page=118"
     }
   ],
   "checkpoints": [
@@ -432,5 +438,11 @@
       "source": "https://data.sfgov.org/resource/ynuv-fyni.json?%24select=sf16_bldgid%2Cgnd_mediancm%2Chgt_maxcm&%24where=intersects(shape%2C'POINT(-122.432770673%2037.776383388)')"
     }
   },
-  "datum_m": 62.48
+  "datum_m": 62.48,
+  "street_elevation": {
+    "source": "https://commissions.sfplanning.org/hpcpackets/2021-004327MLS.pdf#page=118",
+    "loc": "https://www.loc.gov/item/2013630348/",
+    "interpretation": "The city survey Photograph 1 shows stairs on the viewer’s left and the two-storey bay on the right. The attic pediment spans both. The bay occupies approximately 55% of the facade. Equal plan offsets produce 45-degree bay cheeks. The apparent gable rise is roughly half the eave width; the model follows the photographed near-45-degree pitch. These are photographic estimates."
+  },
+  "extent_note": "The six requested matching houses are 710–720. The city report includes the distinct corner house at 722 in the historical group of seven."
 }
