@@ -37,7 +37,8 @@
       "what": "Abutment to abutment, including approaches",
       "real": 2737,
       "model": 2737,
-      "source": "https://www.goldengate.org/bridge/history-research/statistics-data/design-construction-stats/"
+      "source": "https://www.goldengate.org/bridge/history-research/statistics-data/design-construction-stats/",
+      "bbox": "length"
     },
     {
       "what": "Main span, tower centre to tower centre",
@@ -61,7 +62,8 @@
       "what": "Tower top above water",
       "real": 227,
       "model": 227,
-      "source": "https://www.goldengate.org/bridge/history-research/statistics-data/design-construction-stats/"
+      "source": "https://www.goldengate.org/bridge/history-research/statistics-data/design-construction-stats/",
+      "bbox": "height"
     },
     {
       "what": "Tower top above roadway at tower",
@@ -177,7 +179,8 @@
       "real": 0.92,
       "model": 1.64,
       "source": "https://www.goldengate.org/bridge/history-research/statistics-data/design-construction-stats/",
-      "exception": "Rule 8 requires at least 1.2 m for display. Diameter is across opposite vertices of the octagon."
+      "exception": "Rule 8 requires at least 1.2 m for display. Diameter is across opposite vertices of the octagon.",
+      "thickened": true
     }
   ],
   "shape_references": [
