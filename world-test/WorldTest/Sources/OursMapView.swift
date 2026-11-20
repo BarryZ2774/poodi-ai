@@ -10,7 +10,7 @@ struct OursMapView: UIViewRepresentable {
     func makeCoordinator() -> Coordinator { Coordinator(model: model) }
 
     func makeUIView(context: Context) -> MLNMapView {
-        let mapView = MLNMapView(frame: UIScreen.main.bounds, styleURL: Self.styleURL())
+        let mapView = MLNMapView(frame: UIScreen.main.bounds, styleURL: Self.styleURL(landmarks: model.landmarks))
         mapView.delegate = context.coordinator
         mapView.logoView.isHidden = true            // credit is shown by ContentView
         mapView.attributionButton.isHidden = true
@@ -34,7 +34,10 @@ struct OursMapView: UIViewRepresentable {
     }
 
     /// Fills the style template's placeholders with bundle file URLs and writes it to Caches.
-    static func styleURL() -> URL {
+    /// Where a landmark model stands, the map's own buildings and bridge roads are left out, so the map
+    /// does not also draw its own version underneath. The filters use tile ids (the same at every zoom)
+    /// and a fixed outline, so they hold while tiles reload.
+    static func styleURL(landmarks: [Landmark]) -> URL {
         let bundle = Bundle.main
         guard let template = bundle.url(forResource: "porcelain-style", withExtension: "json"),
               var json = try? String(contentsOf: template, encoding: .utf8),
@@ -47,6 +50,11 @@ struct OursMapView: UIViewRepresentable {
         let idsJSON = String(data: try! JSONEncoder().encode(places.flatMap(\.buildingIds)), encoding: .utf8)!
         let tileIDsJSON = String(data: try! JSONEncoder().encode(places.flatMap(\.buildingTileIds).compactMap { Int($0) }),
                                  encoding: .utf8)!
+        func encoded(_ value: some Encodable) -> String { String(data: try! JSONEncoder().encode(value), encoding: .utf8)! }
+        let shown = landmarks.filter { $0.model != nil }
+        let outlines = shown.compactMap(\.bridgeOutline).map { [$0] }      // MultiPolygon: polygons of rings
+        let bridgeFilter = outlines.isEmpty ? "true"
+            : #"["!", ["all", ["==", ["get", "is_bridge"], true], ["within", {"type": "MultiPolygon", "coordinates": \#(encoded(outlines))}]]]"#
         var glyphsURL = glyphs.absoluteString
         if glyphsURL.hasSuffix("/") { glyphsURL.removeLast() }
         json = json
@@ -55,6 +63,9 @@ struct OursMapView: UIViewRepresentable {
             .replacingOccurrences(of: "__GLYPHS__", with: glyphsURL)
             .replacingOccurrences(of: "__VISITED_BUILDING_IDS__", with: idsJSON)
             .replacingOccurrences(of: "__VISITED_BUILDING_TILE_IDS__", with: tileIDsJSON)
+            .replacingOccurrences(of: "__HIDDEN_BUILDING_TILE_IDS__", with: encoded(shown.flatMap(\.hiddenBuildings)))
+            .replacingOccurrences(of: "__HIDDEN_PART_TILE_IDS__", with: encoded(shown.flatMap(\.hiddenParts)))
+            .replacingOccurrences(of: "__BRIDGE_ROAD_FILTER__", with: bridgeFilter)
         let out = FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask)[0]
             .appendingPathComponent("porcelain-style.json")
         try? json.write(to: out, atomically: true, encoding: .utf8)
@@ -160,48 +171,27 @@ struct OursMapView: UIViewRepresentable {
             // Debug: "-noModels YES" leaves all models out, to compare with the map's own buildings.
             guard !UserDefaults.standard.bool(forKey: "noModels") else { return }
             // Debug: "-testModelAt 37.7936,-122.3966" moves the test model, e.g. next to tall buildings.
-            var testAnchor = CLLocationCoordinate2D(latitude: 37.8267, longitude: -122.4230)
+            var testAnchor = CameraPreset.testModelAnchor
             if let v = UserDefaults.standard.string(forKey: "testModelAt")?.split(separator: ",").compactMap({ Double($0) }), v.count == 2 {
                 testAnchor = CLLocationCoordinate2D(latitude: v[0], longitude: v[1])
             }
-            var models: [(id: String, url: URL?, anchor: CLLocationCoordinate2D, heading: Double, altitude: Double)] = [
-                // Test model from tools/make_test_glb.py, standing on Alcatraz.
-                ("model-test-tower", Bundle.main.url(forResource: "test-tower", withExtension: "glb"), testAnchor, 0, 0),
-            ]
-            // Landmark models from the landmark builders: landmarks/<slug>/<slug>.glb, anchored by facts.json.
-            // Their origin is at mean sea level, which is the map's ground level.
-            models += Self.landmarkModels().map { ("model-\($0.slug)", $0.url, $0.anchor, 0, 0) }
-            let below = style.layer(withIdentifier: "label-water")
-            for m in models {
-                guard let url = m.url else { continue }
-                do {
-                    let model = try GLBModel(url: url)
-                    let layer = ModelLayer(identifier: m.id, model: model, anchor: m.anchor, heading: m.heading, altitude: m.altitude)
-                    layer.highlighted = self.model.colourPlaces
-                    if let below { style.insertLayer(layer, below: below) } else { style.addLayer(layer) }
-                    modelLayers.append(layer)
-                    print("[WorldTest] Model \(m.id): \(model.triangleCount) triangles, \(model.maxY - model.minY) m tall")
-                } catch {
-                    print("[WorldTest] Model \(m.id) not shown: \(error)")
+            // Test model from tools/make_test_glb.py, standing in the water west of Alcatraz.
+            var models: [(id: String, model: GLBModel, anchor: CLLocationCoordinate2D)] = []
+            if let url = Bundle.main.url(forResource: "test-tower", withExtension: "glb") {
+                do { models.append(("model-test-tower", try GLBModel(url: url), testAnchor)) } catch {
+                    print("[WorldTest] Test model not shown: \(error)")
                 }
             }
-        }
-
-        /// The landmark folders bundled in Resources/landmarks, with the anchor from each facts.json.
-        static func landmarkModels() -> [(slug: String, url: URL, anchor: CLLocationCoordinate2D)] {
-            struct Facts: Decodable { struct Anchor: Decodable { let lat: Double; let lon: Double }; let anchor: Anchor }
-            guard let root = Bundle.main.url(forResource: "landmarks", withExtension: nil),
-                  let folders = try? FileManager.default.contentsOfDirectory(at: root, includingPropertiesForKeys: nil) else { return [] }
-            return folders.sorted { $0.lastPathComponent < $1.lastPathComponent }.compactMap { folder in
-                let slug = folder.lastPathComponent
-                let glb = folder.appendingPathComponent("\(slug).glb")
-                guard FileManager.default.fileExists(atPath: glb.path),
-                      let data = try? Data(contentsOf: folder.appendingPathComponent("facts.json")),
-                      let facts = try? JSONDecoder().decode(Facts.self, from: data) else {
-                    print("[WorldTest] Landmark \(slug) skipped: needs \(slug).glb and facts.json with anchor.lat/lon")
-                    return nil
-                }
-                return (slug, glb, CLLocationCoordinate2D(latitude: facts.anchor.lat, longitude: facts.anchor.lon))
+            // Landmark models from landmarks/index.json, each at its facts.json anchor, never turned.
+            // Bridges have their origin at sea level and buildings at ground level; the map is flat at 0 m.
+            models += self.model.landmarks.compactMap { l in l.model.map { ("model-\(l.slug)", $0, l.anchor) } }
+            let below = style.layer(withIdentifier: "label-water")
+            for m in models {
+                let layer = ModelLayer(identifier: m.id, model: m.model, anchor: m.anchor)
+                layer.highlighted = self.model.colourPlaces
+                if let below { style.insertLayer(layer, below: below) } else { style.addLayer(layer) }
+                modelLayers.append(layer)
+                print("[WorldTest] Model \(m.id): \(m.model.triangleCount) triangles, \(m.model.maxY - m.model.minY) m tall")
             }
         }
 

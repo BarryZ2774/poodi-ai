@@ -17,6 +17,9 @@ nonisolated struct GLBModel {
     var vertices: [Vertex] = []
     var minY: Float = .infinity
     var maxY: Float = -.infinity
+    /// Extent seen from above, in metres east (X) and south (Z) of the origin.
+    var minX: Float = .infinity, maxX: Float = -.infinity
+    var minZ: Float = .infinity, maxZ: Float = -.infinity
     var triangleCount: Int { vertices.count / 3 }
 
     enum LoadError: Error, CustomStringConvertible {
@@ -152,6 +155,8 @@ nonisolated struct GLBModel {
                             }
                             vertices.append(Vertex(px: p[k].x, py: p[k].y, pz: p[k].z, nx: n.x, ny: n.y, nz: n.z))
                             minY = min(minY, p[k].y); maxY = max(maxY, p[k].y)
+                            minX = min(minX, p[k].x); maxX = max(maxX, p[k].x)
+                            minZ = min(minZ, p[k].z); maxZ = max(maxZ, p[k].z)
                         }
                     }
                 }
@@ -164,5 +169,23 @@ nonisolated struct GLBModel {
         let roots = sceneIndex < scenes.count ? scenes[sceneIndex]["nodes"] as? [Int] ?? [] : Array(nodes.indices)
         for root in roots { try visit(root, matrix_identity_float4x4) }
         guard !vertices.isEmpty else { throw LoadError.broken("no triangles") }
+    }
+
+    /// Direction of the model's long axis seen from above, in degrees clockwise from north (0..<180),
+    /// from the spread of its vertices. Used to look at long models such as bridges from an angle.
+    var longAxisBearing: Double {
+        var (sx, sz, sxx, szz, sxz) = (0.0, 0.0, 0.0, 0.0, 0.0)
+        let step = max(1, vertices.count / 20_000)
+        var n = 0.0
+        for i in stride(from: 0, to: vertices.count, by: step) {
+            let (x, z) = (Double(vertices[i].px), Double(vertices[i].pz))
+            sx += x; sz += z; sxx += x * x; szz += z * z; sxz += x * z; n += 1
+        }
+        let (mx, mz) = (sx / n, sz / n)
+        let (cxx, czz, cxz) = (sxx / n - mx * mx, szz / n - mz * mz, sxz / n - mx * mz)
+        let angle = 0.5 * atan2(2 * cxz, cxx - czz)          // from +X (east) towards +Z (south)
+        // East is bearing 90 and south is 180, so a direction at `angle` from east has bearing 90 + angle.
+        let bearing = 90 + angle * 180 / .pi
+        return (bearing.truncatingRemainder(dividingBy: 180) + 180).truncatingRemainder(dividingBy: 180)
     }
 }

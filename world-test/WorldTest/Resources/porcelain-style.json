@@ -2,7 +2,7 @@
   "version": 8,
   "name": "Porcelain",
   "metadata": {
-    "about": "A quiet porcelain city. Placeholders in double underscores are filled in by OursMapView.swift at launch."
+    "about": "A quiet porcelain city. Placeholders in double underscores are filled in by OursMapView.swift at launch. The HIDDEN ids and the bridge road filter leave out the map's own drawing where a landmark model stands (landmarks/overlap.json)."
   },
   "glyphs": "__GLYPHS__/{fontstack}/{range}.pbf",
   "light": {
@@ -88,7 +88,8 @@
       "minzoom": 12,
       "filter": ["all",
         ["!=", ["get", "is_tunnel"], true],
-        ["in", ["get", "kind"], ["literal", ["minor_road", "other"]]]
+        ["in", ["get", "kind"], ["literal", ["minor_road", "other"]]],
+        __BRIDGE_ROAD_FILTER__
       ],
       "layout": { "line-cap": "round", "line-join": "round" },
       "paint": {
@@ -102,7 +103,7 @@
       "source": "base",
       "source-layer": "roads",
       "minzoom": 15,
-      "filter": ["all", ["!=", ["get", "is_tunnel"], true], ["==", ["get", "kind"], "path"]],
+      "filter": ["all", ["!=", ["get", "is_tunnel"], true], ["==", ["get", "kind"], "path"], __BRIDGE_ROAD_FILTER__],
       "paint": {
         "line-color": "#F4F1EB",
         "line-width": ["interpolate", ["exponential", 1.6], ["zoom"], 15, 0.6, 18, 3]
@@ -116,7 +117,8 @@
       "minzoom": 9,
       "filter": ["all",
         ["!=", ["get", "is_tunnel"], true],
-        ["in", ["get", "kind"], ["literal", ["major_road", "highway"]]]
+        ["in", ["get", "kind"], ["literal", ["major_road", "highway"]]],
+        __BRIDGE_ROAD_FILTER__
       ],
       "layout": { "line-cap": "round", "line-join": "round" },
       "paint": {
@@ -132,7 +134,8 @@
       "minzoom": 11,
       "filter": ["all",
         ["!=", ["get", "has_parts"], true],
-        ["!=", ["get", "is_underground"], true]
+        ["!=", ["get", "is_underground"], true],
+        ["!", ["in", ["id"], ["literal", __HIDDEN_BUILDING_TILE_IDS__]]]
       ],
       "paint": {
         "fill-extrusion-color": ["case", ["boolean", ["feature-state", "visited"], false], "#D9825B", "#F4F1EC"],
@@ -148,7 +151,10 @@
       "source": "buildings",
       "source-layer": "building_part",
       "minzoom": 11,
-      "filter": ["!=", ["get", "is_underground"], true],
+      "filter": ["all",
+        ["!=", ["get", "is_underground"], true],
+        ["!", ["in", ["id"], ["literal", __HIDDEN_PART_TILE_IDS__]]]
+      ],
       "paint": {
         "fill-extrusion-color": ["case", ["boolean", ["feature-state", "visited"], false], "#D9825B", "#F4F1EC"],
         "fill-extrusion-height": ["coalesce", ["get", "height"],
@@ -167,7 +173,8 @@
       "layout": { "visibility": "none" },
       "filter": ["all",
         ["!=", ["get", "has_parts"], true],
-        ["in", ["id"], ["literal", __VISITED_BUILDING_TILE_IDS__]]
+        ["in", ["id"], ["literal", __VISITED_BUILDING_TILE_IDS__]],
+        ["!", ["in", ["id"], ["literal", __HIDDEN_BUILDING_TILE_IDS__]]]
       ],
       "paint": {
         "fill-extrusion-color": "#D9825B",
@@ -183,7 +190,10 @@
       "source-layer": "building_part",
       "minzoom": 11,
       "layout": { "visibility": "none" },
-      "filter": ["in", ["get", "building_id"], ["literal", __VISITED_BUILDING_IDS__]],
+      "filter": ["all",
+        ["in", ["get", "building_id"], ["literal", __VISITED_BUILDING_IDS__]],
+        ["!", ["in", ["id"], ["literal", __HIDDEN_PART_TILE_IDS__]]]
+      ],
       "paint": {
         "fill-extrusion-color": "#D9825B",
         "fill-extrusion-height": ["coalesce", ["get", "height"],

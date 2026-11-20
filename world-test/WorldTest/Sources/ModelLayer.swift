@@ -20,6 +20,8 @@ nonisolated final class ModelLayer: MLNCustomStyleLayer {
     private var pipeline: MTLRenderPipelineState?
     private var pipelineFormats: [UInt] = []
     private var depthState: MTLDepthStencilState?
+    private static let cacheLock = NSLock()
+    nonisolated(unsafe) private static var pipelineCache: [[UInt]: MTLRenderPipelineState] = [:]
 
     // Same as the porcelain style: buildings #F4F1EC, visited #D9825B; light colour #FFFDF8,
     // intensity 0.18, position [1.15, 225, 45], anchored to the map.
@@ -64,8 +66,16 @@ nonisolated final class ModelLayer: MLNCustomStyleLayer {
         let formats = [colorTexture.pixelFormat.rawValue, depthFormat.rawValue, stencilFormat.rawValue, UInt(colorTexture.sampleCount)]
         if pipeline == nil || formats != pipelineFormats {
             pipelineFormats = formats
-            pipeline = Self.makePipeline(device: device, color: colorTexture.pixelFormat, depth: depthFormat,
-                                         stencil: stencilFormat, samples: colorTexture.sampleCount)
+            // One pipeline for all model layers: compiling the shader once per layer would stall the first frame.
+            Self.cacheLock.lock()
+            if let cached = Self.pipelineCache[formats] {
+                pipeline = cached
+            } else {
+                pipeline = Self.makePipeline(device: device, color: colorTexture.pixelFormat, depth: depthFormat,
+                                             stencil: stencilFormat, samples: colorTexture.sampleCount)
+                Self.pipelineCache[formats] = pipeline
+            }
+            Self.cacheLock.unlock()
             let depth = MTLDepthStencilDescriptor()
             depth.depthCompareFunction = depthFormat == .invalid ? .always : .lessEqual
             depth.isDepthWriteEnabled = depthFormat != .invalid
