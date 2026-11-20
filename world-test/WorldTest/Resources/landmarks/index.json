@@ -17,7 +17,7 @@
       "lat": 37.802374164,
       "lon": -122.405833827
     },
-    "commit": "2d62933"
+    "commit": "fb5bd8b"
   },
   {
     "slug": "conservatory-of-flowers",
@@ -27,7 +27,7 @@
       "lat": 37.77263055,
       "lon": -122.46023301
     },
-    "commit": "d318059"
+    "commit": "74f70f9"
   },
   {
     "slug": "dutch-windmill",
@@ -37,7 +37,7 @@
       "lat": 37.770440892,
       "lon": -122.509405798
     },
-    "commit": "87432c0"
+    "commit": "957fc3f"
   },
   {
     "slug": "fort-point",
@@ -47,7 +47,7 @@
       "lat": 37.810553412,
       "lon": -122.477111712
     },
-    "commit": "fc9a90d"
+    "commit": "0c36423"
   },
   {
     "slug": "golden-gate-bridge",
@@ -57,7 +57,7 @@
       "lat": 37.8197584999,
       "lon": -122.4785625925
     },
-    "commit": "3753d52"
+    "commit": "e5ec31e"
   },
   {
     "slug": "grace-cathedral",
@@ -67,7 +67,7 @@
       "lat": 37.791849722,
       "lon": -122.413472099
     },
-    "commit": "6890222"
+    "commit": "2980661"
   },
   {
     "slug": "legion-of-honor",
@@ -77,7 +77,7 @@
       "lat": 37.784512622,
       "lon": -122.500789862
     },
-    "commit": "d36e937"
+    "commit": "9d29c29"
   },
   {
     "slug": "mission-dolores",
@@ -87,7 +87,7 @@
       "lat": 37.764314211,
       "lon": -122.42691978
     },
-    "commit": "61716f4"
+    "commit": "c1012f6"
   },
   {
     "slug": "painted-ladies",
@@ -97,7 +97,7 @@
       "lat": 37.776227679,
       "lon": -122.432739088
     },
-    "commit": "c030467"
+    "commit": "22251cc"
   },
   {
     "slug": "palace-of-fine-arts",
@@ -107,7 +107,7 @@
       "lat": 37.802918453,
       "lon": -122.448396631
     },
-    "commit": "335a248"
+    "commit": "90b4f51"
   },
   {
     "slug": "saints-peter-and-paul-church",
@@ -117,7 +117,7 @@
       "lat": 37.801601109,
       "lon": -122.410236744
     },
-    "commit": "b30102d"
+    "commit": "ca09e90"
   },
   {
     "slug": "city-hall",
@@ -127,7 +127,7 @@
       "lat": 37.779275892,
       "lon": -122.419238999
     },
-    "commit": "aeb4c4c"
+    "commit": "5d52be9"
   },
   {
     "slug": "ferry-building",
@@ -137,7 +137,7 @@
       "lat": 37.795532468,
       "lon": -122.393439784
     },
-    "commit": "471e08a"
+    "commit": "f70f5df"
   },
   {
     "slug": "bay-bridge-east-span",
@@ -147,7 +147,7 @@
       "lat": 37.8152652,
       "lon": -122.35850585
     },
-    "commit": "bfe4a2b"
+    "commit": "20b55dd"
   },
   {
     "slug": "bay-bridge-west-span",
@@ -157,7 +157,7 @@
       "lat": 37.79818985,
       "lon": -122.37786045
     },
-    "commit": "8b61dc0"
+    "commit": "c9d38c8"
   },
   {
     "slug": "sutro-tower",
@@ -167,6 +167,6 @@
       "lat": 37.75524132,
       "lon": -122.452852702
     },
-    "commit": "8fc9d7c"
+    "commit": "aec5678"
   }
 ]

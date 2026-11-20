@@ -39,6 +39,7 @@ struct ContentView: View {
                         } label: {
                             Text("Landmarks")
                         }
+                        .menuOrder(.fixed)          // A to Z from the top, even when the menu opens upwards
                         .font(.subheadline)
                         .lineLimit(1)
                         .fixedSize()

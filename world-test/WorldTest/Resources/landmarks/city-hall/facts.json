@@ -33,6 +33,51 @@
       "real": 24.384,
       "model": 24.384,
       "source": "https://commissions.sfplanning.org/hpcpackets/2016-007523COA%20-%20Asian%20Art%20Museum.pdf"
+    },
+    {
+      "what": "Main block length",
+      "real": 118.872,
+      "model": 118.872,
+      "source": "https://tile.loc.gov/storage-services/master/pnp/habshaer/ca/ca0600/ca0633/data/ca0633data.pdf"
+    },
+    {
+      "what": "Main block width",
+      "real": 83.2866,
+      "model": 83.2866,
+      "source": "https://tile.loc.gov/storage-services/master/pnp/habshaer/ca/ca0600/ca0633/data/ca0633data.pdf"
+    },
+    {
+      "what": "Dome spring diameter",
+      "real": 26.2128,
+      "model": 26.2128,
+      "source": "https://tile.loc.gov/storage-services/master/pnp/habshaer/ca/ca0600/ca0633/data/ca0633data.pdf"
+    },
+    {
+      "what": "Dome spring elevation",
+      "real": 58.2168,
+      "model": 58.2168,
+      "source": "https://tile.loc.gov/storage-services/master/pnp/habshaer/ca/ca0600/ca0633/data/ca0633data.pdf"
+    },
+    {
+      "what": "Drum across column shafts",
+      "real": 34,
+      "model": 34,
+      "source": "https://www.openstreetmap.org/way/494810790",
+      "method": "Diameter of the mapped circular drum, measured in the local metric plane."
+    },
+    {
+      "what": "Dome top beneath lantern, estimated",
+      "real": 75.65,
+      "model": 75.65,
+      "source": "https://doi.org/10.1016/S0141-0296(98)00007-8",
+      "method": "Approximation from the published photograph in figure 2, scaled relative to the exterior height. Uncertainty about 1 m."
+    },
+    {
+      "what": "Lantern diameter across columns, estimated",
+      "real": 7.74,
+      "model": 7.74,
+      "source": "https://doi.org/10.1016/S0141-0296(98)00007-8",
+      "method": "Approximation from the published photograph in figure 2, scaled relative to the exterior height. Uncertainty about 1 m."
     }
   ],
   "plans": {
@@ -546,12 +591,14 @@
   "simplified": [
     "The outer member of the OSM building relation fixes the ground outline. The wings use broad recessed bays and stepped cornices in place of fine masonry.",
     "The drum retains a ring of columns. The dome has sixteen raised ribs, a lantern, and a thickened finial. The portico retains its steps, column line and pediment.",
-    "Roof services, interior light courts and carved figures are omitted."
+    "Roof services, interior light courts and carved figures are omitted.",
+    "The larger OSM outline supplies the low ground terrace and steps. HABS gives the exterior main block as 390 by 273 ft 3 in. An open eight-column lantern follows the exterior profile. The upper portico cornice stops at both openings."
   ],
   "osm_attribution": "Ground outline from OpenStreetMap, © OpenStreetMap contributors, ODbL.",
   "origin_of_work": "Written from published measurements for this project. No third-party mesh used.",
   "front_local_direction": [
     -1,
     0
-  ]
+  ],
+  "footprint_note": "Ground outline 127.104 by 97.946 m includes the entrances and steps. The narrower main walls follow HABS. Figure 3 of the engineering study shows the plan projections on the entrance axis."
 }

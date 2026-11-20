@@ -41,6 +41,18 @@
       "real": 8.2296,
       "model": 8.2296,
       "source": "https://www.history.uscg.mil/Browse-by-Topic/Assets/Land/Lighthouses-Light-Stations/Article/1926698/fort-point-light-ca/"
+    },
+    {
+      "what": "Parapet thickness",
+      "real": 1.8288,
+      "model": 1.8288,
+      "source": "https://www.nps.gov/goga/learn/historyculture/upload/2006-fopo-hsr.pdf"
+    },
+    {
+      "what": "Parapet above the roof",
+      "real": 1.524,
+      "model": 1.524,
+      "source": "https://www.nps.gov/goga/learn/historyculture/upload/2006-fopo-hsr.pdf"
     }
   ],
   "plans": {
@@ -252,7 +264,8 @@
   ],
   "simplified": [
     "Three tiers of broad recessed arches face the mapped open court. Short corners and stair drums remain solid.",
-    "The nine-sided lighthouse keeps its base, gallery and lantern. Smaller ironwork, masonry joints and rooftop fittings are omitted."
+    "The nine-sided lighthouse keeps its base, gallery and lantern. Smaller ironwork, masonry joints and rooftop fittings are omitted.",
+    "One continuous average-height parapet follows the exterior. Two gabled stair penthouses and a recessed south entrance are grouped from the NPS historic structure report."
   ],
   "osm_attribution": "Ground outline from OpenStreetMap, © OpenStreetMap contributors, ODbL.",
   "origin_of_work": "Written from published measurements for this project. No third-party mesh used.",
