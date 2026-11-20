@@ -1,0 +1,594 @@
+{
+  "slug": "sutro-tower",
+  "name": "Sutro Tower",
+  "kind": "building",
+  "anchor": {
+    "lat": 37.75524132,
+    "lon": -122.452852702,
+    "what": "centre of the mapped ground outline at ground level"
+  },
+  "bearing_deg": 0,
+  "measurements_m": [
+    {
+      "what": "Overall height above the base",
+      "real": 297.7896,
+      "model": 297.7896,
+      "source": "https://www.sutrotower.com/faq",
+      "bbox": "height"
+    },
+    {
+      "what": "Main structure height",
+      "real": 232.2576,
+      "model": 232.2576,
+      "source": "https://sfplanning.s3.amazonaws.com/archives/documents/6728-Sutro%20Tower%20DEIR%2008-0517%281%29.pdf"
+    },
+    {
+      "what": "Mast above main structure",
+      "real": 65.532,
+      "model": 65.532,
+      "source": "https://sfplanning.s3.amazonaws.com/archives/documents/6728-Sutro%20Tower%20DEIR%2008-0517%281%29.pdf"
+    },
+    {
+      "what": "Ground leg spacing",
+      "real": 45.72,
+      "model": 45.58,
+      "source": "https://sfplanning.s3.amazonaws.com/archives/documents/6728-Sutro%20Tower%20DEIR%2008-0517%281%29.pdf"
+    },
+    {
+      "what": "Waist leg spacing",
+      "real": 18.288,
+      "model": 18.288,
+      "source": "https://sfplanning.s3.amazonaws.com/archives/documents/6728-Sutro%20Tower%20DEIR%2008-0517%281%29.pdf"
+    },
+    {
+      "what": "Antenna spacing",
+      "real": 30.48,
+      "model": 30.54,
+      "source": "https://sfplanning.s3.amazonaws.com/archives/documents/6728-Sutro%20Tower%20DEIR%2008-0517%281%29.pdf"
+    },
+    {
+      "what": "Horizontal truss 1 centre height",
+      "real": 54.864,
+      "model": 54.864,
+      "source": "https://sfplanning.s3.amazonaws.com/archives/documents/6728-Sutro%20Tower%20DEIR%2008-0517%281%29.pdf"
+    },
+    {
+      "what": "Horizontal truss 2 centre height",
+      "real": 114.3,
+      "model": 114.3,
+      "source": "https://sfplanning.s3.amazonaws.com/archives/documents/6728-Sutro%20Tower%20DEIR%2008-0517%281%29.pdf"
+    },
+    {
+      "what": "Horizontal truss 3 centre height",
+      "real": 167.64,
+      "model": 167.64,
+      "source": "https://sfplanning.s3.amazonaws.com/archives/documents/6728-Sutro%20Tower%20DEIR%2008-0517%281%29.pdf"
+    },
+    {
+      "what": "Horizontal truss 4 centre height",
+      "real": 198.12,
+      "model": 198.12,
+      "source": "https://sfplanning.s3.amazonaws.com/archives/documents/6728-Sutro%20Tower%20DEIR%2008-0517%281%29.pdf"
+    },
+    {
+      "what": "Horizontal truss 5 centre height",
+      "real": 230.124,
+      "model": 230.124,
+      "source": "https://sfplanning.s3.amazonaws.com/archives/documents/6728-Sutro%20Tower%20DEIR%2008-0517%281%29.pdf"
+    }
+  ],
+  "plans": {
+    "base": {
+      "outline": [
+        [
+          -30.702,
+          -6.307
+        ],
+        [
+          -29.759,
+          -7.927
+        ],
+        [
+          -19.616,
+          -2.111
+        ],
+        [
+          7.975,
+          -17.961
+        ],
+        [
+          7.975,
+          -29.637
+        ],
+        [
+          9.87,
+          -29.637
+        ],
+        [
+          9.861,
+          -19.037
+        ],
+        [
+          11.104,
+          -19.759
+        ],
+        [
+          10.046,
+          -20.369
+        ],
+        [
+          10.046,
+          -20.669
+        ],
+        [
+          12.426,
+          -22.034
+        ],
+        [
+          11.368,
+          -22.645
+        ],
+        [
+          11.368,
+          -22.944
+        ],
+        [
+          14.012,
+          -24.465
+        ],
+        [
+          14.276,
+          -24.309
+        ],
+        [
+          14.276,
+          -21.268
+        ],
+        [
+          14.012,
+          -21.124
+        ],
+        [
+          12.954,
+          -21.734
+        ],
+        [
+          12.954,
+          -18.993
+        ],
+        [
+          12.69,
+          -18.849
+        ],
+        [
+          11.624,
+          -19.459
+        ],
+        [
+          11.624,
+          -18.016
+        ],
+        [
+          20.859,
+          -23.31
+        ],
+        [
+          21.802,
+          -21.679
+        ],
+        [
+          11.624,
+          -15.841
+        ],
+        [
+          11.632,
+          15.859
+        ],
+        [
+          21.784,
+          21.686
+        ],
+        [
+          20.841,
+          23.328
+        ],
+        [
+          11.632,
+          18.023
+        ],
+        [
+          11.632,
+          19.388
+        ],
+        [
+          12.664,
+          18.8
+        ],
+        [
+          12.928,
+          18.955
+        ],
+        [
+          12.928,
+          21.741
+        ],
+        [
+          14.012,
+          21.12
+        ],
+        [
+          14.276,
+          21.275
+        ],
+        [
+          14.276,
+          24.316
+        ],
+        [
+          14.012,
+          24.46
+        ],
+        [
+          11.368,
+          22.94
+        ],
+        [
+          11.368,
+          22.64
+        ],
+        [
+          12.452,
+          22.019
+        ],
+        [
+          10.02,
+          20.62
+        ],
+        [
+          10.02,
+          20.32
+        ],
+        [
+          11.042,
+          19.732
+        ],
+        [
+          9.87,
+          19.055
+        ],
+        [
+          9.87,
+          29.633
+        ],
+        [
+          7.975,
+          29.633
+        ],
+        [
+          7.975,
+          17.967
+        ],
+        [
+          -19.616,
+          2.096
+        ],
+        [
+          -29.768,
+          7.912
+        ],
+        [
+          -30.711,
+          6.28
+        ],
+        [
+          -21.511,
+          1.008
+        ],
+        [
+          -22.692,
+          0.331
+        ],
+        [
+          -22.692,
+          1.529
+        ],
+        [
+          -22.956,
+          1.674
+        ],
+        [
+          -25.371,
+          0.286
+        ],
+        [
+          -25.371,
+          1.518
+        ],
+        [
+          -25.635,
+          1.663
+        ],
+        [
+          -28.27,
+          0.153
+        ],
+        [
+          -28.27,
+          -0.158
+        ],
+        [
+          -25.635,
+          -1.667
+        ],
+        [
+          -25.371,
+          -1.523
+        ],
+        [
+          -25.371,
+          -0.28
+        ],
+        [
+          -22.956,
+          -1.667
+        ],
+        [
+          -22.692,
+          -1.512
+        ],
+        [
+          -22.692,
+          -0.346
+        ],
+        [
+          -21.52,
+          -1.023
+        ]
+      ],
+      "centre": [
+        -0.001,
+        0.001
+      ],
+      "source": "https://www.openstreetmap.org/way/581120610"
+    },
+    "se": {
+      "outline": [
+        [
+          14.276,
+          -21.268
+        ],
+        [
+          14.012,
+          -21.124
+        ],
+        [
+          12.426,
+          -22.034
+        ],
+        [
+          11.368,
+          -22.645
+        ],
+        [
+          11.368,
+          -22.944
+        ],
+        [
+          14.012,
+          -24.465
+        ],
+        [
+          14.276,
+          -24.309
+        ]
+      ],
+      "centre": [
+        13.219,
+        -22.794
+      ],
+      "source": "https://www.openstreetmap.org/way/1350828182"
+    },
+    "north": {
+      "outline": [
+        [
+          14.276,
+          24.316
+        ],
+        [
+          14.012,
+          24.46
+        ],
+        [
+          11.368,
+          22.94
+        ],
+        [
+          11.368,
+          22.64
+        ],
+        [
+          14.012,
+          21.12
+        ],
+        [
+          14.276,
+          21.275
+        ]
+      ],
+      "centre": [
+        13.22,
+        22.79
+      ],
+      "source": "https://www.openstreetmap.org/way/1350828183"
+    },
+    "west": {
+      "outline": [
+        [
+          -25.371,
+          1.518
+        ],
+        [
+          -25.635,
+          1.663
+        ],
+        [
+          -28.27,
+          0.153
+        ],
+        [
+          -28.27,
+          -0.158
+        ],
+        [
+          -25.635,
+          -1.667
+        ],
+        [
+          -25.371,
+          -1.523
+        ]
+      ],
+      "centre": [
+        -26.426,
+        -0.002
+      ],
+      "source": "https://www.openstreetmap.org/way/1350828181"
+    },
+    "topse": {
+      "outline": [
+        [
+          8.892,
+          -14.775
+        ],
+        [
+          8.407,
+          -15.053
+        ],
+        [
+          8.469,
+          -15.463
+        ],
+        [
+          8.716,
+          -15.619
+        ],
+        [
+          9.209,
+          -15.341
+        ],
+        [
+          9.147,
+          -14.931
+        ]
+      ],
+      "centre": [
+        8.808,
+        -15.197
+      ],
+      "source": "https://www.openstreetmap.org/way/1350860498"
+    },
+    "topnorth": {
+      "outline": [
+        [
+          8.998,
+          15.759
+        ],
+        [
+          8.504,
+          15.492
+        ],
+        [
+          8.566,
+          15.082
+        ],
+        [
+          8.821,
+          14.926
+        ],
+        [
+          9.315,
+          15.204
+        ],
+        [
+          9.244,
+          15.603
+        ]
+      ],
+      "centre": [
+        8.907,
+        15.343
+      ],
+      "source": "https://www.openstreetmap.org/way/1334229829"
+    },
+    "topwest": {
+      "outline": [
+        [
+          -17.686,
+          0.431
+        ],
+        [
+          -18.18,
+          0.153
+        ],
+        [
+          -18.109,
+          -0.257
+        ],
+        [
+          -17.862,
+          -0.413
+        ],
+        [
+          -17.369,
+          -0.135
+        ],
+        [
+          -17.439,
+          0.275
+        ]
+      ],
+      "centre": [
+        -17.774,
+        0.009
+      ],
+      "source": "https://www.openstreetmap.org/way/1350860499"
+    }
+  },
+  "checkpoints": [
+    {
+      "what": "se antenna tip",
+      "lat": 37.755104403,
+      "lon": -122.452752757,
+      "min_height_m": 297.5,
+      "within_m": 5,
+      "source": "https://www.openstreetmap.org/way/1350860498"
+    },
+    {
+      "what": "north antenna tip",
+      "lat": 37.755379553,
+      "lon": -122.452751647,
+      "min_height_m": 297.5,
+      "within_m": 5,
+      "source": "https://www.openstreetmap.org/way/1334229829"
+    },
+    {
+      "what": "west antenna tip",
+      "lat": 37.755241395,
+      "lon": -122.453054397,
+      "min_height_m": 297.5,
+      "within_m": 5,
+      "source": "https://www.openstreetmap.org/way/1350860499"
+    }
+  ],
+  "simplified": [
+    "The surveyed leg footprints define the ground contact. The mapped outer envelope locates the anchor.",
+    "Five horizontal truss tiers, their main diagonals and three stepped aerials remain. Small transmitters, feedlines, rigging and service buildings are omitted."
+  ],
+  "osm_attribution": "Ground outline from OpenStreetMap, © OpenStreetMap contributors, ODbL.",
+  "origin_of_work": "Written from published measurements for this project. No third-party mesh used.",
+  "ground_keys": [
+    "se",
+    "north",
+    "west"
+  ]
+}
