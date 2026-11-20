@@ -128,6 +128,11 @@ def build():
         md.OpType.Add).offset(-.05)
     houses = [ground.extrude(.8)]
     for address in FACTS["ground_keys"]:
+        parts=[]
+        survey=FACTS["survey"][address]
+        grade=survey["ground_m"]-FACTS["datum_m"]
+        peak=survey["height_m"]
+        ridge=min(13.15,peak-.55)
         plan = np.asarray(FACTS["plans"][address]["outline"])
         left, front = plan.min(axis=0)
         right, back = plan.max(axis=0)
@@ -138,11 +143,15 @@ def build():
         facade = front + 1.5
         eaves = 8.65 + .12 * (int(address) % 3)
         body = front_plate([(x-w/2,.8), (x+w/2,.8), (x+w/2,eaves),
-                            (x,12), (x-w/2,eaves)], (facade+back)/2, back-facade)
+                            (x,ridge), (x-w/2,eaves)], (facade+back)/2, back-facade)
         # Recess the entry and attic window into the solid elevations.
         body -= box(x+w/2-2.25, x+w/2-.65, facade-.5, facade+1.1, 2.4, 5.3)
         body -= box(x-.66,x+.66,facade-.4,facade+.8,9.25,10.35)
-        houses.append(body)
+        parts.append(body)
+        # A small stack interrupts each roof slope near the rear of the house.
+        parts.append(box(x+1.25,x+2.13,back-5.1,back-3.8,eaves-.2,peak-.75))
+        parts.append(box(x+1.12,x+2.26,back-5.22,back-3.68,peak-.75,peak))
+        parts.append(box(x-1.26,x+1.26,facade-.78,facade+.2,10.4,11.22))
         bay_x = x-1.05
         bay = [(bay_x-1.63,facade+.25),(bay_x-1.63,front+.45),
                (bay_x-1.30,front-.28),(bay_x+1.30,front-.28),
@@ -150,10 +159,16 @@ def build():
         bay_solid=mass(bay,1.8,eaves-.35)
         for z in (2.5,5.65):
             bay_solid-=box(bay_x-.59,bay_x+.59,front-.5,front+.55,z,z+1.75)
-        houses.append(bay_solid)
+        parts.append(bay_solid)
+        cap=section([(u-bay_x,v-facade) for u,v in bay])
+        parts.append(cap.extrude(1.04,scale_top=(.72,.65))
+                     .translate((bay_x,facade,eaves-.49)))
         for level in range(3):
-            houses.append(box(x+w/2-2.4,x+w/2-.45,
-                              front-.90+level*.74,facade+.2,0,1.05+level*.70))
+            parts.append(box(x+w/2-2.4,x+w/2-.45,
+                              front-.90+level*.74,facade+.2,-grade,1.05+level*.70))
+        if grade>0:
+            houses.append(mass(plan,0,grade+.81))
+        houses.append(union(parts).as_original().translate((0,0,grade)))
     finish(houses,[])
 
 
