@@ -181,10 +181,12 @@ def build():
         for y in guide[:,0]:
             z=road(y)
             # Box girders widen from the soffit to the driving surface.
-            profile=[(-13.94,-0.9),(-13.94,0),(13.94,0),(13.94,-0.9),
+            profile=[(-13.94,-.9),(-13.94,.82),(-12.84,.82),(-12.84,0),
+                     (12.84,0),(12.84,.82),(13.94,.82),(13.94,-.9),
                      (10.35,-4.4),(-10.35,-4.4)]
             rings.append([(offset(y)+sign*20.77+x,y,z+h) for x,h in profile])
-        hard.append(loft(rings))
+        cap=[(0,1,2),(0,2,3),(0,3,4),(0,4,7),(4,5,6),(4,6,7),(0,7,8),(0,8,9)]
+        hard.append(loft(rings,cap))
     hard.append(pedestal(0,0,[(-3,27,27,5),(3,25,25,4)]))
     for a in (-1,1):
         for b in (-1,1):
@@ -194,9 +196,10 @@ def build():
             hard.append(loft(rings))
     for z in (24,44,64,84,104,124,144):
         w=6.9-(z-3)/150*4.75
+        height=3.7 if z in (24,84,144) else 2.0
         for sign in (-1,1):
-            hard.append(box(-w,w,sign*w-1.1,sign*w+1.1,z,z+2.4))
-            hard.append(box(sign*w-1.1,sign*w+1.1,-w,w,z,z+2.4))
+            hard.append(box(-w,w,sign*w-1.1,sign*w+1.1,z,z+height))
+            hard.append(box(sign*w-1.1,sign*w+1.1,-w,w,z,z+height))
     hard.append(pedestal(0,0,[(151,11,11,1.4),(155,11,11,1.4),
                               (155,8.7,8.7,1.1),(160,6.4,6.4,1)]))
     # Support both carriageways at the clipped ends of the displayed span.
@@ -204,7 +207,9 @@ def build():
         a,b=sorted((y,y+5*direction))
         for sign in (-1,1):
             x=offset(y)+sign*20.77
-            hard.append(box(x-10.0,x+10.0,a,b,0,min(road(a),road(b))-3.7))
+            top=min(road(a),road(b))-3.7
+            hard.append(pedestal(x,(a+b)/2,[(0,20,b-a,1.65),(top-3,16,b-a,1.55),
+                                            (top,16,b-a,1.55)]))
     for y in [-180,385,520,665,810]:
         z=road(y)
         for sign in (-1,1):
