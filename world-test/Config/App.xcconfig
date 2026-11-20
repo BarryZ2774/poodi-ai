@@ -1,0 +1,3 @@
+// Shared build settings. The Mapbox token lives in Secrets.xcconfig (not in git).
+MAPBOX_ACCESS_TOKEN =
+#include? "Secrets.xcconfig"
