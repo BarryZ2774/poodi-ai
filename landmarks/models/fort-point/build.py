@@ -181,7 +181,7 @@ def build():
             for z in (1.5,5.8,10.1):
                 if np.array_equal(a,outline[-1]) and abs(t-.5)*length<3 and z<6:
                     continue
-                walls-=box(-.82,.82,-1.1,1.1,z,z+1.15).rotate((0,0,angle)).translate((*xy,0))
+                walls-=box(-1.02,1.02,-1.1,1.1,z,z+1.85).rotate((0,0,angle)).translate((*xy,0))
     edge=outline[0]-outline[-1]
     angle=math.degrees(math.atan2(edge[1],edge[0]))
     centre=(outline[0]+outline[-1])/2
@@ -194,7 +194,7 @@ def build():
                                (0,16.75),(-1.9,15.6)],0,4.5)
         hard.append(penthouse.translate((u,v,0)))
     x,y=p["light"]["centre"]
-    light=drum(x,y,[(13.3,2.05,2.05),(14.55,2.05,2.05),(14.55,1.54,1.54),
+    light=drum(x,y,[(13.3,1.72,1.72),(14.55,1.72,1.72),(14.55,1.54,1.54),
                     (18.1,1.25,1.25),(18.1,1.94,1.94),(18.85,1.94,1.94),
                     (18.85,1.38,1.38),(20.7,1.38,1.38),(21.9456,.4,.4)],9)
     finish([*hard,light],[])
