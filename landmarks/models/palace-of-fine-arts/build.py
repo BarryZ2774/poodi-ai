@@ -158,20 +158,22 @@ def build():
     plans=FACTS["plans"]
     hard,curved=[],[]
     for name in FACTS["ground_keys"]:
-        # One solid landing per mapped footprint; close stair notches before
-        # rounding off the thin ends of the old individual stair landings.
-        platform=section(plans[name]["outline"]).simplify(1.15)
-        platform=platform.offset(1.1,md.JoinType.Miter).offset(-1.1,md.JoinType.Miter)
-        platform=platform.offset(-.61,md.JoinType.Miter).offset(.61,md.JoinType.Miter)
+        outline=section(plans[name]["outline"])
         if name=="base":
-            platform+=md.CrossSection.batch_boolean([section(plans["pier"+str(i)]["outline"])
-                                                    for i in range(8)],md.OpType.Add)
-        hard.append(platform.simplify(.12).extrude(.98))
+            # The rotunda stands on one continuous terrace. Round both the
+            # deep stair notches and their outer corners into broad landings.
+            platform=outline.offset(2.4,md.JoinType.Round,12).offset(-2.4,md.JoinType.Round,12)
+            platform=platform.offset(-1.9,md.JoinType.Round,12).offset(1.9,md.JoinType.Round,12)
+        else:
+            platform=outline.offset(1.7,md.JoinType.Round,8).offset(-1.7,md.JoinType.Round,8)
+            platform=platform.offset(-1.2,md.JoinType.Round,8).offset(1.2,md.JoinType.Round,8)
+        hard.append(platform.simplify(.58).extrude(.98))
     for i in range(8):
         outline=plans["pier"+str(i)]["outline"]
         x,y=plans["pier"+str(i)]["centre"]
         theta=math.atan2(y,x)
-        hard.append(mass(outline,.98,3.1))
+        pier=section(outline).offset(-.85,md.JoinType.Round,8).offset(.85,md.JoinType.Round,8)
+        hard.append(pier.simplify(.35).extrude(3.1))
         for sign in (-1,1):
             u=x-sign*1.8*math.sin(theta);v=y+sign*1.8*math.cos(theta)
             hard.append(drum(u,v,[(2.9,1.55,1.55),
@@ -212,8 +214,8 @@ def build():
             length=np.linalg.norm(d)
             t=d/length
             n=np.array([-t[1],t[0]])
-            beams.append(section([a-1.45*n-.7*t,b-1.45*n+.7*t,
-                                  b+1.45*n+.7*t,a+1.45*n-.7*t]))
+            beams.append(section([a-2.5*n-.75*t,b-2.5*n+.75*t,
+                                  b+2.5*n+.75*t,a+2.5*n-.75*t]))
             intervals=round(length/6)
             for j in range(intervals):
                 if j==0 and i in groups: continue
@@ -221,7 +223,7 @@ def build():
                 hard.append(drum(u,v,[(0,.95,.95),(14.9,.78,.78),
                                       (16.2,1.22,1.22)],5))
         hard.append(md.CrossSection.batch_boolean(beams,md.OpType.Add)
-                    .extrude(2.48).translate((0,0,16.2)))
+                    .extrude(3.98).translate((0,0,16.2)))
         for i in sorted(groups):
             centre=route[i]
             t=route[min(i+1,len(route)-1)]-route[max(0,i-1)]
@@ -230,7 +232,7 @@ def build():
             for along in (-1.46,1.46):
                 for across in (-1.38,1.38):
                     u,v=centre+t*along+n*across
-                    hard.append(drum(u,v,[(0,.94,.94),(16.2,.84,.84)],5))
+                    hard.append(drum(u,v,[(0,.94,.94),(16.2,.84,.84)],4))
             outline=section([centre+t*i+n*j for i,j in
                              [(-2.7,-2.6),(2.7,-2.6),(2.7,2.6),(-2.7,2.6)]])
             hard.append(outline.extrude(5.136).translate((0,0,16.2)))
