@@ -25,10 +25,6 @@ def section(outline):
     return md.CrossSection([outline], md.FillRule.EvenOdd)
 
 
-def front_plate(outline, station, depth):
-    return section(outline).extrude(depth).rotate((90, 0, 0)).translate((0, station + depth / 2, 0))
-
-
 def loft(rings, cap=None):
     """Skin aligned rings, CCW about the sweep axis. Convex caps can use a fan."""
     n = len(rings[0])
@@ -56,17 +52,10 @@ def mass(outline, low, high):
 
 def drum(x, y, levels, sides=32):
     """Revolve horizontal elliptical sections (elevation, X radius, Y radius)."""
-    angles = [math.radians(k * 45 + t) for k in range(8) for t in (-17.5, 17.5)]
+    angles = np.arange(sides) * math.tau / sides
     rings = [[(x + w*math.cos(t), y + d*math.sin(t), z) for t in angles]
              for z, w, d in levels]
     return loft(rings)
-
-
-def arch_cut(x, bottom, spring, radius, station, depth):
-    """Round-headed opening in a wall normal to the station axis."""
-    arc = [(x+radius*math.cos(t), spring+radius*math.sin(t))
-           for t in np.linspace(0, math.pi, 13)]
-    return front_plate([(x-radius,bottom),(x+radius,bottom)]+arc, station, depth)
 
 
 def finish(hard, curved):
@@ -165,26 +154,62 @@ def build():
             continue
         opening=box(-.85,.85,-.95,.95,3,5.8).rotate((0,0,math.degrees(math.atan2(edge[1],edge[0]))))
         plinth-=opening.translate((*(a+b)/2,0))
-    hard=[plinth,drum(x,y,[(9.65,6.45,6.45),(10.55,6.45,6.45),(11.45,5.76,5.76)])]
+    hard=[plinth,drum(x,y,[(9.65,6.45,6.45),(10.55,6.45,6.45),(11.45,6.42,6.42)])]
     for u in (-2.55,2.55):
         hard.append(md.Manifold.cylinder(6.45,0.78,circular_segments=16).translate((u,-9.75,0.8)))
     # Alternating channels follow the depth of the fluting to the belvedere.
-    angles=np.arange(96)*math.tau/96
+    angles=np.arange(64)*math.tau/64
     rings=[]
-    for z,r,relief in [(9.5,5.75,0.06),(12.5,5.72,.37),(47.5,5.18,.37),(49.2,5.18,0.06)]:
-        rings.append([(x+(r-relief*(1-math.cos(24*t))/2)*math.cos(t),
+    for z,r,relief in [(9.5,6.45,.06),(12.5,6.4,.38),(45.6,5.86,.38),(46.6,5.8,0)]:
+        rings.append([(x+(r-relief*(1-math.cos(8*t))/2)*math.cos(t),
                        y+(r-relief*(1-math.cos(24*t))/2)*math.sin(t),z) for t in angles])
     shaft=loft(rings)
-    outer=drum(x,y,[(48.8,5.6,5.6),(53.7,5.6,5.6),(54.5,5.9,5.9),
-                    (55.7,5.9,5.9),(56.1,5.55,5.55),(high-1.45,5.55,5.55),(high-.90,5.87,5.87),(high,5.87,5.87)],64)
-    inside=drum(x,y,[(49.8,4.6,4.6),(68.0,4.6,4.6)])
-    crown=outer-inside
-    for k in range(8):
-        for bottom,spring,width in [(50,52.1,1.09),(56.6,60.25,1.18)]:
-            cut=arch_cut(0,bottom,spring,width,5.4,3.2)
-            crown -= cut.rotate((0,0,k*45)).translate((x,y,0))
+    # Build the round arcade sector by sector. The reveals run radially and
+    # retain their full wall depth all the way round each arch.
+    deck=high-32*.3048
+    crown=[drum(x,y,[(46.6,5.8,5.8),(47.6,5.8,5.8)],64),
+           drum(x,y,[(47.56,3.66,3.66),(deck,3.66,3.66)],64)]
+    def window_tier(z0,z1,ri,ro,sill,spring,half_steps,repeat):
+        # Indexed rings keep every reveal radial. Neighbouring bays share their
+        # endpoints, including on the back of the lantern wall.
+        vertices=[]
+        faces=[]
+        count=64
+        period=count//repeat
+        def offset(i):
+            return (i+period/2)%period-period/2
+        def idx(i,row,side):
+            return (i%count)*8+row*2+side
+        for i in range(count):
+            t=i*math.tau/count
+            h=math.sqrt(max(0,1-(offset(i)/half_steps)**2))
+            head=spring+h*ro*half_steps*math.tau/count
+            for z in (z0,sill,head,z1):
+                for radius in (ri,ro):
+                    vertices.append((x+radius*math.cos(t),y+radius*math.sin(t),z))
+        def quad(a,b,c,d):
+            faces.extend([(a,b,c),(a,c,d)])
+        def present(i,row):
+            return 0<=row<3 and (row!=1 or abs(offset(i+.5))>half_steps)
+        for i in range(count):
+            for row in range(3):
+                if not present(i,row):
+                    continue
+                a,b,c,d=[idx(k,j,1) for k,j in ((i,row),(i+1,row),(i+1,row+1),(i,row+1))]
+                quad(a,b,c,d)
+                quad(d-1,c-1,b-1,a-1)
+                if not present(i,row-1): quad(b,a,a-1,b-1)
+                if not present(i,row+1): quad(d,c,c-1,d-1)
+                if not present(i-1,row): quad(a-1,a,d,d-1)
+                if not present(i+1,row): quad(c-1,c,b,b-1)
+        mesh=md.Mesh64(np.array(vertices),np.array(faces,dtype=np.uint64))
+        crown.append(md.Manifold(mesh))
+    window_tier(47.6,deck+.015,3.64,5.8,48.4,51.65,2,8)
+    window_tier(deck,58.52,4.12,5.65,55.45,56.70,1,16)
+    window_tier(58.5,high,4.08,5,59.25,61.65,2,8)
+    crown=union(crown)
     # The concrete rim is hollow. Its inner edge lies inside the checkpoint radius.
-    finish(hard+[(shaft)],[(crown,18)])
+    finish(hard+[shaft],[(crown,16)])
 
 
 if __name__ == "__main__":

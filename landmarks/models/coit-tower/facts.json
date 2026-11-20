@@ -33,6 +33,47 @@
       "real": 9.7536,
       "model": 9.7536,
       "source": "https://commissions.sfplanning.org/hpcpackets/2017-015688FED.pdf"
+    },
+    {
+      "what": "Lantern deck below the rim",
+      "real": 9.7536,
+      "model": 9.7536,
+      "source": "https://commissions.sfplanning.org/hpcpackets/2017-015688FED.pdf"
+    },
+    {
+      "what": "Shaft at its foot",
+      "real": 12.9,
+      "model": 12.9,
+      "source": "https://sfgov.legistar.com/View.ashx?GUID=11D1B120-E1AE-4488-A3D6-6CE77C670DCC&ID=4151667&M=F#page=57",
+      "method": "Approximate scaled reading from Exhibit A, north/south section, normalized to the adopted 64 m exterior height; no dimension label."
+    },
+    {
+      "what": "Shaft just beneath the belvedere",
+      "real": 11.6,
+      "model": 11.6,
+      "source": "https://sfgov.legistar.com/View.ashx?GUID=11D1B120-E1AE-4488-A3D6-6CE77C670DCC&ID=4151667&M=F#page=57",
+      "method": "Approximate scaled reading from Exhibit A, north/south section, normalized to the adopted 64 m exterior height; no dimension label."
+    },
+    {
+      "what": "Lower crown diameter",
+      "real": 11.6,
+      "model": 11.6,
+      "source": "https://sfgov.legistar.com/View.ashx?GUID=11D1B120-E1AE-4488-A3D6-6CE77C670DCC&ID=4151667&M=F#page=57",
+      "method": "Approximate scaled reading from Exhibit A, north/south section, normalized to the adopted 64 m exterior height; no dimension label."
+    },
+    {
+      "what": "Lantern rim diameter",
+      "real": 10,
+      "model": 10,
+      "source": "https://sfgov.legistar.com/View.ashx?GUID=11D1B120-E1AE-4488-A3D6-6CE77C670DCC&ID=4151667&M=F#page=57",
+      "method": "Approximate scaled reading from Exhibit A, north/south section, normalized to the adopted 64 m exterior height; no dimension label."
+    },
+    {
+      "what": "Height from start of lower crown to rim",
+      "real": 17.4,
+      "model": 17.4,
+      "source": "https://sfgov.legistar.com/View.ashx?GUID=11D1B120-E1AE-4488-A3D6-6CE77C670DCC&ID=4151667&M=F#page=57",
+      "method": "Approximate scaled reading from Exhibit A, north/south section, normalized to the adopted 64 m exterior height; no dimension label."
     }
   ],
   "plans": {
@@ -274,13 +315,15 @@
     }
   ],
   "simplified": [
-    "The mapped base is retained, with its projecting entry. The 24 shaft flutes are cut into a single continuous shell.",
-    "The eight large belvedere arches and the open lantern use thick concrete piers. Small glazing bars, murals and terrace furnishings are omitted."
+    "The north-facing porch follows the city's National Register description and the aerial in Exhibit A. Eight broad flutes continue into the belvedere piers.",
+    "Tall lower belvedere bays, grouped small lights and a shorter open lantern follow the park's exterior photograph. The floor is 32 ft below the rim. Diameters are scaled estimates from the city's north/south section, with line-weight uncertainty of roughly 0.3 m."
   ],
   "osm_attribution": "Ground outline from OpenStreetMap, © OpenStreetMap contributors, ODbL.",
   "origin_of_work": "Written from published measurements for this project. No third-party mesh used.",
   "shape_sources": [
     "https://commissions.sfplanning.org/hpcpackets/2012.0882E.pdf",
-    "https://commissions.sfplanning.org/hpcpackets/2017-015688FED.pdf"
+    "https://commissions.sfplanning.org/hpcpackets/2017-015688FED.pdf",
+    "https://sfgov.legistar.com/View.ashx?GUID=11D1B120-E1AE-4488-A3D6-6CE77C670DCC&ID=4151667&M=F#page=57",
+    "https://www.pioneerparksf.org/coit-tower"
   ]
 }
