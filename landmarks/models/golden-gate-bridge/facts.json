@@ -100,14 +100,6 @@
       "source": "https://www.goldengate.org/bridge/history-research/statistics-data/design-construction-stats/"
     },
     {
-      "what": "Clearance under the roadway above MHHW, with a traveler in the central span",
-      "real": 67,
-      "model": 66.7326,
-      "source": "https://www.goldengate.org/bridge/history-research/statistics-data/design-construction-stats/",
-      "component_source": "https://nauticalcharts.noaa.gov/publications/coast-pilot/files/cp7/CPB7_WEB.pdf",
-      "method": "District nominal clearance, compared with the underside of the modeled movable platform. Coast Pilot 7, chapter 7 paragraph 56 gives a 231 ft bare center clearance and about 12 ft reduction at a traveler."
-    },
-    {
       "what": "Clearance to the fixed center-span structure above MHHW (231 ft, Coast Pilot)",
       "real": 70.4088,
       "model": 70.3902,
@@ -253,12 +245,11 @@
     "Legs step back on their outer faces with vertical inner jambs. Recessed channels replace finer fluting on the legs and cross struts. Each cable seats between a pair of saddle cheeks.",
     "Vertical plinths run under the land anchorages to mean sea level. Each approach terminates on an open, grounded two-leg bent with a cap and diagonal. Four Fort Point ribs retain their separate springings.",
     "Lights, guardrail pickets, safety netting, road markings, terrain and water are omitted.",
-    "A raised fender rim, grouped arch posts and a cap course on the southern housing distinguish the shore supports at map scale.",
-    "One movable maintenance traveler is shown at midspan for the clearance comparison. Its location varies in service."
+    "A raised fender rim, grouped arch posts and a cap course on the southern housing distinguish the shore supports at map scale."
   ],
   "origin_of_work": "Written from published measurements for this project. No third-party mesh used.",
   "clearance_reconciliation": {
-    "what": "The District publishes 220 ft (67 m) and records that figure as the permitted midspan clearance. NOAA separately reports 231 ft for the fixed center span and a roughly 12 ft reduction beneath a movable traveler. The model gives 70.390 m to the fixed truss and 66.733 m to a traveler positioned at center; the precise historical basis of the District figure is unspecified.",
+    "what": "The District gives a nominal clearance of 220 ft (67 m). NOAA gives 231 ft (70.41 m) at the fixed centre span. The model follows that midspan value, with 70.390 m beneath the fixed truss.",
     "district": "https://www.goldengate.org/bridge/history-research/statistics-data/design-construction-stats/",
     "permit": "https://www.goldengate.org/bridge/history-research/bridge-construction/construction/",
     "crown": "https://www.goldengate.org/assets/1/6/ggb_plan_elevation_drawing.jpg",

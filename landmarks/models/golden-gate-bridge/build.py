@@ -177,14 +177,6 @@ def deck():
         parts.append(side_plate(web, x, x+1.3))
     # Transverse floor bracing gives the underside its full navigational depth.
     parts.append(box(-11.6, 11.6, -0.8, 0.8, bottom(0), bottom(0)+1.5))
-    # The Coast Pilot describes movable platforms hanging about 12 ft below the truss.
-    traveler_floor = bottom(0) - 12 * .3048
-    parts.append(box(-12.0, 12.0, -1.65, 1.65, traveler_floor, traveler_floor+.9))
-    for x in (-11.95, 10.9):
-        cheek = section([(-7.0,bottom(0)+1.2),(-7.0,bottom(0)-.15),
-                         (-1.65,traveler_floor),(1.65,traveler_floor),
-                         (7.0,bottom(0)-.15),(7.0,bottom(0)+1.2)])
-        parts.append(side_plate(cheek,x,x+1.05))
     return parts
 
 
