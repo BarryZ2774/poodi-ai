@@ -1,0 +1,191 @@
+{
+  "slug": "dutch-windmill",
+  "name": "Dutch Windmill",
+  "kind": "building",
+  "anchor": {
+    "lat": 37.770440892,
+    "lon": -122.509405798,
+    "what": "centre of the mapped ground outline at ground level"
+  },
+  "bearing_deg": 75,
+  "measurements_m": [
+    {
+      "what": "Height to cap above base",
+      "real": 22.86,
+      "model": 22.86,
+      "source": "https://npgallery.nps.gov/GetAsset/c1fdf718-784e-42c5-92fd-055bc965e42b"
+    },
+    {
+      "what": "Mapped gallery envelope width across local axis",
+      "real": 18.254,
+      "model": 18.254,
+      "source": "https://www.openstreetmap.org/way/287921407"
+    },
+    {
+      "what": "Mapped gallery envelope length along local axis",
+      "real": 18.315,
+      "model": 18.315,
+      "source": "https://www.openstreetmap.org/way/287921407"
+    },
+    {
+      "what": "Spar length, tip to opposite tip",
+      "real": 31.0896,
+      "model": 31.0896,
+      "source": "https://sfmuseum.org/hist/wmill.html"
+    },
+    {
+      "what": "Concrete tower foundation diameter",
+      "real": 10.0584,
+      "model": 10.0584,
+      "source": "https://npgallery.nps.gov/GetAsset/c1fdf718-784e-42c5-92fd-055bc965e42b"
+    },
+    {
+      "what": "Stock section, short face at the hub",
+      "real": 0.4064,
+      "model": 0.96,
+      "thickened": true,
+      "source": "https://sfmuseum.org/hist/wmill.html"
+    },
+    {
+      "what": "Stock section, long face at the hub",
+      "real": 0.508,
+      "model": 0.96,
+      "thickened": true,
+      "source": "https://sfmuseum.org/hist/wmill.html"
+    },
+    {
+      "what": "Face width of a sail lattice rib, photograph estimate",
+      "real": 0.035,
+      "model": 0.78,
+      "thickened": true,
+      "source": "https://commons.wikimedia.org/wiki/File:Golden_Gate_Park_north_windmill_sails.JPG",
+      "method": "Three 28-rib profiles in the upper sail give median visible rib widths of 11–12% of the 0.3048 m pitch described in the 1914 plant report. Rounded display cross-section represents grouped ribs.",
+      "pitch_source": "https://sfmuseum.org/hist/wmill.html"
+    },
+    {
+      "what": "Highest sail above ground at the displayed orientation",
+      "real": 33.6,
+      "model": 33.62925,
+      "bbox": "height",
+      "source": "https://sfmuseum.org/hist/wmill.html",
+      "method": "Display pose, not a fixed historic clearance. The 102 ft spar at 35 degrees from vertical and 12 degrees of tilt, an estimated 19.55 m hub, and the outer lattice corner give about 33.6 m."
+    }
+  ],
+  "plans": {
+    "base": {
+      "outline": [
+        [
+          7.152,
+          -5.638
+        ],
+        [
+          8.789,
+          -2.574
+        ],
+        [
+          9.157,
+          0.429
+        ],
+        [
+          8.525,
+          3.389
+        ],
+        [
+          6.98,
+          5.983
+        ],
+        [
+          4.662,
+          7.927
+        ],
+        [
+          1.85,
+          9.009
+        ],
+        [
+          -1.164,
+          9.123
+        ],
+        [
+          -4.056,
+          8.238
+        ],
+        [
+          -6.496,
+          6.465
+        ],
+        [
+          -8.249,
+          3.998
+        ],
+        [
+          -9.097,
+          1.088
+        ],
+        [
+          -8.966,
+          -1.939
+        ],
+        [
+          -7.859,
+          -4.754
+        ],
+        [
+          -5.9,
+          -7.048
+        ],
+        [
+          -3.301,
+          -8.584
+        ],
+        [
+          -0.35,
+          -9.192
+        ],
+        [
+          2.651,
+          -8.801
+        ],
+        [
+          5.356,
+          -7.455
+        ]
+      ],
+      "centre": [
+        -0.006,
+        0.003
+      ],
+      "source": "https://www.openstreetmap.org/way/287921407"
+    }
+  },
+  "checkpoints": [
+    {
+      "what": "Highest sail at the displayed rotor angle",
+      "lat": 37.770375499,
+      "lon": -122.509421027,
+      "min_height_m": 33.348,
+      "within_m": 3,
+      "source": "https://www.openstreetmap.org/way/287921407"
+    }
+  ],
+  "simplified": [
+    "The mapped 18.25 × 18.32 m outline is the projecting gallery, used directly at 5.5 m. Its edge extends up to 4.19 m beyond the documented 10.06 m diameter ground footing. The ground plan follows that published physical foundation.",
+    "The cap faces the prevailing westerlies. The rotor is fixed at 35° from vertical; its upper sail rises above the measured cap. The open sails group the lattice into five broad bays per blade.",
+    "A 12° tilt gives the lower sails clearance outside the gallery. The bearing housing, sixteen grouped gallery posts and one continuous rail are shown.",
+    "The NPS north-mill photograph shows a rounded, continuously tapering shaft and circular gallery. The model uses a 32-sided cone with smooth normals. Individual sail lattice ribs are grouped and thickened."
+  ],
+  "osm_attribution": "Outer gallery outline from OpenStreetMap, © OpenStreetMap contributors, ODbL.",
+  "origin_of_work": "Written from published measurements for this project. No third-party mesh used.",
+  "gallery_outline": {
+    "plan": "base",
+    "elevation_m": 5.5,
+    "source": "https://npgallery.nps.gov/GetAsset/268ad3f7-87be-4afa-a479-1eca2a5df79a/#page=7",
+    "ground_source": "https://sfmuseum.org/hist/wmill.html",
+    "maximum_ground_to_gallery_boundary_m": 4.188
+  },
+  "physical_ground": {
+    "shape": "circle",
+    "diameter_m": 10.0584,
+    "source": "https://sfmuseum.org/hist/wmill.html"
+  }
+}
