@@ -115,6 +115,9 @@ def write_glb(solid):
         triangles[faces, corners] = np.arange(len(faces)) + len(props)
     normals = normals.astype("<f4")
     # Preserve seams while sharing identical position/normal pairs.
+    used, triangles = np.unique(triangles, return_inverse=True)
+    triangles = triangles.reshape(-1,3)
+    positions, normals = positions[used], normals[used]
     keys = np.hstack((positions, normals))
     _, first, remap = np.unique(keys, axis=0, return_index=True, return_inverse=True)
     positions, normals = positions[first], normals[first]
