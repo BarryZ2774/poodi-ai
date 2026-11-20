@@ -1,0 +1,23 @@
+{
+  "slug": "_sample-tower",
+  "name": "Sample Tower (invented, for testing the tools)",
+  "kind": "building",
+  "anchor": {"lat": 37.775, "lon": -122.418, "what": "centre of the tower at ground level (an arbitrary point; the building does not exist)"},
+  "measurements_m": [
+    {"what": "height to the tip of the spire", "real": 124.0, "model": 124.0, "bbox": "height", "source": "https://example.com/sample-tower/drawings"},
+    {"what": "podium, east-west", "real": 30.0, "model": 30.0, "bbox": "length", "source": "https://example.com/sample-tower/drawings"},
+    {"what": "podium, north-south", "real": 30.0, "model": 30.0, "bbox": "width", "source": "https://example.com/sample-tower/drawings"},
+    {"what": "main shaft width", "real": 20.0, "model": 20.0, "source": "https://example.com/sample-tower/drawings"},
+    {"what": "crown drum diameter", "real": 9.0, "model": 9.0, "source": "https://example.com/sample-tower/drawings"}
+  ],
+  "checkpoints": [
+    {"what": "spire, on the centre line", "lat": 37.775, "lon": -122.418, "min_height_m": 120, "within_m": 2},
+    {"what": "north-east part of the podium", "lat": 37.7750991, "lon": -122.4178751, "min_height_m": 9.5, "within_m": 1.5}
+  ],
+  "simplified": [
+    "Corner notches drawn as single 3 m and 2 m steps.",
+    "No windows, doors or roof equipment.",
+    "Spire ends in a flat tip 0.7 m across instead of a point, so no part is thinner than 0.6 m."
+  ],
+  "origin_of_work": "Written from the numbers in build.py for this project. No third-party mesh used."
+}
