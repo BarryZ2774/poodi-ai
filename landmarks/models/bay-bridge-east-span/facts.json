@@ -13,7 +13,8 @@
       "what": "Tower above water",
       "real": 160,
       "model": 160,
-      "source": "https://ascelibrary.com/doi/10.1061/JSENDH.STENG-11725"
+      "source": "https://ascelibrary.com/doi/10.1061/JSENDH.STENG-11725",
+      "bbox": "height"
     },
     {
       "what": "Tower above road at tower",
@@ -50,6 +51,13 @@
       "real": 27.88,
       "model": 27.88,
       "source": "https://ascelibrary.com/doi/10.1061/JSENDH.STENG-11725"
+    },
+    {
+      "what": "Single main cable diameter",
+      "real": 0.79248,
+      "model": 1.78,
+      "thickened": true,
+      "source": "https://mtc.ca.gov/news/new-bay-bridge-east-span-reaches-high-point-cable-pulling-begins-week"
     }
   ],
   "checkpoints": [
