@@ -11,10 +11,11 @@
   "measurements_m": [
     {
       "what": "Overall height above the base",
-      "real": 21,
-      "model": 21,
-      "source": "https://www.openstreetmap.org/way/1410202318",
-      "bbox": "height"
+      "real": 22.05,
+      "model": 22.05,
+      "source": "https://zenodo.org/records/15443630",
+      "bbox": "height",
+      "method": "Maximum of the 2 m normalized LiDAR cells within 4 m on both local axes of the mapped rotunda centre; two adjacent cells are 22.0 and 22.1 m."
     },
     {
       "what": "Width across local axis",
@@ -29,22 +30,25 @@
       "source": "https://www.openstreetmap.org/relation/21115818"
     },
     {
-      "what": "Gallery ridge",
-      "real": 17,
-      "model": 17,
-      "source": "https://www.openstreetmap.org/way/1540337302"
+      "what": "Crown of the flanking gallery skylights",
+      "real": 17.1,
+      "model": 17.0,
+      "source": "https://zenodo.org/records/15443630",
+      "method": "Highest returns in 6 m wide windows along each long gallery ridge, clear of the trees at the ends. Individual maxima were 17.06 and 17.14 m."
     },
     {
       "what": "Entablature of court colonnades",
-      "real": 11,
-      "model": 11,
-      "source": "https://www.openstreetmap.org/way/1540327030"
+      "real": 8.2,
+      "model": 8.2,
+      "source": "https://zenodo.org/records/15443630",
+      "method": "Flat glazed roof on the front returns of the court arcade and on the court-side edge of each side arcade. Typical cells read about 8 m."
     },
     {
       "what": "Entrance arch crown",
-      "real": 16,
-      "model": 16,
-      "source": "https://www.openstreetmap.org/way/1540333313"
+      "real": 11.6,
+      "model": 11.6,
+      "source": "https://zenodo.org/records/15443630",
+      "method": "Median of 11 raster cells within a 9.4 x 4.0 m window on the flat gate crown was 11.60 m."
     }
   ],
   "plans": {
@@ -598,19 +602,27 @@
       "what": "Rotunda roof",
       "lat": 37.784297355,
       "lon": -122.501102662,
-      "min_height_m": 20.7,
+      "min_height_m": 21.7,
       "within_m": 5,
-      "source": "https://www.openstreetmap.org/way/1410202318"
+      "source": "https://zenodo.org/records/15443630"
     }
   ],
   "simplified": [
     "The open court retains the side colonnades, entrance arch and pedimented rear portico. Roof lanterns and capitals replace individual carvings.",
     "The rotunda, galleries and court share one grade. Artworks, fountains, inscriptions, underground galleries and the surrounding park are omitted.",
-    "The entrance has a modeled arch surround, pilasters and attic molding. Raised skylights divide each long roof into four groups. Three broad treads lead to the rear portico."
+    "The museum photographs show six front portico columns under a level entablature, a rear cupola no wider than the drum, and modest strips of skylights on the two long roofs. The entrance arch mouldings extend to the paving and the broad portico steps are joined to the terrace."
   ],
   "osm_attribution": "Ground outline from OpenStreetMap, © OpenStreetMap contributors, ODbL.",
   "origin_of_work": "Written from published measurements for this project. No third-party mesh used.",
   "courtyard_keys": [
     "court"
+  ],
+  "survey_source": {
+    "url": "https://zenodo.org/records/15443630",
+    "description": "Published 2 m DSM minus bare-earth LiDAR raster. Local heights, rounded to field precision. The museum anchor in EPSG:7131 is E 43525.95, N 27831.87 m. Roof returns can vary with cell coverage and local terrain."
+  },
+  "visual_sources": [
+    "https://artondemand.famsf.org/detail/514978/legion-of-honor-aerial-view-and-lands-end",
+    "https://artondemand.famsf.org/detail/514976/legion-of-honor-rodin%E2%80%99s-the-thinker-and-the-museum-portico"
   ]
 }

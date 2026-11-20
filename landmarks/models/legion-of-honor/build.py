@@ -171,39 +171,39 @@ def build():
             cut=arch_cut(y,3.1,6.7,1.65,-sign*29.8,3.7)
             galleries-=cut.rotate((0,0,90))
         axis=sign*24
-        hard.append(hip(axis,6.4,11.4,86.3,12.3,15.15,76))
+        hard.append(hip(axis,6.4,11.4,86.3,12.3,16.3,76))
         # A low hipped cover carries raised runs of gallery skylights.
-        for centre,length in [(-21,16.5),(.5,19.0),(23,17),(41,12.3)]:
-            hard.append(box(axis-2.15,axis+2.15,centre-length/2,centre+length/2,14.2,15.6))
-            hard.append(hip(axis,centre,4.3,length,15.6,17,length-2.7))
+        for centre,length in [(-21,16.5),(.5,19.0),(23,17),(39.1,10.0)]:
+            hard.append(hip(axis,centre,4.3,length,13.25,17.0,length-2.7))
     hard.append(galleries)
-    hard.append(hip(0,-15.7,12.2,38.4,12.3,17,32))
+    hard.append(hip(0,-15.7,12.2,38.4,12.3,17.35,32))
     cx,cy=plans["rotunda"]["centre"]
-    rotunda=drum(cx,cy,[(12.3,6.3,6.3),(13.3,6.6,6.6),(14,6.9,6.9),
-                        (15.3,6.9,6.9),(17,6.35,6.35),(18.8,5.3,5.3),
-                        (20.2,3.3,3.3),(21,1,1)],24)
+    # The shallow cupola tapers continuously above its cylindrical drum.
+    rotunda=drum(cx,cy,[(12.3,6.65,6.65),(17.65,6.65,6.65),
+                        (18.95,6.20,6.20),(20.2,5.15,5.15),(21.0,3.7,3.7),
+                        (21.4,1.5,1.5),(22.05,.72,.72)],24)
     for k,sign in (("northWalk",-1),("southWalk",1)):
-        hard.append(sheet(k).extrude(1.7).translate((0,0,9.3)))
+        hard.append(sheet(k).extrude(1.56).translate((0,0,6.64)))
         for y in np.linspace(5.8,46.9,11):
             x=sign*16.38
             hard.append(drum(x,y,[(.72,.95,.95),(1.7,.95,.95),(1.7,.69,.69),
-                                  (8.4,.67,.67),(9.3,.95,.95)],12))
+                                  (5.85,.67,.67),(6.64,.95,.95)],12))
         for x in (8.1,12.2):
-            hard.append(drum(sign*x,47.15,[(.72,.94,.94),(9.3,.82,.82)],12))
-    for extent,level in [(12.35,.77),(11.50,1.16),(10.65,1.55)]:
-        hard.append(box(-6.75,6.75,4.65,extent,0,level))
-    for x in (-4.9,-1.65,1.65,4.9):
-        hard.append(drum(x,9.25,[(.7,.85,.85),(10.7,.75,.75)],12))
-    hard.append(front_plate([(-6.28,10.6),(6.28,10.6),(6.28,12.2),(0,15),
-                             (-6.28,12.2)],8.1,5.4))
-    gate=box(-5.46,5.23,44.88,49.65,.7,15.1)
-    gate-=arch_cut(-.11,.68,9.35,2.36,47.15,7)
-    arch=arch_cut(-.11,.70,9.35,3.25,49.48,1.64)-arch_cut(-.11,.65,9.35,2.36,49.48,2)
+            hard.append(drum(sign*x,47.15,[(.72,.94,.94),(6.64,.82,.82)],12))
+    for extent,level in [(12.35,.80),(11.28,1.51)]:
+        hard.append(box(-6.75,6.75,3.65,extent,0,level))
+    for x in np.linspace(-5.14,5.14,6):
+        hard.append(drum(x,9.25,[(.7,.71,.71),(9.4,.63,.63),(9.92,.80,.80)],10))
+    # A level cornice caps the six-column portico below the gallery gable.
+    hard.append(box(-6.38,6.30,5.05,10.85,9.92,13.0))
+    gate=box(-5.46,5.23,44.88,49.65,0,10.84)
+    gate-=arch_cut(-.11,-.2,6.52,2.36,47.15,7)
+    arch=arch_cut(-.11,0,6.52,3.25,49.48,1.64)-arch_cut(-.11,-.2,6.52,2.36,49.48,2)
     gate+=arch
-    gate+=box(-5.52,5.29,44.8,50.0,12.88,13.68)
+    gate+=box(-5.52,5.29,44.8,50.0,9.4,10.15)
     for u in (-4.45,4.22):
-        gate+=box(u-.55,u+.55,49.25,50.35,.7,13.45)
-    hard.extend([gate,box(-5.8,5.56,44.58,49.88,15.1,16)])
+        gate+=box(u-.55,u+.55,49.25,50.35,0,9.95)
+    hard.extend([gate,box(-5.8,5.56,44.58,49.88,10.84,11.6)])
     finish(hard,[(rotunda,24)])
 
 
