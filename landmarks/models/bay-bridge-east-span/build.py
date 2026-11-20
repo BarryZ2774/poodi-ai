@@ -208,8 +208,8 @@ def build():
         for sign in (-1,1):
             x=offset(y)+sign*20.77
             top=min(road(a),road(b))-3.7
-            hard.append(pedestal(x,(a+b)/2,[(0,20,b-a,1.65),(top-3,16,b-a,1.55),
-                                            (top,16,b-a,1.55)]))
+            hard.append(pedestal(x,(a+b)/2,[(0,9,b-a,1.2),(3,8,b-a,1.2),
+                                            (top-6,7,b-a,1.0),(top,15,b-a,1.4)]))
     for y in [-180,385,520,665,810]:
         z=road(y)
         for sign in (-1,1):
