@@ -239,7 +239,12 @@ def approaches():
             parts.append(brace(sign*10.9,ground+1,-sign*10.9,top-2,1.6,s,2.6))
     for s, inward in [(SOUTH_END, 1), (NORTH_END, -1)]:
         a, b = sorted([s, s+inward*5])
-        parts.append(box(-13.2, 13.2, a, b, 0, road(s)-1))
+        station = (a+b)/2
+        soffit = road(station)-2
+        for x in (-10.9,10.9):
+            parts.append(box(x-1.5,x+1.5,a,b,0,soffit))
+        parts.append(box(-12.4,12.4,a,b,soffit-2,road(station)-.9))
+        parts.append(brace(-10.9,1,10.9,soffit-2,1.6,station,2.6))
     return parts
 
 
@@ -253,10 +258,10 @@ def cable_height(s):
 
 def cables():
     parts = []
-    stations = np.arange(-64,65)*PANEL
+    stations = np.arange(-63,64)*PANEL  # The terminal bays meet the pylons.
     path = [(S2-70,27),(S2,road(S2)-4)]
-    curve_stations = np.r_[np.linspace(-PYLON, -TOWER, 7)[:-1],
-                          np.linspace(-TOWER, TOWER, 25)[:-1], np.linspace(TOWER, PYLON, 7)]
+    curve_stations = np.r_[np.linspace(-PYLON, -TOWER, 6)[:-1],
+                          np.linspace(-TOWER, TOWER, 25)[:-1], np.linspace(TOWER, PYLON, 6)]
     path.extend((s, cable_height(s)) for s in curve_stations)
     path.append((PYLON+215*0.3048, road(PYLON)-28))
     cable_height_samples = [cable_height(s) for s in curve_stations]
