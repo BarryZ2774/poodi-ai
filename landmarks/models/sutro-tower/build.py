@@ -168,21 +168,30 @@ def build():
     for i,name in enumerate(names):
         outline=np.array(plans[name]["outline"])
         hard.append(mass(outline,0,2))
-        # The clad legs bend inward at the waist and flare to the aerial heads.
+        # The main leg envelopes bend inward at the waist and flare to the aerial heads.
         shape=np.array([[-1.1,-1.1],[1.1,-1.1],[1.1,1.1],[-1.1,1.1]])
         rings=[]
         for z in (2,knee,platform):
             rings.append([(*uv,z) for uv in locations(z)[i]+shape])
         hard.append(loft(rings))
         x,y=top[i]
-        hard.append(drum(x,y,[(platform,1.28,1.28),(257,1.28,1.28),(257,.93,.93),
-                              (279,.93,.93),(279,.62,.62),(297.7896,.62,.62)],12))
+        hard.append(drum(x,y,[(platform-.45,1.95,1.95),(platform+3.5,1.95,1.95),
+                              (platform+6.8,1.35,1.35),(257,1.35,1.35),(257,.93,.93),
+                              (279,.93,.93),(279,.68,.68),(297.7896,.68,.68)],12))
     previous=2.
     for height in (180,375,550,650,755):
         centre=height*.3048
         bottom,upper=centre-1.5,centre+1.5
         for i in range(3):
             j=(i+1)%3
+            if height in (180,375,550):
+                p=locations(centre)
+                hard.append(bar((*p[i],centre),(*p[j],centre),1.65,3.3))
+            if height==755:
+                p=locations(upper)
+                direction=(p[j]-p[i])/np.linalg.norm(p[j]-p[i])
+                hard.append(bar((*(p[i]-3.6*direction),upper),
+                                (*(p[j]+3.6*direction),upper),1.5))
             for z in (bottom,upper):
                 p=locations(z)
                 hard.append(bar((*p[i],z),(*p[j],z),1.25))
