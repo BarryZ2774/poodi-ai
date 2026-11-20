@@ -202,9 +202,11 @@ def build():
         slab += [(s,road(s)-down-1.5) for s in reversed(stations)]
         hard.append(side_plate(section(slab), -width/2, width/2))
     # A single folded web on either edge reveals both traffic levels.
-    ys = np.linspace(west+1,east-1,63)
+    ys = np.linspace(west+1,east-1,193)
     for x in (-9.10,9.10):
         for i, (a,b) in enumerate(zip(ys,ys[1:])):
+            if i%2==0:
+                hard.append(box(x-.60,x+.60,a-.66,a+.66,road(a)-depth+.8,road(a)-.8))
             z1, z2 = (0.9, depth-0.9) if i%2 else (depth-0.9, 0.9)
             hard.append(bar((x,a,road(a)-z1),(x,b,road(b)-z2),1.15))
     for i,s in enumerate((w2,w3,w5,w6)):
@@ -220,8 +222,11 @@ def build():
                        [road(s)-depth,road(s)+1,top-42,top-20,top-3]):
             for sign in (-1,1):
                 hard.append(brace(sign*leg_x(a),a,-sign*leg_x(b),b,2.1,s,3.2))
-        hard.append(box(-13,13,s-4.4,s+4.4,top-4.5,top))
+        hard.append(box(-13,13,s-4.4,s+4.4,top-4.5,top-1.4))
+        for x in (-9.4,9.4):
+            hard.append(pedestal(x,s,[(top-1.5,5.5,8.6,1),(top,4.7,7.6,.8)]))
     # Centre anchor rises between the two independent pairs of cables.
+    hard.append(pedestal(0,0,[(-2,36,74,6),(3.5,36,74,6),(4.4,34,72,6)]))
     hard.append(pedestal(0,0,[(-3,34,72,6),(14,34,72,6),(52,29,61,4)]))
     hard.append(pedestal(0,0,[(50,29,61,4),(crown-depth,28,2*half_anchor,2)]))
     for x in (-12.1,12.1):
@@ -241,10 +246,11 @@ def build():
     for s in (w2-side,east-7):
         for x in (-9.4,9.4):
             hard.append(box(x-1.55,x+1.55,s-2.2,s+2.2,road(s)-4.4,road(s)+2.15))
-    for s in np.linspace(west+2,w2-side,5)[1:-1]:
+    for s in np.linspace(west+3.3,w2-side-2.1,5)[1:-1]:
         for sign in (-1,1):
             hard.append(bar((sign*12.8,s,0),(sign*9.5,s,road(s)-1),2.1,3))
-            hard.append(brace(sign*11,3,-sign*10,road(s)-depth,1.6,s,2.2))
+        hard.append(brace(-12.5,3,10,road(s)-depth,1.8,s,2.0))
+        hard.append(box(-11.4,11.4,s-1.1,s+1.1,road(s)/2,road(s)/2+1.65))
     for a,b,c,d in [(w2-side,w2,w3,-half_anchor),(half_anchor,w5,w6,east)]:
         tower_z = lambda s: (474 if s in (w2,w6) else 519)*.3048-1.4
         nodes = [a,b,c,d]
