@@ -1,0 +1,259 @@
+{
+  "slug": "golden-gate-bridge",
+  "name": "Golden Gate Bridge",
+  "kind": "bridge",
+  "anchor": {
+    "lat": 37.8197584999,
+    "lon": -122.4785625925,
+    "what": "midpoint of the main span, at mean sea level"
+  },
+  "checkpoints": [
+    {
+      "what": "San Francisco Tower centre",
+      "lat": 37.8140143999,
+      "lon": -122.4778914425,
+      "min_height_m": 200,
+      "within_m": 5,
+      "source": "https://www.openstreetmap.org/way/1330586852"
+    },
+    {
+      "what": "Marin Tower centre",
+      "lat": 37.8255025999,
+      "lon": -122.4792337425,
+      "min_height_m": 200,
+      "within_m": 5,
+      "source": "https://www.openstreetmap.org/way/1330832666"
+    },
+    {
+      "what": "East leg of Pylon S2",
+      "lat": 37.809954009,
+      "lon": -122.477231794,
+      "min_height_m": 60,
+      "within_m": 5,
+      "source": "https://www.openstreetmap.org/way/1560010164"
+    },
+    {
+      "what": "South anchorage centre",
+      "lat": 37.80941468,
+      "lon": -122.477358222,
+      "min_height_m": 34.5,
+      "within_m": 5,
+      "source": "https://www.openstreetmap.org/way/1560010167"
+    }
+  ],
+  "position_method": "Area centroids of the named OpenStreetMap building footprints. The tower axis follows their WGS84 local bearing. The 1,280 m District span is centred on their geographic midpoint. Footprints © OpenStreetMap contributors.",
+  "water_datum": {
+    "mhhw_above_msl_m": 0.829,
+    "what": "Fort Point tide station 9414290. MHHW 3.602 m minus MSL 2.773 m on the same station datum. The 67 m District clearance is measured from MHHW.",
+    "source": "https://api.tidesandcurrents.noaa.gov/mdapi/prod/webapi/stations/9414290/datums.json?units=metric",
+    "msl_above_mllw_m": 0.951
+  },
+  "measurements_m": [
+    {
+      "what": "Abutment to abutment, including approaches",
+      "real": 2737,
+      "model": 2737,
+      "source": "https://www.goldengate.org/bridge/history-research/statistics-data/design-construction-stats/",
+      "bbox": "length"
+    },
+    {
+      "what": "Main span, tower centre to tower centre",
+      "real": 1280,
+      "model": 1280,
+      "source": "https://www.goldengate.org/bridge/history-research/statistics-data/design-construction-stats/"
+    },
+    {
+      "what": "San Francisco side span",
+      "real": 343,
+      "model": 343,
+      "source": "https://www.goldengate.org/bridge/history-research/statistics-data/design-construction-stats/"
+    },
+    {
+      "what": "Marin side span",
+      "real": 343,
+      "model": 343,
+      "source": "https://www.goldengate.org/bridge/history-research/statistics-data/design-construction-stats/"
+    },
+    {
+      "what": "Tower top above water",
+      "real": 227,
+      "model": 227,
+      "source": "https://www.goldengate.org/bridge/history-research/statistics-data/design-construction-stats/",
+      "bbox": "height"
+    },
+    {
+      "what": "Tower top above roadway at tower",
+      "real": 152,
+      "model": 152.9458,
+      "source": "https://www.goldengate.org/bridge/history-research/statistics-data/design-construction-stats/"
+    },
+    {
+      "what": "Overall bridge deck width",
+      "real": 27,
+      "model": 27,
+      "source": "https://www.goldengate.org/bridge/history-research/statistics-data/design-construction-stats/"
+    },
+    {
+      "what": "Roadway width between curbs",
+      "real": 19,
+      "model": 19,
+      "source": "https://www.goldengate.org/bridge/history-research/statistics-data/design-construction-stats/"
+    },
+    {
+      "what": "Clearance to the fixed center-span structure above MHHW (231 ft, Coast Pilot)",
+      "real": 70.4088,
+      "model": 70.3902,
+      "source": "https://nauticalcharts.noaa.gov/publications/coast-pilot/files/cp7/CPB7_WEB.pdf",
+      "district_source": "https://www.goldengate.org/bridge/history-research/statistics-data/design-construction-stats/"
+    },
+    {
+      "what": "Tower leg base, transverse",
+      "real": 10.0584,
+      "model": 10.0584,
+      "source": "https://www.goldengate.org/bridge/history-research/statistics-data/design-construction-stats/"
+    },
+    {
+      "what": "Tower leg base, longitudinal",
+      "real": 16.4592,
+      "model": 16.4592,
+      "source": "https://www.goldengate.org/bridge/history-research/statistics-data/design-construction-stats/"
+    },
+    {
+      "what": "Main cable sag, saddle centreline to midspan centreline",
+      "real": 144,
+      "model": 143.256,
+      "source": "https://www.goldengate.org/assets/1/6/ggb-exhibit-chapter-statistics.pdf",
+      "profile_source": "https://www.goldengate.org/assets/1/6/ggb_plan_elevation_drawing.jpg"
+    },
+    {
+      "what": "Fort Point arch rib span between springings",
+      "real": 97.536,
+      "model": 97.536,
+      "source": "https://www.goldengate.org/assets/1/6/suicide-deterrent-historic-resources-evaluation-report.pdf"
+    },
+    {
+      "what": "South anchorage housing length",
+      "real": 112.776,
+      "model": 112.776,
+      "source": "https://www.goldengate.org/assets/1/6/suicide-deterrent-historic-resources-evaluation-report.pdf"
+    },
+    {
+      "what": "South anchorage housing wall width below coping",
+      "real": 36.576,
+      "model": 36.576,
+      "source": "https://www.goldengate.org/assets/1/6/suicide-deterrent-historic-resources-evaluation-report.pdf"
+    },
+    {
+      "what": "South anchorage housing height",
+      "real": 18.288,
+      "model": 18.288,
+      "source": "https://www.goldengate.org/assets/1/6/suicide-deterrent-historic-resources-evaluation-report.pdf"
+    },
+    {
+      "what": "North anchorage housing length",
+      "real": 106.68,
+      "model": 106.68,
+      "source": "https://www.goldengate.org/assets/1/6/suicide-deterrent-historic-resources-evaluation-report.pdf"
+    },
+    {
+      "what": "North anchorage housing width",
+      "real": 39.624,
+      "model": 39.624,
+      "source": "https://www.goldengate.org/assets/1/6/suicide-deterrent-historic-resources-evaluation-report.pdf"
+    },
+    {
+      "what": "North anchorage housing height",
+      "real": 33.528,
+      "model": 33.528,
+      "source": "https://www.goldengate.org/assets/1/6/suicide-deterrent-historic-resources-evaluation-report.pdf"
+    },
+    {
+      "what": "South pier fender, long axis",
+      "real": 91.44,
+      "model": 91.44,
+      "source": "https://www.goldengate.org/assets/1/6/suicide-deterrent-historic-resources-evaluation-report.pdf"
+    },
+    {
+      "what": "South pier fender, short axis",
+      "real": 47.244,
+      "model": 47.24,
+      "source": "https://www.goldengate.org/assets/1/6/suicide-deterrent-historic-resources-evaluation-report.pdf"
+    },
+    {
+      "what": "Roadway crown at midspan, above MLLW",
+      "real": 81.29016,
+      "model": 81.29016,
+      "source": "https://www.goldengate.org/assets/1/6/ggb_plan_elevation_drawing.jpg"
+    },
+    {
+      "what": "Roadway crown at towers, above MLLW",
+      "real": 75.00518,
+      "model": 75.00518,
+      "source": "https://www.goldengate.org/assets/1/6/ggb_plan_elevation_drawing.jpg"
+    },
+    {
+      "what": "Wrapped main cable diameter",
+      "real": 0.92,
+      "model": 1.64,
+      "source": "https://www.goldengate.org/bridge/history-research/statistics-data/design-construction-stats/",
+      "exception": "Rule 8 enlargement. Measured across the transverse cable section.",
+      "thickened": true
+    },
+    {
+      "what": "Depth of stiffening truss",
+      "real": 7.62,
+      "model": 7.62,
+      "source": "https://www.goldengate.org/exhibits/hanging-the-roadway-deck/"
+    },
+    {
+      "what": "Truss panel and suspender pitch",
+      "real": 15.24,
+      "model": 15.24,
+      "source": "https://www.goldengate.org/exhibits/hanging-the-roadway-deck/"
+    },
+    {
+      "what": "Main cable spacing",
+      "real": 27.432,
+      "model": 27.44,
+      "source": "https://www.goldengate.org/assets/1/6/suicide-deterrent-historic-resources-evaluation-report.pdf"
+    },
+    {
+      "what": "Suspender rope diameter",
+      "real": 0.06826,
+      "model": 1.1,
+      "source": "https://www.goldengate.org/bridge/history-research/statistics-data/design-construction-stats/",
+      "thickened": true
+    }
+  ],
+  "shape_references": [
+    {
+      "what": "Deck camber and grades, pylon stations, side-span profiles and approach elevations",
+      "source": "https://www.goldengate.org/assets/1/6/ggb_plan_elevation_drawing.jpg"
+    },
+    {
+      "what": "Four portal struts with stepped brackets, under-deck bracing, four arch ribs, shore structures and anchorage offsets",
+      "source": "https://www.goldengate.org/assets/1/6/suicide-deterrent-historic-resources-evaluation-report.pdf"
+    },
+    {
+      "what": "Stepped tower openings and ribbed portal faces",
+      "source": "https://www.goldengate.org/bridge/history-research/bridge-features/color-art-deco-styling/"
+    }
+  ],
+  "simplified": [
+    "Main cables use a smoothed six-sided section, enlarged to 1.64 m across. Suspenders use a square 1.10 m display section at 15.24 m intervals.",
+    "A 7.62 m deep stiffening web uses 15.24 m panels and alternating 45° diagonals. The profile uses a simplified 1.5 m crown-to-upper-chord allowance.",
+    "Legs step back on their outer faces with vertical inner jambs. Recessed channels replace finer fluting on the legs and cross struts. Each cable seats between a pair of saddle cheeks.",
+    "Vertical plinths run under the land anchorages to mean sea level. Each approach terminates on an open, grounded two-leg bent with a cap and diagonal. Four Fort Point ribs retain their separate springings.",
+    "Lights, guardrail pickets, safety netting, road markings, terrain and water are omitted.",
+    "A raised fender rim, grouped arch posts and a cap course on the southern housing distinguish the shore supports at map scale."
+  ],
+  "origin_of_work": "Written from published measurements for this project. No third-party mesh used.",
+  "clearance_reconciliation": {
+    "what": "The District gives a nominal clearance of 220 ft (67 m). NOAA gives 231 ft (70.41 m) at the fixed centre span. The model follows that midspan value, with 70.390 m beneath the fixed truss.",
+    "district": "https://www.goldengate.org/bridge/history-research/statistics-data/design-construction-stats/",
+    "permit": "https://www.goldengate.org/bridge/history-research/bridge-construction/construction/",
+    "crown": "https://www.goldengate.org/assets/1/6/ggb_plan_elevation_drawing.jpg",
+    "clearance": "https://nauticalcharts.noaa.gov/publications/coast-pilot/files/cp7/CPB7_WEB.pdf",
+    "deck_offset": "The 1.50 m simplified crown-to-upper-chord allowance reconciles the District elevation drawing with the charted fixed center-span clearance."
+  }
+}
