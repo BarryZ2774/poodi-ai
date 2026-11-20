@@ -1,0 +1,276 @@
+{
+  "slug": "fort-point",
+  "name": "Fort Point",
+  "kind": "building",
+  "anchor": {
+    "lat": 37.810553412,
+    "lon": -122.477111712,
+    "what": "centre of the mapped ground outline at ground level"
+  },
+  "bearing_deg": 68.26977514819151,
+  "measurements_m": [
+    {
+      "what": "Overall height above the base",
+      "real": 21.945600000000002,
+      "model": 21.945600000000002,
+      "source": "https://www.npshistory.com/publications/fopo/sf-presidio-fort-point.pdf",
+      "bbox": "height",
+      "method": "45 ft to the fort roof plus the 27 ft lighthouse.",
+      "tower_source": "https://www.history.uscg.mil/Browse-by-Topic/Assets/Land/Lighthouses-Light-Stations/Article/1926698/fort-point-light-ca/"
+    },
+    {
+      "what": "Width across local axis",
+      "real": 60.241,
+      "model": 60.241,
+      "source": "https://www.openstreetmap.org/relation/5504536"
+    },
+    {
+      "what": "Length along local axis",
+      "real": 92.008,
+      "model": 92.008,
+      "source": "https://www.openstreetmap.org/relation/5504536"
+    },
+    {
+      "what": "Fort roof above grade",
+      "real": 13.716,
+      "model": 13.716,
+      "source": "https://www.npshistory.com/publications/fopo/sf-presidio-fort-point.pdf"
+    },
+    {
+      "what": "Lighthouse height above roof",
+      "real": 8.2296,
+      "model": 8.2296,
+      "source": "https://www.history.uscg.mil/Browse-by-Topic/Assets/Land/Lighthouses-Light-Stations/Article/1926698/fort-point-light-ca/"
+    },
+    {
+      "what": "Parapet thickness",
+      "real": 1.8288,
+      "model": 1.8288,
+      "source": "https://www.nps.gov/goga/learn/historyculture/upload/2006-fopo-hsr.pdf"
+    },
+    {
+      "what": "Parapet above the roof",
+      "real": 1.524,
+      "model": 1.524,
+      "source": "https://www.nps.gov/goga/learn/historyculture/upload/2006-fopo-hsr.pdf"
+    }
+  ],
+  "plans": {
+    "base": {
+      "outline": [
+        [
+          17.014,
+          31.204
+        ],
+        [
+          -3.481,
+          37.761
+        ],
+        [
+          -5.706,
+          48.127
+        ],
+        [
+          -9.284,
+          50.302
+        ],
+        [
+          -16.807,
+          48.513
+        ],
+        [
+          -19.254,
+          45.071
+        ],
+        [
+          -17.044,
+          34.787
+        ],
+        [
+          -26.679,
+          26.143
+        ],
+        [
+          -27.809,
+          21.389
+        ],
+        [
+          -19.224,
+          -18.709
+        ],
+        [
+          -27.403,
+          -25.829
+        ],
+        [
+          -27.809,
+          -30.445
+        ],
+        [
+          -22.572,
+          -36.191
+        ],
+        [
+          -18.271,
+          -36.284
+        ],
+        [
+          -10.042,
+          -29.127
+        ],
+        [
+          29.177,
+          -41.706
+        ],
+        [
+          32.432,
+          -38.936
+        ]
+      ],
+      "centre": [
+        0.053,
+        0.217
+      ],
+      "source": "https://www.openstreetmap.org/relation/5504536"
+    },
+    "court": {
+      "outline": [
+        [
+          -18.377,
+          20.682
+        ],
+        [
+          -12.293,
+          -6.863
+        ],
+        [
+          -6.152,
+          -13.88
+        ],
+        [
+          -4.66,
+          -13.404
+        ],
+        [
+          -3.194,
+          -14.282
+        ],
+        [
+          -2.862,
+          -15.608
+        ],
+        [
+          -3.51,
+          -16.905
+        ],
+        [
+          2.132,
+          -23.343
+        ],
+        [
+          14.763,
+          -27.297
+        ],
+        [
+          17.504,
+          -24.948
+        ],
+        [
+          6.634,
+          24.165
+        ],
+        [
+          3.804,
+          25.88
+        ],
+        [
+          -4.854,
+          23.852
+        ],
+        [
+          -4.939,
+          22.559
+        ],
+        [
+          -6.923,
+          20.999
+        ],
+        [
+          -8.073,
+          21.021
+        ],
+        [
+          -9.875,
+          22.678
+        ]
+      ],
+      "centre": [
+        0.159,
+        0.685
+      ],
+      "source": "https://www.openstreetmap.org/way/370509217"
+    },
+    "light": {
+      "outline": [
+        [
+          -5.714,
+          -13.59
+        ],
+        [
+          -6.808,
+          -14.955
+        ],
+        [
+          -6.696,
+          -16.204
+        ],
+        [
+          -5.877,
+          -17.146
+        ],
+        [
+          -4.043,
+          -17.252
+        ],
+        [
+          -2.969,
+          -16.087
+        ],
+        [
+          -2.981,
+          -14.679
+        ],
+        [
+          -4.115,
+          -13.535
+        ]
+      ],
+      "centre": [
+        -4.858,
+        -15.41
+      ],
+      "source": "https://www.openstreetmap.org/way/1358282761"
+    }
+  },
+  "checkpoints": [
+    {
+      "what": "Fort Point Light lantern roof",
+      "lat": 37.810542618,
+      "lon": -122.477294643,
+      "min_height_m": 21.6456,
+      "within_m": 5,
+      "source": "https://www.openstreetmap.org/way/1358282761"
+    }
+  ],
+  "simplified": [
+    "Three tiers of broad recessed arches face the mapped open court. Short corners and stair drums remain solid.",
+    "The nine-sided lighthouse keeps its base, gallery and lantern. Smaller ironwork, masonry joints and rooftop fittings are omitted.",
+    "One continuous average-height parapet follows the exterior. Two gabled stair penthouses and a recessed south entrance are grouped from the NPS historic structure report.",
+    "The two stair penthouse roofs reach an estimated 16.75 m above the fort datum. Their elevations illustrate the rooftop forms in the NPS report."
+  ],
+  "osm_attribution": "Ground outline from OpenStreetMap, © OpenStreetMap contributors, ODbL.",
+  "origin_of_work": "Written from published measurements for this project. No third-party mesh used.",
+  "courtyard_keys": [
+    "court"
+  ]
+}
