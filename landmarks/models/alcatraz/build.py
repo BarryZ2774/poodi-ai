@@ -215,7 +215,7 @@ def build():
     yard_floor = 32.365
     terrain = island_slope() ^ shore.extrude(summit)
     for plan,level in [(factories,13),(dock,4.8),(plateau,summit),
-                       (yard,yard_floor),(section(points("tank")).offset(1.3),31.2)]:
+                       (yard,yard_floor)]:
         area = plan ^ shore
         terrain -= area.extrude(75-level).translate((0,0,level))
         terrain += area.extrude(level)
@@ -272,15 +272,24 @@ def build():
                              (base+h-1.6,1.55,1.55),(base+h-1.6,2,2),(base+h-.85,2,2),
                              (base+h,0.35,0.35)],8))
     x,y=centre("tank")
-    foot,top=31.2,31.2+94*.3048
-    for a,b in [(-1,-1),(-1,1),(1,-1),(1,1)]:
-        u,v=x+a*4.45,y+b*4.45
-        hard.append(box(u-.66,u+.66,v-.66,v+.66,foot-1.4,top-8))
-    for side in (-1,1):
-        for a in (-1,1):
-            member=bar((a*4.45,side*4.45,foot+1.5),(-a*4.45,side*4.45,top-9),1.05)
-            hard.append(member.translate((x,y,0)))
-            hard.append(member.rotate((0,0,90)).translate((x,y,0)))
+    # Each footing bears directly on the unaltered rock. Keep a level tank
+    # and measure its published height from the mean of the four footing tops.
+    footing_tops = {}
+    half_spacing = 4.45
+    for dx in (-half_spacing, half_spacing):
+        for dy in (-half_spacing, half_spacing):
+            u, v = x + dx, y + dy
+            grade = terrain.ray_cast((u, v, summit + 1), (u, v, 0))[0].position[2]
+            cap = grade + 0.5
+            footing_tops[dx, dy] = cap
+            hard.append(box(u-1.05, u+1.05, v-1.05, v+1.05, grade-0.8, cap))
+    top = sum(footing_tops.values()) / len(footing_tops) + 94 * 0.3048
+    for (dx, dy), cap in footing_tops.items():
+        u, v = x + dx, y + dy
+        hard.append(box(u-.66, u+.66, v-.66, v+.66, cap-.2, top-8))
+        start = (u, v, cap+1.0)
+        for end in ((x-dx, v, top-9), (u, y-dy, top-9)):
+            hard.append(bar(start, end, 1.05))
     tank=drum(x,y,[(top-11,2,2),(top-9,6.6,6.6),(top-1.8,6.6,6.6),
                    (top,0.5,0.5)],24)
     finish(hard,[(tank,25)])

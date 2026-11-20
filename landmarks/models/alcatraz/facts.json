@@ -51,7 +51,8 @@
       "what": "Water tower height above its footings",
       "real": 28.6512,
       "model": 28.6512,
-      "source": "https://www.nps.gov/places/000/alcatraz-water-tower.htm"
+      "source": "https://www.nps.gov/places/000/alcatraz-water-tower.htm",
+      "method": "NPS gives 94 ft for the tower. On the sloping site, the model measures from the mean top elevation of the four individual footings to the roof peak. Each footing bears on the interpolated USGS terrain at its leg, with its top 0.50 m above local grade."
     },
     {
       "what": "Powerhouse chimney above its terrace",
@@ -96,7 +97,7 @@
       "what": "tank",
       "lon": -122.423931613,
       "lat": 37.8275728,
-      "min_height_m": 55,
+      "min_height_m": 51,
       "within_m": 5,
       "source": "https://www.openstreetmap.org/way/660870452"
     },
@@ -120,7 +121,7 @@
   "simplified": [
     "The shoreline follows the OSM coastline. Sloped rock faces and broad terraces stand in for individual cliffs, seawalls and paths.",
     "The prison, dining hall, administration wing, barracks and industrial buildings use their mapped plans. Repeated roof bays and a raised cellhouse roof convey the blocks at map scale.",
-    "The lighthouse uses the 84-foot structure in the National Park Service landscape inventory. The water tank is supported on four enlarged legs. Handrails, windows, lettering and vegetation are omitted.",
+    "The lighthouse uses the 84-foot structure in the National Park Service landscape inventory. The water tank stands on four enlarged legs with separate concrete footings on the sloping rock. Handrails, windows, lettering and vegetation are omitted.",
     "Surveyed transects form irregular sloped rock and cliffs. The dock, parade ground and industries apron have distinct level surfaces. The exercise yard sits 8.48 m below the NPS crest.",
     "A perimeter wall encloses the mapped exercise yard. Broad roof monitors and a tapered chimney distinguish the northwestern workshops."
   ],
