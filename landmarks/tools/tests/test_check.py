@@ -248,7 +248,7 @@ def case_no_normals(folder, parts, mats, facts):
 
 
 def case_measurement_off(folder, parts, mats, facts):
-    facts["measurements_m"][3]["model"] = facts["measurements_m"][3]["real"] * 1.05
+    facts["measurements_m"][3]["model"] = facts["measurements_m"][3]["real"] * 1.15
 
 
 def case_checkpoint_missed(folder, parts, mats, facts):
@@ -349,7 +349,7 @@ CASES = [
     ("back-to-back faces", case_back_to_back, {"7 duplicates"}, True),
     ("parts touching face to face", case_touching_parts, {"7 overlaps"}, True),
     ("normals missing", case_no_normals, {"6 normals"}, True),
-    ("measurement 5% off", case_measurement_off, {"10 measurements"}, True),
+    ("measurement 15% off", case_measurement_off, {"10 measurements"}, True),
     ("checkpoint missed", case_checkpoint_missed, {"checkpoints"}, True),
     ("source URL missing", case_missing_source, {"10 sources"}, True),
     ("slug does not match folder", case_slug_mismatch, {"facts"}, True),

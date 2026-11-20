@@ -22,7 +22,7 @@ Test the check itself: `python tools/tests/test_check.py` breaks the sample in m
 
 Limits the check applies: a building 6,000 triangles and 400,000 bytes, a bridge 25,000 triangles and 1,500,000 bytes; no glTF extensions (plain 32-bit float positions and normals).
 
-Two optional marks on a measurement in facts.json: `"bbox": "length"`, `"width"` or `"height"` makes the check measure the model itself (height = top above the origin; length and width = sides of the smallest rectangle around the footprint), and `"bbox": "height"` is also what the up-axis test compares against. `"thickened": true` marks a part drawn thicker on purpose (rule 8): the 2% rule is skipped, and the model value must not be smaller than the real one.
+Two optional marks on a measurement in facts.json: `"bbox": "length"`, `"width"` or `"height"` makes the check measure the model itself (height = top above the origin; length and width = sides of the smallest rectangle around the footprint), and `"bbox": "height"` is also what the up-axis test compares against. `"thickened": true` marks a part drawn thicker on purpose (rule 8): the 10% rule is skipped, and the model value must not be smaller than the real one.
 
 Checkpoints are placed from the anchor with a flat local approximation: +X east, -Z north, metres. A bridge needs at least two checkpoints at least 100 m apart, so its direction is tested as well as its position.
 

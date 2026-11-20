@@ -40,7 +40,7 @@ Python 3.11 or newer. Keep dependencies few and list them in `requirements.txt`,
 7. **Clean geometry.** No holes you can see from outside, no faces inside the solid, no two faces on top of each other, normals pointing out.
 8. **Nothing too thin.** No bar, wall, cable or fin thinner than 0.6 m along its length, or it flickers and vanishes from far away. Draw cables and railings thicker than they are (main cables at least 1.2 m). A spire or a roof may still end in a point.
 9. **The outline comes first.** What a person would sketch from memory must be there and in proportion. Detail smaller than about 2 m is left out. No cars, people, water, terrain, signs, text, logos or flags. The one exception to "no terrain" is `alcatraz`, where the rock is the landmark.
-10. **True proportions.** Every main measurement comes from a published source and is listed in `facts.json` with its URL. The model must match each one within 2%.
+10. **Roughly true proportions.** Good enough is the bar: the model has to read as the place, it does not have to match it part for part. The overall sizes (the height, and the length for a bridge) come from a published source and are listed in `facts.json` with its URL. Every measurement you list needs a source, and the model must match it within 10%. Everything else is your best reading of photos, drawings or open survey data and does not have to be listed.
 
 ## facts.json
 
@@ -61,7 +61,7 @@ Python 3.11 or newer. Keep dependencies few and list them in `requirements.txt`,
 }
 ```
 
-Two optional marks on a measurement help the check. `"bbox": "height"`, `"length"` or `"width"` says the measurement is the model's own overall size, and the check then measures the model itself (height is the top above the origin; length and width are the sides of the smallest rectangle around the footprint). `"thickened": true` marks a part that rule 8 makes you draw thicker than it is, such as a main cable; the 2% rule does not apply to it, but the model value must not be smaller than the real one.
+Two optional marks on a measurement help the check. `"bbox": "height"`, `"length"` or `"width"` says the measurement is the model's own overall size, and the check then measures the model itself (height is the top above the origin; length and width are the sides of the smallest rectangle around the footprint). `"thickened": true` marks a part that rule 8 makes you draw thicker than it is, such as a main cable; the 10% rule does not apply to it, but the model value must not be smaller than the real one.
 
 `kind` is `bridge` or `building` and sets the triangle and file size limits. `checkpoints` are real positions where the model must have geometry at least that tall. The check turns each one into model coordinates from the anchor and looks there. A bridge needs at least two checkpoints at least 100 m apart, so that both its position and its direction are tested.
 
@@ -89,8 +89,8 @@ Most landmarks other than the bridges and Alcatraz already stand in the open map
 
 - One branch and one pull request per landmark, named `model/<slug>`.
 - The pull request text gives: triangle count, file size, the table of real against model measurements, the list of what you simplified, and the four preview pictures.
-- `tools/check.py models/<slug>` must pass before you ask for review. It runs on every push and tests rules 1 to 8, the 2% rule, the checkpoints, and that nothing hangs in the air.
-- Passing the check is not approval. The pictures are judged by eye for one thing: would a person who knows the place name it at a glance? Expect two or three rounds.
+- `tools/check.py models/<slug>` must pass before you ask for review. It runs on every push and tests rules 1 to 8, the 10% rule, the checkpoints, and that nothing hangs in the air.
+- Passing the check is not approval. The pictures are judged by eye for one thing: would a person who knows the place name it at a glance? If yes, the model is done and small flaws stay. Expect one round of fixes at most.
 
 ## Not allowed
 

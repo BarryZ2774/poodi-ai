@@ -36,7 +36,8 @@ MATERIAL_NAMES = ("body", "accent")
 BASE_COLOUR_SRGB = (0xF4, 0xF1, 0xEC)
 COLOUR_TOLERANCE_8BIT = 1.5                # in sRGB steps of 1/255
 MIN_THICKNESS = 0.6
-MEASURE_TOLERANCE = 0.02
+MEASURE_TOLERANCE = 0.10                   # model against the real size (rule 10)
+STATED_TOLERANCE = 0.02                    # the model's own size against the value stated in facts.json
 MAX_HEIGHT = 1000.0
 MAX_SPAN = 5000.0
 PREVIEWS = ("front.png", "side.png", "three-quarter.png", "top.png")
@@ -973,7 +974,7 @@ def check_measurements(facts, geo: Geometry, rep: Report):
         elif thick:
             rep.check(mod >= real, "10 measurements",
                       f"{label}: model {fmt(mod)} m vs real {fmt(real)} m ({diff * 100:+.2f}%); "
-                      "marked thickened, drawn thicker on purpose (rule 8), so the 2% rule is "
+                      f"marked thickened, drawn thicker on purpose (rule 8), so the {MEASURE_TOLERANCE * 100:.0f}% rule is "
                       "skipped and the model must not be smaller than the real thing")
         else:
             rep.check(abs(diff) <= MEASURE_TOLERANCE + 1e-9, "10 measurements",
@@ -986,9 +987,9 @@ def check_measurements(facts, geo: Geometry, rep: Report):
                 continue
             got = bbox[hint]
             d = (got - mod) / mod if mod else math.inf
-            rep.check(abs(d) <= MEASURE_TOLERANCE + 1e-9, "10 bbox",
+            rep.check(abs(d) <= STATED_TOLERANCE + 1e-9, "10 bbox",
                       f"{label}: model's own {hint} measures {fmt(got)} m vs stated {fmt(mod)} m "
-                      f"({d * 100:+.2f}%, limit {MEASURE_TOLERANCE * 100:.0f}%)")
+                      f"({d * 100:+.2f}%, limit {STATED_TOLERANCE * 100:.0f}%)")
     rep.note("10 bbox", "height = top of the model above the origin; length and width = sides of "
                         "the smallest rectangle around the footprint")
 
