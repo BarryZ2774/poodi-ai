@@ -58,6 +58,21 @@
       "model": 1.78,
       "thickened": true,
       "source": "https://mtc.ca.gov/news/new-bay-bridge-east-span-reaches-high-point-cable-pulling-begins-week"
+    },
+    {
+      "what": "Driving deck at tower above sea level",
+      "real": 53,
+      "model": 53,
+      "source": "https://ascelibrary.com/doi/10.1061/JSENDH.STENG-11725",
+      "method": "160 m above water less 107 m above the bridge deck."
+    },
+    {
+      "what": "Spacing between box-girder centrelines",
+      "real": 41.535,
+      "model": 41.54,
+      "source": "https://www.openstreetmap.org/way/1000066963",
+      "other_outline": "https://www.openstreetmap.org/way/1006027483",
+      "method": "The inner edges at T1 are 13.655 m apart. Add one published 27.88 m girder width. The mapped outer outlines also include paths and railings."
     }
   ],
   "checkpoints": [
@@ -68,12 +83,29 @@
       "min_height_m": 155,
       "within_m": 5,
       "source": "https://www.openstreetmap.org/way/237735191"
+    },
+    {
+      "what": "W2 eastbound girder over the west pier",
+      "lon": -122.35999536,
+      "lat": 37.81413104,
+      "min_height_m": 47,
+      "within_m": 6,
+      "source": "https://www.openstreetmap.org/way/1000066963"
+    },
+    {
+      "what": "E2 eastbound girder at the suspended span end",
+      "lon": -122.35478224,
+      "lat": 37.81709901,
+      "min_height_m": 37,
+      "within_m": 6,
+      "source": "https://www.openstreetmap.org/way/1000066963"
     }
   ],
   "simplified": [
-    "One continuous cable follows both eastern dead ends over the saddle and around the western turning beam. The bend is shown just above the western crossbeam so it can be read at map scale.",
+    "A single cable descends outboard of the western carriageways and returns through a half-ellipse below both girder soffits. The eastern anchoring saddles sit outside the traffic surfaces.",
     "The adjacent box girders use a bevelled soffit. The approach to Oakland includes 600 m along the mapped skyway curve and four intermediate support stations.",
-    "Four tapered tower shafts, enlarged linking beams, simplified suspenders and a single saddle housing replace the smaller steelwork. The bicycle path and road furniture are omitted."
+    "Four tapered tower shafts, enlarged linking beams, simplified suspenders and a single saddle housing replace the smaller steelwork. The bicycle path and road furniture are omitted.",
+    "The western cutoff is the SAS approach 37.5 m behind W2. The eastern cutoff follows 600 m of the curved skyway from the SAS transition. Both pairs of deck ends meet grounded abutments."
   ],
   "osm_attribution": "© OpenStreetMap contributors, ODbL",
   "origin_of_work": "Written from published measurements for this project. No third-party mesh used.",

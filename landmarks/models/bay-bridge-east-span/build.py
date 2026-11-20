@@ -183,13 +183,15 @@ def build():
             # Box girders widen from the soffit to the driving surface.
             profile=[(-13.94,-0.9),(-13.94,0),(13.94,0),(13.94,-0.9),
                      (10.35,-4.4),(-10.35,-4.4)]
-            rings.append([(offset(y)+sign*19.4+x,y,z+h) for x,h in profile])
+            rings.append([(offset(y)+sign*20.77+x,y,z+h) for x,h in profile])
         hard.append(loft(rings))
     hard.append(pedestal(0,0,[(-3,27,27,5),(3,25,25,4)]))
     for a in (-1,1):
         for b in (-1,1):
-            start=(a*6.9,b*6.3,2.9);stop=(a*2.15,b*2.15,153)
-            hard.append(bar(start,stop,3.6,3.8))
+            profile=[(-1.45,-1.9),(1.45,-1.9),(1.45,1.9),(-1.45,1.9)]
+            rings=[[(a*x+u,b*y+v,z) for u,v in profile] for z,x,y in
+                   [(2.9,6.9,6.3),(45,4.25,5.2),(62,4.15,4.9),(153,2.15,2.15)]]
+            hard.append(loft(rings))
     for z in (24,44,64,84,104,124,144):
         w=6.9-(z-3)/150*4.75
         for sign in (-1,1):
@@ -201,36 +203,42 @@ def build():
     for y,direction in ((guide[0,0],1),(end[0],-1)):
         a,b=sorted((y,y+5*direction))
         for sign in (-1,1):
-            x=offset(y)+sign*19.4
+            x=offset(y)+sign*20.77
             hard.append(box(x-10.0,x+10.0,a,b,0,min(road(a),road(b))-3.7))
     for y in [-180,385,520,665,810]:
         z=road(y)
         for sign in (-1,1):
-            x=offset(y)+sign*19.4
+            x=offset(y)+sign*20.77
             hard.append(pedestal(x,y,[(-2,11,12,1.5),(4,9,10,1.3),
                                        (z-10,7,8,1.2),(z-3.7,15,9,1.6)]))
         if y in (-180,385):
             hard.append(box(offset(y)-32,offset(y)+32,y-3.8,y+3.8,z-5,z-2))
-    for x in (-29.3,29.3):
-        hard.append(box(x-2,x+2,382,388,road(385)-1,road(385)+2.4))
+    reach=20.77+13.94+1.35
+    for sign in (-1,1):
+        x=offset(385)+sign*reach
+        hard.append(box(x-2,x+2,382,388,road(385)-2.2,road(385)+2.4))
+        x=offset(-180)+sign*reach
+        hard.append(box(x-1.9,x+1.9,-183,-177,road(-180)-8.6,road(-180)-5.8))
+    hard.append(box(offset(-180)-reach,offset(-180)+reach,-182,-178,road(-180)-9.8,road(-180)-7.7))
     for y in np.linspace(-150,360,12):
-        hard.append(box(offset(y)-7,offset(y)+7,y-0.9,y+0.9,road(y)-3.1,road(y)-1.6))
+        hard.append(box(offset(y)-11,offset(y)+11,y-0.9,y+0.9,road(y)-3.1,road(y)-1.6))
     # Stations run from the western turning saddle to the eastern anchoring.
     left,right=[],[]
-    for y in np.r_[np.linspace(-180,0,11)[:-1],np.linspace(0,385,23)]:
+    for y in np.r_[np.arange(-180,385,10),385]:
         t=abs(y)/(180 if y<0 else 385)
-        x=3.2+(29.3-3.2)*t
-        z=(1-t)*156 + t*(road(y)+1) - (22 if y<0 else 81)*t*(1-t)
+        x=3.2+(reach-3.2)*min(1,t/.79)
+        end_z=road(-180)-7.2 if y<0 else road(385)+1.2
+        z=(1-t)*156 + t*end_z - (22 if y<0 else 81)*t*(1-t)
         left.append((offset(y)-x,y,z))
         right.append((offset(y)+x,y,z))
     # The return is a horizontal half-ellipse. One swept tube makes the entire rope.
-    loop=[(offset(-180)+29.3*math.cos(t),-180-17*math.sin(t),road(-180)+1)
+    loop=[(offset(-180)+reach*math.cos(t),-180-17*math.sin(t),road(-180)-7.2)
           for t in np.linspace(math.pi,0,17)[1:-1]]
     curved.append((tube(list(reversed(left))+loop+right,0.89,8),67))
     for path,sign in [(left,-1),(right,1)]:
         for x,y,z in path[1:-1]:
-            if abs(y)<0.1:continue
-            endpt=(offset(y)+sign*30.4,y,road(y)-0.45)
+            if abs(y)<0.1 or z<road(y)+1.4:continue
+            endpt=(offset(y)+sign*33.0,y,road(y)-0.45)
             curved.append((tube([endpt,(x,y,z)],0.55,6),73))
     finish(hard,curved)
 
