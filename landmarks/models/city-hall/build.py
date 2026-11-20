@@ -185,6 +185,10 @@ def build():
         for y in (-54,-45,-36,-27,-19,20,28,36,44,52):
             cut=arch_cut(y,3.1,9.2,2.25,-side*42,9).rotate((0,0,90))
             wings-=cut
+            # Tall second-storey windows align with the lower arcade and finish
+            # beneath the continuous entablature on both long elevations.
+            inner,outer = sorted((side*(width/2-3.0),side*(width/2+1.0)))
+            wings -= box(inner,outer,y-1.72,y+1.72,12.3,18.85)
     # Three treads are cut into the existing entrance footprint.
     for face in (-1,1):
         for distance, height in [(46.4,1.45),(47.75,.9),(49.1,.68)]:

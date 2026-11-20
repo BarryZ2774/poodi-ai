@@ -59,11 +59,11 @@
       "source": "https://tile.loc.gov/storage-services/master/pnp/habshaer/ca/ca0600/ca0633/data/ca0633data.pdf"
     },
     {
-      "what": "Drum across column shafts",
+      "what": "Drum across column shafts, estimated from the mapped outline",
       "real": 34,
       "model": 34,
       "source": "https://www.openstreetmap.org/way/494810790",
-      "method": "Diameter of the mapped circular drum, measured in the local metric plane."
+      "method": "Approximate diameter of the OSM drum outline in the local metric plane. The HABS report dimensions the narrower dome spring separately."
     },
     {
       "what": "Dome top beneath lantern, estimated",
@@ -592,7 +592,8 @@
     "The outer member of the OSM building relation fixes the ground outline. The wings use broad recessed bays and stepped cornices in place of fine masonry.",
     "The drum retains a ring of columns. The dome has sixteen raised ribs, a lantern, and a thickened finial. The portico retains its steps, column line and pediment.",
     "Roof services, interior light courts and carved figures are omitted.",
-    "The larger OSM outline supplies the low ground terrace and steps. HABS gives the exterior main block as 390 by 273 ft 3 in. An open eight-column lantern follows the exterior profile. The upper portico cornice stops at both openings."
+    "The larger OSM outline supplies the low ground terrace and steps. HABS gives the exterior main block as 390 by 273 ft 3 in. An open eight-column lantern follows the exterior profile. The upper portico cornice stops at both openings.",
+    "Ten tall recessed upper windows on each long side follow the bays of the ground-floor arcade."
   ],
   "osm_attribution": "Ground outline from OpenStreetMap, © OpenStreetMap contributors, ODbL.",
   "origin_of_work": "Written from published measurements for this project. No third-party mesh used.",
