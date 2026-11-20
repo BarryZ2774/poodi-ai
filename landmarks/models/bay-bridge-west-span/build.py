@@ -180,9 +180,20 @@ def build():
     half_anchor = (abs(w3)+w5)/2 - side
     east = w6 + side
     west = east - 3140
-    stations = [west, w2-side, w2, w3, -half_anchor, half_anchor, w5, w6, east]
-    grades = [47, 50, 58, 67, 67, 67, 67, 58, 51]
-    width, depth = 66*0.3048, 35*0.3048
+    width, depth = 66*.3048,35*.3048
+    # Coast Pilot lists underside clearances at the four towers and midspans.
+    mhw=.643
+    deck_at=lambda clearance: clearance*.3048+mhw+depth
+    crown=260.76*.3048
+    anchorage_top=286.6*.3048
+    cable_entry=269.5*.3048
+    mid_w,mid_e=(w2+w3)/2,(w5+w6)/2
+    stations=[west,w2-side,w2,mid_w,w3,-half_anchor,half_anchor,w5,mid_e,w6,east]
+    # Continue the measured outer slopes to the two shore landings.
+    slope=(deck_at(204)-deck_at(174))/(mid_w-w2)
+    grades=[deck_at(174)+(west-w2)*slope,deck_at(174)-side*slope,deck_at(174),
+            deck_at(204),deck_at(217),crown,crown,deck_at(218),deck_at(204),
+            deck_at(175),deck_at(175)-(east-w6)*(deck_at(204)-deck_at(175))/(w6-mid_e)]
     def road(s):
         return float(np.interp(s, stations, grades))
     hard, curved = [], []
@@ -197,8 +208,9 @@ def build():
             z1, z2 = (0.9, depth-0.9) if i%2 else (depth-0.9, 0.9)
             hard.append(bar((x,a,road(a)-z1),(x,b,road(b)-z2),1.15))
     for i,s in enumerate((w2,w3,w5,w6)):
-        base = 12.2
-        top = base + (414 if i in (0,3) else 458)*0.3048
+        outer = i in (0,3)
+        top=(474 if outer else 519)*.3048
+        base=top-(414 if outer else 458)*.3048
         hard.append(pedestal(0,s,[(-3,42,23,5),(base,37,19,4)]))
         def leg_x(z):
             return 15.1 - (z-base)/(top-base)*4.3
@@ -211,22 +223,33 @@ def build():
         hard.append(box(-13,13,s-4.4,s+4.4,top-4.5,top))
     # Centre anchor rises between the two independent pairs of cables.
     hard.append(pedestal(0,0,[(-3,34,72,6),(14,34,72,6),(52,29,61,4)]))
-    for x in (-12,12):
-        hard.append(pedestal(x,0,[(50,5,55,2),(67,5,2*half_anchor,1.2)]))
+    hard.append(pedestal(0,0,[(50,29,61,4),(crown-depth,28,2*half_anchor,2)]))
+    for x in (-12.1,12.1):
+        # Separate the two tall side housings around the through roadway.
+        hard.append(pedestal(x,0,[(crown-depth-1,5.2,2*half_anchor,1.2),
+                                  (cable_entry+1.1,5.2,2*half_anchor,1.2),
+                                  (anchorage_top-1.2,5.0,2*half_anchor-8,1.1)]))
+        for station in (-.60*half_anchor,-.20*half_anchor,.20*half_anchor,.60*half_anchor):
+            hard.append(box(x-2.9,x+2.9,station-1.3,station+1.3,crown-depth,anchorage_top))
+    hard.append(box(-width/2,width/2,-half_anchor,half_anchor,crown-1.5,crown))
     for s in (w2-side,east-14.7):
         hard.append(pedestal(0,s,[(-1.5,32,29,3),(road(s)-3.3,25,25,2)]))
     # The two-level roadway meets solid, grounded abutments on the flat map.
     for s,direction in ((west,1),(east,-1)):
         a,b=sorted((s,s+5*direction))
         hard.append(box(-width/2,width/2,a,b,0,min(road(a),road(b))-.7))
+    for s in (w2-side,east-7):
+        for x in (-9.4,9.4):
+            hard.append(box(x-1.55,x+1.55,s-2.2,s+2.2,road(s)-4.4,road(s)+2.15))
     for s in np.linspace(west+2,w2-side,5)[1:-1]:
         for sign in (-1,1):
             hard.append(bar((sign*12.8,s,0),(sign*9.5,s,road(s)-1),2.1,3))
             hard.append(brace(sign*11,3,-sign*10,road(s)-depth,1.6,s,2.2))
     for a,b,c,d in [(w2-side,w2,w3,-half_anchor),(half_anchor,w5,w6,east)]:
-        tower_z = lambda s: 12.2 + (414 if s in (w2,w6) else 458)*0.3048 - 1.4
+        tower_z = lambda s: (474 if s in (w2,w6) else 519)*.3048-1.4
         nodes = [a,b,c,d]
-        heights = [road(a)-1,tower_z(b),tower_z(c),road(d)-1]
+        heights = [cable_entry if a>0 else road(a)+1.8,tower_z(b),tower_z(c),
+                   cable_entry if d<0 else road(d)+1.8]
         pts = []
         for i,(u,v) in enumerate(zip(nodes,nodes[1:])):
             n = 14 if i==1 else 6
@@ -234,9 +257,13 @@ def build():
             for t in np.linspace(0,1,n+1)[0 if i==0 else 1:]:
                 pts.append((u+(v-u)*t,(1-t)*heights[i]+t*heights[i+1]-4*sag*t*(1-t)))
         if d == east:
-            pts[-1] = (east-7, road(east)-8)
+            pts[-1] = (east-7, road(east)+1.8)
         for x in (-9.4,9.4):
-            curved.append((tube([(x,s,z) for s,z in pts],0.85,6),73))
+            def cable_x(s):
+                # Flare the last station into the side housing above the roadway.
+                t=max(0,1-(abs(s)-half_anchor)/55)
+                return x+math.copysign(2.7*t,x)
+            curved.append((tube([(cable_x(s),s,z) for s,z in pts],.85,6),73))
             for u,v in zip(nodes,nodes[1:]):
                 hangers=np.linspace(u,v,round((v-u)/28)+1)[1:-1]
                 for s in hangers:
@@ -244,7 +271,7 @@ def build():
                     bottom=road(s)-0.4
                     if z-bottom>0.8:
                         curved.append((md.Manifold.cylinder(z-bottom,0.5,circular_segments=5)
-                                       .translate((x,s,bottom)),78))
+                                       .translate((cable_x(s),s,bottom)),78))
     finish(hard, curved)
 
 
