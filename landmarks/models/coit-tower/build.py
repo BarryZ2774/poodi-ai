@@ -156,7 +156,16 @@ def build():
     x,y=FACTS["plans"]["shaft"]["centre"]
     high=64.008
     plinth=mass(base,0,9.7536)-box(-3.55,3.55,-14,-7.35,1,7.1)
-    hard=[plinth]
+    # Deep reveals follow the larger sides of the irregular ground plan.
+    outline=np.asarray(base)
+    for a,b in zip(outline,np.roll(outline,-1,axis=0)):
+        edge=b-a
+        length=np.linalg.norm(edge)
+        if length<3.4 or (a[1]+b[1])/2 < -7:
+            continue
+        opening=box(-.85,.85,-.95,.95,3,5.8).rotate((0,0,math.degrees(math.atan2(edge[1],edge[0]))))
+        plinth-=opening.translate((*(a+b)/2,0))
+    hard=[plinth,drum(x,y,[(9.65,6.45,6.45),(10.55,6.45,6.45),(11.45,5.76,5.76)])]
     for u in (-2.55,2.55):
         hard.append(md.Manifold.cylinder(6.45,0.78,circular_segments=16).translate((u,-9.75,0.8)))
     # Alternating channels follow the depth of the fluting to the belvedere.
@@ -167,7 +176,7 @@ def build():
                        y+(r-relief*(1-math.cos(24*t))/2)*math.sin(t),z) for t in angles])
     shaft=loft(rings)
     outer=drum(x,y,[(48.8,5.6,5.6),(53.7,5.6,5.6),(54.5,5.9,5.9),
-                    (55.7,5.9,5.9),(56.1,5.55,5.55),(high,5.55,5.55)],64)
+                    (55.7,5.9,5.9),(56.1,5.55,5.55),(high-1.45,5.55,5.55),(high-.90,5.87,5.87),(high,5.87,5.87)],64)
     inside=drum(x,y,[(49.8,4.6,4.6),(68.0,4.6,4.6)])
     crown=outer-inside
     for k in range(8):
