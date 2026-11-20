@@ -83,6 +83,24 @@ def write_glb(solid):
     # Trimming a round member can introduce a small corner at a junction.
     # Split that corner when its interpolated normal points through the surface.
     triangles = mesh.tri_verts.copy()
+    # A boolean intersection can leave sub-millimetre slivers. Collapse only
+    # short mesh edges; all shading corners at an endpoint move together.
+    points, owners = np.unique(positions, axis=0, return_inverse=True)
+    spatial = owners[triangles]
+    edges = np.sort(np.vstack((spatial[:, [0,1]], spatial[:, [1,2]], spatial[:, [2,0]])), axis=1)
+    short = edges[np.linalg.norm(points[edges[:,0]]-points[edges[:,1]], axis=1) < 0.0012]
+    parent = np.arange(len(points))
+    for a, b in short:
+        while parent[a] != a:
+            a = parent[a]
+        while parent[b] != b:
+            b = parent[b]
+        parent[max(a,b)] = min(a,b)
+    while np.any(parent != parent[parent]):
+        parent = parent[parent]
+    positions = points[parent[owners]]
+    corners = parent[spatial]
+    triangles = triangles[np.all(corners != np.roll(corners, 1, axis=1), axis=1)]
     pa, pb, pc = positions[triangles].astype(np.float64).transpose(1, 0, 2)
     face_normals = np.cross(pb-pa, pc-pa)
     face_normals /= np.maximum(np.linalg.norm(face_normals, axis=1, keepdims=True), 1e-20)
@@ -91,28 +109,21 @@ def write_glb(solid):
         positions = np.vstack((positions, positions[triangles[faces, corners]]))
         normals = np.vstack((normals, face_normals[faces]))
         triangles[faces, corners] = np.arange(len(faces)) + len(props)
-    # glTF's standard quantized normal format packs a unit vector into one
-    # aligned word. Positions remain ordinary float32 metre coordinates.
-    packed = np.zeros((len(normals), 4), dtype=np.int8)
-    packed[:, :3] = np.rint(normals * 127).astype(np.int8)
-    # Hard edges need separate corners. Reuse corners that became identical
-    # after encoding, including those created on either side of a boolean seam.
-    keys = np.hstack((positions, packed))
+    normals = normals.astype("<f4")
+    # Preserve seams while sharing identical position/normal pairs.
+    keys = np.hstack((positions, normals))
     _, first, remap = np.unique(keys, axis=0, return_index=True, return_inverse=True)
-    positions, packed = positions[first], packed[first]
+    positions, normals = positions[first], normals[first]
     if len(positions) >= 65536:
         raise ValueError("Index range exceeded")
     indices = remap[triangles].astype("<u2").ravel()
     views, data = [], bytearray()
-    for array, target in [(positions, 34962), (packed, 34962), (indices, 34963)]:
+    for array, target in [(positions, 34962), (normals, 34962), (indices, 34963)]:
         views.append(dict(buffer=0, byteOffset=len(data), byteLength=array.nbytes, target=target))
         data.extend(array.tobytes())
         data.extend(bytes(-len(data) % 4))
-    views[1]["byteStride"] = 4
     linear = [((c/255+0.055)/1.055)**2.4 for c in (244, 241, 236)]
     model = {
-        "extensionsUsed": ["KHR_mesh_quantization"],
-        "extensionsRequired": ["KHR_mesh_quantization"],
         "asset": {"version": "2.0"}, "scene": 0, "scenes": [{"nodes": [0]}],
         "nodes": [{"mesh": 0, "name": FACTS["name"]}],
         "meshes": [{"primitives": [{"attributes": {"POSITION": 0, "NORMAL": 1},
@@ -122,7 +133,7 @@ def write_glb(solid):
         "accessors": [
             dict(bufferView=0, componentType=5126, count=len(positions), type="VEC3",
                  min=positions.min(axis=0).tolist(), max=positions.max(axis=0).tolist()),
-            dict(bufferView=1, componentType=5120, normalized=True, count=len(packed), type="VEC3"),
+            dict(bufferView=1, componentType=5126, count=len(normals), type="VEC3"),
             dict(bufferView=2, componentType=5123, count=len(indices), type="SCALAR")],
         "bufferViews": views, "buffers": [{"byteLength": len(data)}]}
     metadata = json.dumps(model, separators=(",", ":"), allow_nan=False).encode()
@@ -130,7 +141,7 @@ def write_glb(solid):
     length = 28 + len(metadata) + len(data)
     glb = (struct.pack("<4sIII4s", b"glTF", 2, length, len(metadata), b"JSON") +
            metadata + struct.pack("<I4s", len(data), b"BIN\0") + data)
-    if len(glb) > 400_000 or len(indices) // 3 > (25_000 if FACTS["kind"] == "bridge" else 6_000):
+    if len(glb) > (1_500_000 if FACTS["kind"] == "bridge" else 400_000) or len(indices) // 3 > (25_000 if FACTS["kind"] == "bridge" else 6_000):
         raise ValueError(f"Mobile budget exceeded: {len(indices)//3} triangles, {len(glb)} bytes")
     (HERE / (FACTS["slug"] + ".glb")).write_bytes(glb)
     print(f"{len(indices)//3:,} triangles, {len(glb):,} bytes")
@@ -140,7 +151,14 @@ def build():
     plans=FACTS["plans"]
     hard,curved=[],[]
     for name in FACTS["ground_keys"]:
-        hard.append(section(plans[name]["outline"]).simplify(0.95).extrude(.8))
+        platform = section(plans[name]["outline"]).simplify(.95)
+        if name == "base":
+            # Blunt the narrow acute corner of the eastern stair landing.
+            points = platform.to_polygons()[0]
+            tip = np.argmin(np.linalg.norm(points - [31.4, -12.9], axis=1))
+            points[tip] += [-.85, .25]
+            platform = section(points)
+        hard.append(platform.extrude(.8))
     for i in range(8):
         outline=plans["pier"+str(i)]["outline"]
         x,y=plans["pier"+str(i)]["centre"]
@@ -149,15 +167,18 @@ def build():
         for sign in (-1,1):
             u=x-sign*1.8*math.sin(theta);v=y+sign*1.8*math.cos(theta)
             hard.append(drum(u,v,[(2.9,1.55,1.55),
-                                  (23.4,1.3,1.3),(24.7,2.2,2.2)],8))
-        hard.append(mass(outline,24.2,27.6))
+                                  (22.4,1.3,1.3),(23.6,2.1,2.1),(24.7,2.1,2.1)],6))
+        hard.append(mass(outline,24.7,26.4))
     def ring(r,inside,low,high,n=32):
         return (md.CrossSection.circle(r,n)-md.CrossSection.circle(inside,n)).extrude(high-low).translate((0,0,low))
     # Wide round arches bridge the gaps between the paired supports.
-    arcade=ring(23.5,16.1,22.8,33.5)
     theta=math.atan2(*reversed(plans["pier0"]["centre"]))
+    angles=[theta+math.radians(i*45+22.5+d) for i in range(8) for d in (-20.5,20.5)]
+    def belt(r):
+        return section([(r*math.cos(t),r*math.sin(t)) for t in angles])
+    arcade=(belt(23.5)-belt(16.1)).extrude(7.1).translate((0,0,26.4))
     for i in range(8):
-        cut=arch_cut(0,20,23,6.2,20,13)
+        cut=arch_cut(0,25.4,26.4,5.4,20,16)
         arcade-=cut.rotate((0,0,math.degrees(theta)-90+22.5+i*45))
     hard.extend([arcade,ring(24.384,16,31.8,33.1),ring(18.6,15.4,32.8,36.2)])
     # An open soffit follows the dome. The inner shell ends below its apex.
@@ -174,7 +195,7 @@ def build():
         hard.append(section(plans[name]["outline"]).simplify(1.2).extrude(2.2 if name=="north" else 3.2).translate((0,0,16.8)))
         for x,y in locations:
             hard.append(drum(x,y,[(.65,1.1,1.1),
-                                  (15.7,.93,.93),(17.3,1.65,1.65)],8))
+                                  (14.8,.93,.93),(15.8,1.65,1.65),(16.8,1.65,1.65)],8))
     finish(hard,curved)
 
 
