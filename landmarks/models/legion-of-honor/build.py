@@ -170,7 +170,12 @@ def build():
         for y in np.linspace(-29,42,10):
             cut=arch_cut(y,3.1,6.7,1.65,-sign*29.8,3.7)
             galleries-=cut.rotate((0,0,90))
-        hard.append(hip(sign*24,6.4,11.4,86.3,12.3,17,77))
+        axis=sign*24
+        hard.append(hip(axis,6.4,11.4,86.3,12.3,15.15,76))
+        # A low hipped cover carries raised runs of gallery skylights.
+        for centre,length in [(-21,16.5),(.5,19.0),(23,17),(41,12.3)]:
+            hard.append(box(axis-2.15,axis+2.15,centre-length/2,centre+length/2,14.2,15.6))
+            hard.append(hip(axis,centre,4.3,length,15.6,17,length-2.7))
     hard.append(galleries)
     hard.append(hip(0,-15.7,12.2,38.4,12.3,17,32))
     cx,cy=plans["rotunda"]["centre"]
@@ -185,12 +190,19 @@ def build():
                                   (8.4,.67,.67),(9.3,.95,.95)],12))
         for x in (8.1,12.2):
             hard.append(drum(sign*x,47.15,[(.72,.94,.94),(9.3,.82,.82)],12))
+    for extent,level in [(12.35,.77),(11.50,1.16),(10.65,1.55)]:
+        hard.append(box(-6.75,6.75,4.65,extent,0,level))
     for x in (-4.9,-1.65,1.65,4.9):
         hard.append(drum(x,9.25,[(.7,.85,.85),(10.7,.75,.75)],12))
     hard.append(front_plate([(-6.28,10.6),(6.28,10.6),(6.28,12.2),(0,15),
                              (-6.28,12.2)],8.1,5.4))
     gate=box(-5.46,5.23,44.88,49.65,.7,15.1)
     gate-=arch_cut(-.11,.68,9.35,2.36,47.15,7)
+    arch=arch_cut(-.11,.70,9.35,3.25,49.48,1.64)-arch_cut(-.11,.65,9.35,2.36,49.48,2)
+    gate+=arch
+    gate+=box(-5.52,5.29,44.8,50.0,12.88,13.68)
+    for u in (-4.45,4.22):
+        gate+=box(u-.55,u+.55,49.25,50.35,.7,13.45)
     hard.extend([gate,box(-5.8,5.56,44.58,49.88,15.1,16)])
     finish(hard,[(rotunda,24)])
 
