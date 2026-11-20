@@ -17,6 +17,10 @@ def union(parts):
     return md.Manifold.batch_boolean(parts, md.OpType.Add)
 
 
+def box(x0, x1, s0, s1, bottom, top):
+    return md.Manifold.cube((x1 - x0, s1 - s0, top - bottom)).translate((x0, s0, bottom))
+
+
 def section(outline):
     return md.CrossSection([outline], md.FillRule.EvenOdd)
 
@@ -61,7 +65,7 @@ def drum(x, y, levels, sides=32):
 def arch_cut(x, bottom, spring, radius, station, depth):
     """Round-headed opening in a wall normal to the station axis."""
     arc = [(x+radius*math.cos(t), spring+radius*math.sin(t))
-           for t in np.linspace(0, math.pi, 13)]
+           for t in np.linspace(0, math.pi, 9)]
     return front_plate([(x-radius,bottom),(x+radius,bottom)]+arc, station, depth)
 
 
@@ -169,7 +173,7 @@ def build():
             hard.append(drum(u,v,[(2.9,1.55,1.55),
                                   (22.4,1.3,1.3),(23.6,2.1,2.1),(24.7,2.1,2.1)],6))
         hard.append(mass(outline,24.7,26.4))
-    def ring(r,inside,low,high,n=32):
+    def ring(r,inside,low,high,n=24):
         return (md.CrossSection.circle(r,n)-md.CrossSection.circle(inside,n)).extrude(high-low).translate((0,0,low))
     # Wide round arches bridge the gaps between the paired supports.
     theta=math.atan2(*reversed(plans["pier0"]["centre"]))
@@ -181,11 +185,12 @@ def build():
         cut=arch_cut(0,25.4,26.4,5.4,20,16)
         arcade-=cut.rotate((0,0,math.degrees(theta)-90+22.5+i*45))
     hard.extend([arcade,ring(24.384,16,31.8,33.1),ring(18.6,15.4,32.8,36.2)])
+    hard.append(ring(19.1,15.8,34.1,35.05,24))
     # An open soffit follows the dome. The inner shell ends below its apex.
     radii=[(35.9,17.8),(37.5,17.5),(40.7,16.2),(44.3,13.4),
            (47.1,9.6),(48.8,5.2),(49.3776,.65)]
-    outer=drum(0,0,[(z,r,r) for z,r in radii],28)
-    inner=drum(0,0,[(35,16.6,16.6)]+[(z-1.1,r-1.05,r-1.05) for z,r in radii[1:-1]]+[(48.2,.65,.65)],28)
+    outer=drum(0,0,[(z,r,r) for z,r in radii],24)
+    inner=drum(0,0,[(35,16.6,16.6)]+[(z-1.1,r-1.05,r-1.05) for z,r in radii[1:-1]]+[(48.2,.65,.65)],24)
     curved.append((outer-inner,24))
     paths={"north":[(-34.4,23),(-32.8,32),(-28.8,45),(-23.2,56),(-17.2,65),
                     (-8.8,73.8),(2,79),(16,83),(13,99),(11,110)],
@@ -193,8 +198,13 @@ def build():
                     (4.7,-67.6),(14,-72.9),(25.8,-76),(41.3,-73.6),(44.7,-89),(47,-99)]}
     for name,locations in paths.items():
         hard.append(section(plans[name]["outline"]).simplify(1.2).extrude(2.2 if name=="north" else 3.2).translate((0,0,16.8)))
-        for x,y in locations:
-            hard.append(drum(x,y,[(.65,1.1,1.1),
+        for end in (locations[0],locations[-1]):
+            u,v=end
+            hard.append(box(u-1.52,u+1.52,v-1.5,v+1.5,.76,17.85))
+            hard.append(box(u-2.05,u+2.05,v-1.95,v+1.95,17.85,19.0))
+        for x,y in locations[1:-1]:
+            hard.append(box(x-1.32,x+1.32,y-1.32,y+1.32,.75,1.75))
+            hard.append(drum(x,y,[(1.75,1.1,1.1),
                                   (14.8,.93,.93),(15.8,1.65,1.65),(16.8,1.65,1.65)],8))
     finish(hard,curved)
 
