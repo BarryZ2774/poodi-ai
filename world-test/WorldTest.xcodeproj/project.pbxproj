@@ -33,6 +33,7 @@
 		361090864FDABD3F130587BA /* glyphs */ = {isa = PBXFileReference; lastKnownFileType = folder; name = glyphs; path = WorldTest/Resources/glyphs; sourceTree = SOURCE_ROOT; };
 		3642E753C10207F4ADF86C99 /* OursMapView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OursMapView.swift; sourceTree = "<group>"; };
 		3AC7A8EA14A85EA9A40B66B1 /* sf-base.pmtiles */ = {isa = PBXFileReference; path = "sf-base.pmtiles"; sourceTree = "<group>"; };
+		3B04CA3C66D6B4C5ED53686C /* Secrets.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Secrets.xcconfig; sourceTree = "<group>"; };
 		3F1DC00583E1147ECEC1584D /* App.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = App.xcconfig; sourceTree = "<group>"; };
 		41D811A7ED2DB9E05CC6F7E3 /* WorldTestApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorldTestApp.swift; sourceTree = "<group>"; };
 		4622403D3DC456EBBC91C333 /* test-tower.glb */ = {isa = PBXFileReference; path = "test-tower.glb"; sourceTree = "<group>"; };
@@ -106,6 +107,7 @@
 			children = (
 				3F1DC00583E1147ECEC1584D /* App.xcconfig */,
 				A76B5C11D3722647C3BE7C60 /* Secrets.example.xcconfig */,
+				3B04CA3C66D6B4C5ED53686C /* Secrets.xcconfig */,
 			);
 			path = Config;
 			sourceTree = "<group>";
