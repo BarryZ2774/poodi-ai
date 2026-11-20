@@ -180,10 +180,12 @@ def build():
     land=[layer(shore,0,4.8)]
     cliff=shore.offset(-3,md.JoinType.Square).simplify(1)-dock
     land.append(layer(cliff,4.8,13))
-    shore_bench=cliff.offset(-7,md.JoinType.Square).simplify(1)-factories
+    shore_bench=(cliff.offset(-5,md.JoinType.Square) ^
+                 shore.scale((.89,.96)).translate((3.5,-3))).simplify(1)-factories
     land.append(layer(shore_bench,13,19.2))
     parade=section(points("parade")).offset(8,md.JoinType.Square)
-    hillside=shore_bench.offset(-12,md.JoinType.Square).simplify(1)-parade
+    hillside=(shore_bench.offset(-7,md.JoinType.Square) ^
+              shore.scale((.76,.81)).translate((-3,5))).simplify(1)-parade
     land.append(layer(hillside,19.2,28.7))
     upper=md.CrossSection.hull_points(np.vstack((crest,points("yard"),points("tank"))))
     land.append(layer((upper.offset(10,md.JoinType.Square)^hillside)-parade,28.7,31.2))
@@ -204,7 +206,22 @@ def build():
             # Neighbouring survey polygons nearly touch along the party walls.
             hard.append(section(outline).offset(.18,md.JoinType.Square).extrude(roof-1.8).translate((0,0,1.8)))
         else:
-            hard.append(mass(outline,1.8,roof))
+            block=mass(outline,1.8,roof)
+            if name in ("cellhouse","barracks"):
+                for a,b in zip(outline,np.roll(outline,-1,axis=0)):
+                    v=b-a
+                    length=np.linalg.norm(v)
+                    if length < (45 if name=="cellhouse" else 68):
+                        continue
+                    if name=="barracks" and (a[0]+b[0])/2<90:
+                        continue
+                    angle=math.degrees(math.atan2(v[1],v[0]))
+                    bays=int(length/5.4)
+                    for t in (np.arange(bays)+.5)/bays:
+                        for z in ((44.3,49.8) if name=="cellhouse" else (7.0,11.6,16.1)):
+                            bay=box(-1.35,1.35,-1.4,1.4,z,z+2.45)
+                            block-=bay.rotate((0,0,angle)).translate((*(a+v*t),0))
+            hard.append(block)
         if name in ("cellhouse","barracks","mess","new_industries"):
             x,y=centre(name)
             # A shallow projecting cornice preserves the long eave line.
