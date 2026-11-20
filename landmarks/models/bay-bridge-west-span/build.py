@@ -215,7 +215,11 @@ def build():
         hard.append(pedestal(x,0,[(50,5,55,2),(67,5,2*half_anchor,1.2)]))
     for s in (w2-side,east-14.7):
         hard.append(pedestal(0,s,[(-1.5,32,29,3),(road(s)-3.3,25,25,2)]))
-    for s in np.linspace(west+2,w2-side,5)[:-1]:
+    # The two-level roadway meets solid, grounded abutments on the flat map.
+    for s,direction in ((west,1),(east,-1)):
+        a,b=sorted((s,s+5*direction))
+        hard.append(box(-width/2,width/2,a,b,0,min(road(a),road(b))-.7))
+    for s in np.linspace(west+2,w2-side,5)[1:-1]:
         for sign in (-1,1):
             hard.append(bar((sign*12.8,s,0),(sign*9.5,s,road(s)-1),2.1,3))
             hard.append(brace(sign*11,3,-sign*10,road(s)-depth,1.6,s,2.2))
