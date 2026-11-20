@@ -43,8 +43,8 @@ EARTH = 40_075_016.685_578_49
 def read_glb(path):
     """Triangles of a glTF binary in model space (metres, Y up, +X east, -Z north)."""
     data = path.read_bytes()
-    magic, version, _ = struct.unpack_from("<III", data, 0)
-    if magic != 0x46546C67 or version != 2:
+    signature, version, _ = struct.unpack_from("<III", data, 0)
+    if signature != 0x46546C67 or version != 2:
         raise ValueError("not a glTF 2.0 binary")
     offset, doc, binary = 12, None, b""
     while offset + 8 <= len(data):
