@@ -182,7 +182,7 @@ def build():
         hard.append(loft(rings))
         x,y=top[i]
         tip = .93 if name == "west" else 1.025
-        hard.append(drum(x,y,[(platform-.45,1.95,1.95),(platform+3.5,1.95,1.95),
+        hard.append(drum(x,y,[(platform-1.5,1.95,1.95),(platform+3.5,1.95,1.95),
                               (platform+6.8,1.35,1.35),(257,1.35,1.35),(257,1.025,1.025),
                               (279,1.025,1.025),(279,tip,tip),(297.7896,tip,tip)],12))
     previous=2.

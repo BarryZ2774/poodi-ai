@@ -119,6 +119,42 @@
       "real": 4.2672,
       "model": 4.2672,
       "source": "https://legacy.seaonc.org/structure/sutro-tower/"
+    },
+    {
+      "what": "Horizontal girder chords (approximate visible width from photograph)",
+      "model": 1.25,
+      "real": 0.28,
+      "thickened": true,
+      "source": "https://commons.wikimedia.org/wiki/File:Sutro_Tower_closeup.jpg",
+      "note": "No published size located. Photographic estimate, about 9 pixels across the painted upper chord on the 2404-pixel-wide original. The two outboard mast centres project about 980 pixels apart for the published 30.48 m spacing. Values describe the frontal silhouette; strand width approaches the pixel resolution. Model width is deliberately enlarged for visibility.",
+      "reference_drawing": "https://commissions.sfplanning.org/cpcpackets/2015-009913DRM.pdf#page=31"
+    },
+    {
+      "what": "Outrigger chord (approximate visible width from photograph)",
+      "model": 1.5,
+      "real": 0.25,
+      "thickened": true,
+      "source": "https://commons.wikimedia.org/wiki/File:Sutro_Tower_closeup.jpg",
+      "note": "No published size located. Photographic estimate, about 8 pixels across the upper projection on the 2404-pixel-wide original. The two outboard mast centres project about 980 pixels apart for the published 30.48 m spacing. Values describe the frontal silhouette; strand width approaches the pixel resolution. Model width is deliberately enlarged for visibility.",
+      "reference_drawing": "https://sfplanning.s3.amazonaws.com/archives/documents/6728-Sutro%20Tower%20DEIR%2008-0517%281%29.pdf#page=27"
+    },
+    {
+      "what": "Short web diagonals (approximate visible width from photograph)",
+      "model": 0.9,
+      "real": 0.28,
+      "thickened": true,
+      "source": "https://commons.wikimedia.org/wiki/File:Sutro_Tower_closeup.jpg",
+      "note": "No published size located. Photographic estimate, about 9 pixels normal to a short diagonal on the 2404-pixel-wide original. The two outboard mast centres project about 980 pixels apart for the published 30.48 m spacing. Values describe the frontal silhouette; strand width approaches the pixel resolution. Model width is deliberately enlarged for visibility.",
+      "reference_drawing": "https://commissions.sfplanning.org/cpcpackets/2015-009913DRM.pdf#page=31"
+    },
+    {
+      "what": "Long X-strands (approximate visible width from photograph)",
+      "model": 0.95,
+      "real": 0.07,
+      "thickened": true,
+      "source": "https://commons.wikimedia.org/wiki/File:Sutro_Tower_closeup.jpg",
+      "note": "No published size located. Photographic estimate, about 2 pixels normal to a single strand on the 2404-pixel-wide original. The two outboard mast centres project about 980 pixels apart for the published 30.48 m spacing. Values describe the frontal silhouette; strand width approaches the pixel resolution. Model width is deliberately enlarged for visibility.",
+      "reference_drawing": "https://static1.squarespace.com/static/5e6fff374bb4d0147cd19d8a/t/5ee96ecf1f51e32053f0ffc5/1592356562550/SDTV_CLADDING%2BMOD%2BPERMIT%2BSET.pdf#page=4"
     }
   ],
   "plans": {
@@ -628,7 +664,8 @@
     "Ground pier centres follow the mapped leg footprints. The concrete pedestals use the published 14-foot width.",
     "Five horizontal truss tiers, their main diagonals and three stepped aerials remain. Small transmitters, feedlines, rigging and service buildings are omitted.",
     "Lower truss cladding is grouped into three broad bands. Projecting outrigger tips and stepped aerial pedestals are shown above the open upper bays.",
-    "Figure 5 mast envelope widths are approximate, scaled against its 58.5 ft and 40.5 ft dimensions. The asymmetrical antenna configuration is grouped into two wide tips and one narrow tip. Individual channels and long strands have no numerical size on the cited drawings."
+    "Figure 5 mast envelope widths are approximate, scaled against its 58.5 ft and 40.5 ft dimensions. The asymmetrical antenna configuration is grouped into two wide tips and one narrow tip. Individual channels and long strands have no numerical size on the cited drawings.",
+    "The four narrow framing widths are approximate readings of the exterior photograph. Perspective, paint and pixel resolution limit their accuracy, especially the X-strands."
   ],
   "osm_attribution": "Ground outline from OpenStreetMap, © OpenStreetMap contributors, ODbL.",
   "origin_of_work": "Written from published measurements for this project. No third-party mesh used.",
@@ -636,39 +673,5 @@
     "se",
     "north",
     "west"
-  ],
-  "member_assumptions": [
-    {
-      "what": "Horizontal girder chords",
-      "model": 1.25,
-      "real": null,
-      "thickened": true,
-      "source": "https://commissions.sfplanning.org/cpcpackets/2015-009913DRM.pdf#page=31",
-      "note": "The drawing locates the member but supplies no individual section size. Model width is an explicit visibility allowance."
-    },
-    {
-      "what": "Outrigger chord",
-      "model": 1.5,
-      "real": null,
-      "thickened": true,
-      "source": "https://sfplanning.s3.amazonaws.com/archives/documents/6728-Sutro%20Tower%20DEIR%2008-0517%281%29.pdf#page=27",
-      "note": "The drawing locates the member but supplies no individual section size. Model width is an explicit visibility allowance."
-    },
-    {
-      "what": "Short web diagonals",
-      "model": 0.9,
-      "real": null,
-      "thickened": true,
-      "source": "https://commissions.sfplanning.org/cpcpackets/2015-009913DRM.pdf#page=31",
-      "note": "The drawing locates the member but supplies no individual section size. Model width is an explicit visibility allowance."
-    },
-    {
-      "what": "Long X-strands",
-      "model": 0.95,
-      "real": null,
-      "thickened": true,
-      "source": "https://static1.squarespace.com/static/5e6fff374bb4d0147cd19d8a/t/5ee96ecf1f51e32053f0ffc5/1592356562550/SDTV_CLADDING%2BMOD%2BPERMIT%2BSET.pdf#page=4",
-      "note": "The drawing locates the member but supplies no individual section size. Model width is an explicit visibility allowance."
-    }
   ]
 }
