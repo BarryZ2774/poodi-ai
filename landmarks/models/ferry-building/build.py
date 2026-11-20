@@ -196,6 +196,11 @@ def build():
     for station in np.linspace(-96,96,27):
         hall-=arch_cut(station,6.4,10.3,1.9,-24.4,3.6).rotate((0,0,90))
         hall-=box(22.85,25.5,station-1.65,station+1.65,1,4.35)
+    # Group the windows on the north and south returns into four bays.
+    for end in (-100.6,100.6):
+        for u in (-12.6,-4.2,4.2,12.6):
+            hall -= arch_cut(u,6.35,10.35,1.9,end,3.8)
+            hall -= box(u-1.6,u+1.6,end-1.9,end+1.9,1.0,4.35)
     hard=[hall,hip(3,0,28,201.168,15.55,19.45,192) ^ mass(base,0,25)]
     # Two shallow hipped roofs flank the centre of the raised skylit nave.
     for s in (-55,55):

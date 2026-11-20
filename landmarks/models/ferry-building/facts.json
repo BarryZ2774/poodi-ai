@@ -47,14 +47,14 @@
       "source": "https://tile.loc.gov/storage-services/master/pnp/habshaer/ca/ca0600/ca0641/data/ca0641data.pdf#page=4"
     },
     {
-      "what": "Hall west eave",
+      "what": "Hall west eave, scaled from the undimensioned Port elevation",
       "real": 15.8,
       "model": 15.8,
       "source": "https://www.sfport.com/media/9505/download#page=17",
       "method": "Estimated from Appendix A's west elevation relative to the published 245 ft tower height, excluding the flagpole. Elevation diagram is not dimensioned; precision approximately 0.5 m."
     },
     {
-      "what": "High nave roof",
+      "what": "High nave roof, scaled from the undimensioned Port elevation",
       "real": 20.7,
       "model": 20.7,
       "source": "https://www.sfport.com/media/9505/download#page=17",
@@ -170,7 +170,8 @@
   "simplified": [
     "The 245 ft clocktower height follows the Marketplace operator. Four recessed dials show hands without numerals or lettering.",
     "The long front arcade uses repeated open recesses and a deeper central entrance. The nave skylight is one raised pitched roof. Individual panes, stalls and waterfront gates are omitted.",
-    "Five central entrance bays include three larger openings. Both sides have grouped arcades. The broad belfry, receding lantern stages and small domed cap follow the Port's west elevation. The architectural tip carries the adopted overall height; flag and pole are omitted."
+    "Five central entrance bays include three larger openings. Both sides have grouped arcades. The broad belfry, receding lantern stages and small domed cap follow the Port's west elevation. The architectural tip carries the adopted overall height; flag and pole are omitted.",
+    "Four grouped bays return the paired upper arches and lower rectangular windows onto each short end."
   ],
   "osm_attribution": "Ground outline from OpenStreetMap, © OpenStreetMap contributors, ODbL.",
   "origin_of_work": "Written from published measurements for this project. No third-party mesh used.",
