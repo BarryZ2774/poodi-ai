@@ -191,6 +191,20 @@
       "model": 10.76,
       "source": "https://data.sf.gov/resource/ynuv-fyni.json?sf16_bldgid=201006.0005375",
       "method": "DataSF hgt_maxcm field in centimetres."
+    },
+    {
+      "what": "Crossing dome drum diameter, LiDAR estimate",
+      "real": 16.3,
+      "model": 16.3,
+      "source": "https://www.fisheries.noaa.gov/inport/item/73386/full-list",
+      "method": "Across the step between the crossing drum and surrounding lower roof at cross-section y = −8.45 m; EPT levels 7 and 8. Rounded to 0.1 m."
+    },
+    {
+      "what": "Crossing cupola and cross above street datum, LiDAR estimate",
+      "real": 29.3,
+      "model": 29.3,
+      "source": "https://www.fisheries.noaa.gov/inport/item/73386/full-list",
+      "method": "The highest sampled crossing return was 52.85 m. Classified ground on the Dolores Street frontage was approximately 23.55 m."
     }
   ],
   "checkpoints": [
@@ -204,11 +218,14 @@
     }
   ],
   "simplified": [
-    "The adobe chapel and its bell niches sit south of the larger basilica. The taller northern belfry, shorter southern dome and curved parapet follow the city survey.",
+    "The chapel’s skewed adobe footprint is clipped behind the street elevation. Four engaged columns, a projecting balcony and three open bell niches describe that elevation. The parish photographs and city survey confirm a tall northern belfry and a shorter southern one.",
     "Two DataSF lidar footprint records supply the heights. The cemetery, adjacent school, tile pattern and statuary are omitted.",
-    "The old chapel has four grouped engaged columns. The basilica has recessed arched side windows and a low polygonal roof following the apse."
+    "The basilica has recessed side openings, a domed crossing with a lantern and cross, and a separate lower apse dome. The profile groups the smaller windows, ribs and tile courses."
   ],
   "osm_attribution": "Building footprints and mapped dimensions © OpenStreetMap contributors, ODbL.",
   "origin_of_work": "Written from published measurements for this project. No third-party mesh used.",
-  "architecture_source": "https://sfplanninggis.org/docs/DPRForms/3566001.pdf"
+  "architecture_source": "https://sfplanninggis.org/docs/DPRForms/3566001.pdf",
+  "aerial_reference": "https://www.missiondolores.org/photos",
+  "front_reference": "https://commissions.sfplanning.org/hpcpackets/2019-005041COA.pdf",
+  "crossing_survey": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/CA_SanFrancisco_1_B23/ept.json"
 }

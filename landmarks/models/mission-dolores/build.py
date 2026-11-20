@@ -173,7 +173,11 @@ def build():
     adobe+=chapel.rotate((0,0,3.15)).translate((ax,ay,0)) ^ mass(adobe_plan,0,11)
     screen=front_plate([(-5.9,0),(5.9,0),(5.9,6.75),(3.5,8.35),(1.45,10.76),
                         (-1.45,10.76),(-3.5,8.35),(-5.9,6.75)],29.4,2.7).translate((13.9,0,0))
+    # The mapped street edge is skew to the elevation. Stop the adobe and
+    # its roof behind the screen so all four columns and bell niches read.
+    adobe -= box(6.8,21.0,29.35,34,-.1,12)
     adobe+=screen
+    adobe+=box(10.05,17.75,30.15,31.46,5.1,5.95)
     adobe-=arch_cut(13.9,.65,3.15,1.35,30.4,3.8)
     for u in (-2.35,0,2.35):
         adobe-=arch_cut(13.9+u,6.1 if u else 7.15,7.0 if u else 8.2,.68,30.3,3.4)
@@ -200,6 +204,17 @@ def build():
             body-=arch_cut(station,4.15,8.4,1.68,-wall,3.8).rotate((0,0,90))
     apse=drum(-7.2,-26.7,[(11.95,7.45,5.58),(12.95,7.2,5.35),
                           (15.45,3.05,2.55),(15.95,1.05,.95)],12)
+    # The parish aerials show two separate domes. The larger one sits
+    # over the crossing, well ahead of the lower roof over the rear apse.
+    cx, cy = -6.65, -8.45
+    crossing = drum(cx,cy,[(14.6,8.15,8.15),(18.3,8.15,8.15),
+                           (18.7,7.82,7.82),(20.7,7.82,7.82),
+                           (21.1,8.05,8.05),(22.7,6.35,6.35),
+                           (24.0,4.35,4.35),(25.0,1.6,1.6),
+                           (25.5,1.18,1.18),(27.45,.85,.85)],16)
+    body += crossing
+    body += box(cx-.35,cx+.35,cy-.35,cy+.35,27.0,29.3)
+    body += box(cx-1,cx+1,cy-.35,cy+.35,28.0,28.66)
     body+=apse ^ mass(plan,0,22)
     hard.append(body)
     for x,tall in [(-15.2,True),(2.35,False)]:
