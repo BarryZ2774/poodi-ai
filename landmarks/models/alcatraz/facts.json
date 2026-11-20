@@ -58,6 +58,29 @@
       "real": 27.7368,
       "model": 27.7368,
       "source": "https://www.nps.gov/goga/learn/historyculture/upload/Alcatraz-Historic-Resource-Study.pdf"
+    },
+    {
+      "what": "Exercise yard floor on the NPS crest datum",
+      "real": 32.365,
+      "model": 32.365,
+      "source": "https://epqs.nationalmap.gov/v1/json?x=-122.4238438&y=37.8270908&wkid=4326&units=Meters&includeDate=true",
+      "method": "The 1 m USGS DEM gives 33.1275 m at the mapped yard centre and 41.6057 m beside the lighthouse. Apply their 8.4782 m difference to the NPS 134 ft crest.",
+      "control_source": "https://epqs.nationalmap.gov/v1/json?x=-122.4222935&y=37.8262541&wkid=4326&units=Meters&includeDate=true"
+    },
+    {
+      "what": "Parade ground elevation on the NPS crest datum",
+      "real": 19.009,
+      "model": 19.01,
+      "source": "https://epqs.nationalmap.gov/v1/json?x=-122.4214631&y=37.8258790&wkid=4326&units=Meters&includeDate=true",
+      "method": "The USGS 1 m DEM at the parade-ground centre minus the local 0.7625 m vertical registration."
+    },
+    {
+      "what": "Island waterline to lighthouse tip",
+      "real": 66.4464,
+      "model": 66.4464,
+      "source": "https://irma.nps.gov/DataStore/FileSource/Get/2186800?filename=GOGA_Alcatraz_Island_CLI.pdf",
+      "bbox": "height",
+      "method": "Sum of the inventory’s 134-foot site elevation and its 84-foot lighthouse."
     }
   ],
   "checkpoints": [
@@ -98,7 +121,7 @@
     "The shoreline follows the OSM coastline. Sloped rock faces and broad terraces stand in for individual cliffs, seawalls and paths.",
     "The prison, dining hall, administration wing, barracks and industrial buildings use their mapped plans. Repeated roof bays and a raised cellhouse roof convey the blocks at map scale.",
     "The lighthouse uses the 84-foot structure in the National Park Service landscape inventory. The water tank is supported on four enlarged legs. Handrails, windows, lettering and vegetation are omitted.",
-    "Near-vertical cliff bands support the crest plateau, the parade ground, factory terraces, and a separate 4.8 m dock cut open to the water. The dimensioned island boundary includes later shoreline works.",
+    "Surveyed transects form irregular sloped rock and cliffs. The dock, parade ground and industries apron have distinct level surfaces. The exercise yard sits 8.48 m below the NPS crest.",
     "A perimeter wall encloses the mapped exercise yard. Broad roof monitors and a tapered chimney distinguish the northwestern workshops."
   ],
   "osm_attribution": "© OpenStreetMap contributors, ODbL",
@@ -1073,5 +1096,425 @@
         ]
       ]
     }
+  },
+  "terrain_survey": {
+    "datum_shift_m": 0.762486188,
+    "source": "https://elevation.nationalmap.gov/arcgis/rest/services/3DEPElevation/ImageServer/getSamples?geometry=%7B%22points%22%3A%5B%5B-122.4209609%2C37.8251573%5D%2C%5B-122.4208776%2C37.8252213%5D%2C%5B-122.4207643%2C37.8253086%5D%2C%5B-122.4206558%2C37.8253921%5D%2C%5B-122.4205424%2C37.8254793%5D%2C%5B-122.420513%2C37.8255019%5D%2C%5B-122.4215511%2C37.8251176%5D%2C%5B-122.4213529%2C37.8252701%5D%2C%5B-122.4210853%2C37.825476%5D%2C%5B-122.4208291%2C37.8256732%5D%2C%5B-122.4205616%2C37.8258791%5D%2C%5B-122.4204914%2C37.825933%5D%2C%5B-122.4220512%2C37.8253483%5D%2C%5B-122.421817%2C37.8255284%5D%2C%5B-122.4214997%2C37.8257726%5D%2C%5B-122.4211962%2C37.8260061%5D%2C%5B-122.4208789%2C37.8262503%5D%2C%5B-122.4207957%2C37.8263144%5D%2C%5B-122.4226038%2C37.8255636%5D%2C%5B-122.4223182%2C37.8257833%5D%2C%5B-122.4219332%2C37.8260796%5D%2C%5B-122.4215644%2C37.8263634%5D%2C%5B-122.4211786%2C37.8266603%5D%2C%5B-122.4210782%2C37.8267375%5D%2C%5B-122.4228854%2C37.8258619%5D%2C%5B-122.4226146%2C37.8260703%5D%2C%5B-122.4222483%2C37.8263521%5D%2C%5B-122.4218983%2C37.8266214%5D%2C%5B-122.421532%2C37.8269033%5D%2C%5B-122.4214366%2C37.8269767%5D%2C%5B-122.4233351%2C37.8260308%5D%2C%5B-122.4230822%2C37.8262254%5D%2C%5B-122.4227404%2C37.8264884%5D%2C%5B-122.4224124%2C37.8267408%5D%2C%5B-122.4220706%2C37.8270038%5D%2C%5B-122.4219809%2C37.8270729%5D%2C%5B-122.4236666%2C37.8263283%5D%2C%5B-122.4234309%2C37.8265098%5D%2C%5B-122.4231119%2C37.8267552%5D%2C%5B-122.4228068%2C37.82699%5D%2C%5B-122.422487%2C37.8272361%5D%2C%5B-122.4224038%2C37.8273001%5D%2C%5B-122.4240282%2C37.8265651%5D%2C%5B-122.4237998%2C37.8267408%5D%2C%5B-122.4234898%2C37.8269794%5D%2C%5B-122.4231937%2C37.8272072%5D%2C%5B-122.4228837%2C37.8274458%5D%2C%5B-122.4228029%2C37.8275079%5D%2C%5B-122.4244916%2C37.8267361%5D%2C%5B-122.4242387%2C37.8269307%5D%2C%5B-122.4238969%2C37.8271937%5D%2C%5B-122.4235697%2C37.8274454%5D%2C%5B-122.4232279%2C37.8277084%5D%2C%5B-122.4231382%2C37.8277775%5D%2C%5B-122.4246831%2C37.8270785%5D%2C%5B-122.4244563%2C37.827253%5D%2C%5B-122.4241504%2C37.8274884%5D%2C%5B-122.4238567%2C37.8277144%5D%2C%5B-122.4235508%2C37.8279498%5D%2C%5B-122.4234709%2C37.8280113%5D%2C%5B-122.4249224%2C37.8274094%5D%2C%5B-122.4247404%2C37.8275494%5D%2C%5B-122.4244949%2C37.8277383%5D%2C%5B-122.4242599%2C37.8279191%5D%2C%5B-122.4240136%2C37.8281087%5D%2C%5B-122.4239499%2C37.8281577%5D%2C%5B-122.425129%2C37.8277654%5D%2C%5B-122.4250025%2C37.8278627%5D%2C%5B-122.4248304%2C37.8279951%5D%2C%5B-122.4246664%2C37.8281213%5D%2C%5B-122.4244943%2C37.8282538%5D%2C%5B-122.4244494%2C37.8282883%5D%2C%5B-122.4255317%2C37.8279076%5D%2C%5B-122.4254256%2C37.8279893%5D%2C%5B-122.4252813%2C37.8281004%5D%2C%5B-122.4251434%2C37.8282065%5D%2C%5B-122.4249998%2C37.8283169%5D%2C%5B-122.4249623%2C37.8283458%5D%2C%5B-122.4255956%2C37.8281097%5D%2C%5B-122.4255376%2C37.8281543%5D%2C%5B-122.4254585%2C37.8282152%5D%2C%5B-122.4253834%2C37.8282729%5D%2C%5B-122.4253043%2C37.8283338%5D%2C%5B-122.4252839%2C37.8283495%5D%5D%2C%22spatialReference%22%3A%7B%22wkid%22%3A4326%7D%7D&geometryType=esriGeometryMultipoint&returnFirstValueOnly=true&f=pjson",
+    "description": "84 spot elevations in metres NAVD88 from the USGS 1 m bare-earth survey, acquisition 2023-03-04, raster 72150. Positions round to 0.1 m in the local island axes. Subtract the difference between the lighthouse sample (41.605686188 m) and the adjacent NPS crest (40.8432 m) to register all terrain to the same model datum.",
+    "control_source": "https://epqs.nationalmap.gov/v1/json?x=-122.4222935&y=37.8262541&wkid=4326&units=Meters&includeDate=true",
+    "transects": [
+      {
+        "v": -238,
+        "samples": [
+          [
+            10.4,
+            3.41
+          ],
+          [
+            20.6,
+            4.71
+          ],
+          [
+            34.5,
+            7.46
+          ],
+          [
+            47.8,
+            6.96
+          ],
+          [
+            61.7,
+            3.67
+          ],
+          [
+            65.3,
+            2.21
+          ]
+        ]
+      },
+      {
+        "v": -205,
+        "samples": [
+          [
+            -29.9,
+            5.6
+          ],
+          [
+            -5.6,
+            19.73
+          ],
+          [
+            27.2,
+            22.59
+          ],
+          [
+            58.6,
+            19.51
+          ],
+          [
+            91.4,
+            8.67
+          ],
+          [
+            100,
+            3.75
+          ]
+        ]
+      },
+      {
+        "v": -156,
+        "samples": [
+          [
+            -43.6,
+            15.28
+          ],
+          [
+            -14.9,
+            22.35
+          ],
+          [
+            24,
+            19.67
+          ],
+          [
+            61.2,
+            19.62
+          ],
+          [
+            100.1,
+            6.3
+          ],
+          [
+            110.3,
+            3.29
+          ]
+        ]
+      },
+      {
+        "v": -105,
+        "samples": [
+          [
+            -61.8,
+            14.51
+          ],
+          [
+            -26.8,
+            20.75
+          ],
+          [
+            20.4,
+            30.37
+          ],
+          [
+            65.6,
+            19.76
+          ],
+          [
+            112.9,
+            3.31
+          ],
+          [
+            125.2,
+            3.34
+          ]
+        ]
+      },
+      {
+        "v": -64,
+        "samples": [
+          [
+            -56.5,
+            18.35
+          ],
+          [
+            -23.3,
+            29.29
+          ],
+          [
+            21.6,
+            41.68
+          ],
+          [
+            64.5,
+            20.22
+          ],
+          [
+            109.4,
+            3.32
+          ],
+          [
+            121.1,
+            3.3
+          ]
+        ]
+      },
+      {
+        "v": -23,
+        "samples": [
+          [
+            -71.8,
+            21.95
+          ],
+          [
+            -40.8,
+            31.65
+          ],
+          [
+            1.1,
+            40.54
+          ],
+          [
+            41.3,
+            36.7
+          ],
+          [
+            83.2,
+            10.94
+          ],
+          [
+            94.2,
+            7.33
+          ]
+        ]
+      },
+      {
+        "v": 21,
+        "samples": [
+          [
+            -69.7,
+            13.09
+          ],
+          [
+            -40.8,
+            29.52
+          ],
+          [
+            -1.7,
+            37.65
+          ],
+          [
+            35.7,
+            32.49
+          ],
+          [
+            74.9,
+            14.03
+          ],
+          [
+            85.1,
+            5.79
+          ]
+        ]
+      },
+      {
+        "v": 62,
+        "samples": [
+          [
+            -74.2,
+            14.14
+          ],
+          [
+            -46.2,
+            24.88
+          ],
+          [
+            -8.2,
+            35.21
+          ],
+          [
+            28.1,
+            30.52
+          ],
+          [
+            66.1,
+            13.57
+          ],
+          [
+            76,
+            6.95
+          ]
+        ]
+      },
+      {
+        "v": 104,
+        "samples": [
+          [
+            -90.2,
+            14.04
+          ],
+          [
+            -59.2,
+            18.88
+          ],
+          [
+            -17.3,
+            33.31
+          ],
+          [
+            22.8,
+            30.05
+          ],
+          [
+            64.7,
+            7.62
+          ],
+          [
+            75.7,
+            7.72
+          ]
+        ]
+      },
+      {
+        "v": 143,
+        "samples": [
+          [
+            -75.8,
+            7.84
+          ],
+          [
+            -48,
+            15.03
+          ],
+          [
+            -10.5,
+            30.25
+          ],
+          [
+            25.5,
+            17.01
+          ],
+          [
+            63,
+            15.64
+          ],
+          [
+            72.8,
+            6.89
+          ]
+        ]
+      },
+      {
+        "v": 184,
+        "samples": [
+          [
+            -65.3,
+            5.17
+          ],
+          [
+            -43,
+            14.39
+          ],
+          [
+            -12.9,
+            30.35
+          ],
+          [
+            15.9,
+            19.51
+          ],
+          [
+            46.1,
+            15.31
+          ],
+          [
+            53.9,
+            8.42
+          ]
+        ]
+      },
+      {
+        "v": 225,
+        "samples": [
+          [
+            -50.8,
+            14.38
+          ],
+          [
+            -35.3,
+            14.3
+          ],
+          [
+            -14.2,
+            15.01
+          ],
+          [
+            5.9,
+            14.65
+          ],
+          [
+            27,
+            11.27
+          ],
+          [
+            32.5,
+            7.16
+          ]
+        ]
+      },
+      {
+        "v": 261,
+        "samples": [
+          [
+            -65.2,
+            7.57
+          ],
+          [
+            -52.2,
+            10.77
+          ],
+          [
+            -34.5,
+            14.56
+          ],
+          [
+            -17.6,
+            14.27
+          ],
+          [
+            0,
+            8.82
+          ],
+          [
+            4.6,
+            5.76
+          ]
+        ]
+      },
+      {
+        "v": 281,
+        "samples": [
+          [
+            -53.6,
+            6.76
+          ],
+          [
+            -46.5,
+            9.44
+          ],
+          [
+            -36.8,
+            11.03
+          ],
+          [
+            -27.6,
+            9.85
+          ],
+          [
+            -17.9,
+            4.41
+          ],
+          [
+            -15.4,
+            3.09
+          ]
+        ]
+      }
+    ]
+  },
+  "shoreline_comparison": {
+    "approximate_landscape_length_m": 518.16,
+    "approximate_landscape_width_m": 176.784,
+    "source": "https://irma.nps.gov/DataStore/FileSource/Get/2186800?filename=GOGA_Alcatraz_Island_CLI.pdf",
+    "method": "NPS describes an island approximately 1,700 by 580 feet without specifying survey endpoints. The model uses the minimum bounding rectangle of the complete present-day mapped coastal polygon, including projecting solid wharf/apron and the extreme rock points rather than typical shore-to-shore dimensions."
   }
 }

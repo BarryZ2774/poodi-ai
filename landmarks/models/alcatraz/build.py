@@ -161,6 +161,41 @@ def write_glb(solid):
     print(f"{len(indices)//3:,} triangles, {len(glb):,} bytes")
 
 
+def island_slope():
+    """Skin sparse USGS bare-earth transects, then clip to the actual coastline."""
+    survey = FACTS["terrain_survey"]
+    rows = survey["transects"]
+    # Extend the survey surface past the shore before trimming its ragged edges.
+    north_south = [dict(rows[0],v=-255), *rows, dict(rows[-1],v=300)]
+    vertices = []
+    for row in north_south:
+        samples = row["samples"]
+        extended = [(-115,samples[0][1]), *samples, (145,samples[-1][1])]
+        for u,z in extended:
+            level = z - survey["datum_shift_m"]
+            # Close the survey triangles across the level parade-ground pad.
+            if -215 < row["v"] < -95 and -8 < u < 86:
+                level = 19.01
+            vertices.append((u,row["v"],level))
+    columns = len(north_south[0]["samples"])+2
+    top_count = len(vertices)
+    vertices.extend([(u,v,-1) for u,v,z in vertices])
+    faces = []
+    for j in range(len(north_south)-1):
+        for i in range(columns-1):
+            a = j*columns+i
+            b, c, d = a+1, a+columns+1, a+columns
+            for tri in ((a,b,c),(a,c,d)):
+                faces.append(tri)
+                faces.append(tuple(top_count+k for k in reversed(tri)))
+    rim = [*range(columns), *range(2*columns-1,top_count,columns),
+           *range(top_count-2,top_count-columns-1,-1),
+           *range(top_count-2*columns,0,-columns)]
+    for a,b in zip(rim,np.roll(rim,-1)):
+        faces.extend([(a,a+top_count,b+top_count),(a,b+top_count,b)])
+    return md.Manifold(md.Mesh64(np.array(vertices),np.array(faces,dtype=np.uint64)))
+
+
 def build():
     plans = FACTS["plans"]
     def points(name):
@@ -170,32 +205,23 @@ def build():
     summit = 134*.3048
     coast = points("coast")
     crest = np.vstack([points(k) for k in ("cellhouse","mess","administration","lighthouse")])
-    # Flat benches and abrupt cliff bands follow the mapped shoreline. The
-    # eastern wharf has an uninterrupted opening to water at the barracks.
-    shore=section(coast)
-    dock=section([(59,-128),(158,-128),(158,-16),(62,-16)])
-    factories=section([(-120,123),(-17,123),(-16,207),(60,200),(65,310),(-120,310)])
-    def layer(plan,low,high):
-        return plan.extrude(high-low).translate((0,0,low))
-    land=[layer(shore,0,4.8)]
-    cliff=shore.offset(-3,md.JoinType.Square).simplify(1)-dock
-    land.append(layer(cliff,4.8,13))
-    shore_bench=(cliff.offset(-5,md.JoinType.Square) ^
-                 shore.scale((.89,.96)).translate((3.5,-3))).simplify(1)-factories
-    land.append(layer(shore_bench,13,19.2))
-    parade=section(points("parade")).offset(8,md.JoinType.Square)
-    hillside=(shore_bench.offset(-7,md.JoinType.Square) ^
-              shore.scale((.76,.81)).translate((-3,5))).simplify(1)-parade
-    land.append(layer(hillside,19.2,28.7))
-    upper=md.CrossSection.hull_points(np.vstack((crest,points("yard"),points("tank"))))
-    land.append(layer((upper.offset(10,md.JoinType.Square)^hillside)-parade,28.7,31.2))
-    plateau=md.CrossSection.hull_points(crest).offset(4.5,md.JoinType.Square)
-    land.append(layer(plateau,31.2,summit))
-    hard=land
-    yard=section(points("yard"))
-    yard_floor=32.6
-    hard.append(layer(yard,27.8,yard_floor))
-    hard.append(layer(yard-yard.offset(-1.2,md.JoinType.Square),yard_floor,yard_floor+4.9))
+    # Preserve the wharf, yard, factories and parade ground as separate level
+    # sites. Everywhere else the surveyed rock rises directly from the water.
+    shore = section(coast)
+    dock = section([(59,-128),(158,-128),(158,-16),(62,-16)])
+    factories = section([(-120,123),(-17,123),(-16,207),(60,200),(65,310),(-120,310)])
+    plateau = md.CrossSection.hull_points(crest).offset(4.5,md.JoinType.Square)
+    yard = section(points("yard"))
+    yard_floor = 32.365
+    terrain = island_slope() ^ shore.extrude(summit)
+    for plan,level in [(factories,13),(dock,4.8),(plateau,summit),
+                       (yard,yard_floor),(section(points("tank")).offset(1.3),31.2)]:
+        area = plan ^ shore
+        terrain -= area.extrude(75-level).translate((0,0,level))
+        terrain += area.extrude(level)
+    hard = [terrain]
+    wall = yard - yard.offset(-1.2,md.JoinType.Square)
+    hard.append(wall.extrude(4.9).translate((0,0,yard_floor)))
     cx,cy=centre("chimney")
     hard.append(drum(cx,cy,[(12.8,1.65,1.65),(13+91*.3048,.74,.74)],12))
     for name, roof in [("cellhouse",55.5),("mess",51.5),("administration",54),
