@@ -218,14 +218,20 @@
     }
   ],
   "simplified": [
-    "The chapel’s skewed adobe footprint is clipped behind the street elevation. Four engaged columns, a projecting balcony and three open bell niches describe that elevation. The parish photographs and city survey confirm a tall northern belfry and a shorter southern one.",
+    "The chapel’s skewed adobe footprint meets the street elevation in a square corner. Four engaged columns, a projecting balcony and three open bell niches describe that elevation.",
     "Two DataSF lidar footprint records supply the heights. The cemetery, adjacent school, tile pattern and statuary are omitted.",
     "The basilica has recessed side openings, a domed crossing with a lantern and cross, and a separate lower apse dome. The profile groups the smaller windows, ribs and tile courses."
   ],
   "osm_attribution": "Building footprints and mapped dimensions © OpenStreetMap contributors, ODbL.",
   "origin_of_work": "Written from published measurements for this project. No third-party mesh used.",
   "architecture_source": "https://sfplanninggis.org/docs/DPRForms/3566001.pdf",
-  "aerial_reference": "https://www.missiondolores.org/photos",
+  "aerial_reference": "https://irp.cdn-website.com/3f4675b8/dms3rep/multi/opt/74-1920w.jpg",
   "front_reference": "https://commissions.sfplanning.org/hpcpackets/2019-005041COA.pdf",
-  "crossing_survey": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/CA_SanFrancisco_1_B23/ept.json"
+  "crossing_survey": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/CA_SanFrancisco_1_B23/ept.json",
+  "basilica_towers": {
+    "north_cross_model_m": 39.04,
+    "south_cross_model_m": 33.04,
+    "profile": "The frontal photograph from Dolores Street shows the additional open bell stage on the northern tower, at right. The southern tower height is a model estimate.",
+    "source": "https://upload.wikimedia.org/wikipedia/commons/8/87/Mission_San_Francisco_de_Asis_and_Dolores_Basilica_(2025).jpg"
+  }
 }

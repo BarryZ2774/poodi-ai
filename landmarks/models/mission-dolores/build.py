@@ -164,15 +164,21 @@ def write_glb(solid):
 
 def build():
     p=FACTS["plans"]
-    adobe_plan=p["adobe"]["outline"]
+    adobe_plan = p["adobe"]["outline"].copy()
+    # Square the north wall into the back of the street elevation. The mapped
+    # corner sets both jambs of this joint, so the skew wall has no thin return.
+    north_jamb = adobe_plan[-2][0]
+    street_centre, street_station, street_depth = 13.9, 29.4, 2.7
+    adobe_plan.insert(-1, (north_jamb, street_station - street_depth / 2))
     adobe=mass(adobe_plan,0,6.5)
     # Rotate the chapel within the basilica's coordinate system to follow
     # its independently mapped, slightly oblique, Dolores Street frontage.
     ax,ay=15.4,8.0
     chapel=front_plate([(-6.1,6.3),(6.1,6.3),(0,9.6)],0,45)
     adobe+=chapel.rotate((0,0,3.15)).translate((ax,ay,0)) ^ mass(adobe_plan,0,11)
-    screen=front_plate([(-5.9,0),(5.9,0),(5.9,6.75),(3.5,8.35),(1.45,10.76),
-                        (-1.45,10.76),(-3.5,8.35),(-5.9,6.75)],29.4,2.7).translate((13.9,0,0))
+    screen=front_plate([(north_jamb-street_centre,0),(5.9,0),(5.9,6.75),(3.5,8.35),(1.45,10.76),
+                        (-1.45,10.76),(-3.5,8.35),(north_jamb-street_centre,6.75)],
+                       street_station,street_depth).translate((street_centre,0,0))
     # The mapped street edge is skew to the elevation. Stop the adobe and
     # its roof behind the screen so all four columns and bell niches read.
     adobe -= box(6.8,21.0,29.35,34,-.1,12)
