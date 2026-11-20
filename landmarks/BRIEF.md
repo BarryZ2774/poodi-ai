@@ -12,9 +12,9 @@ The app runs on phones and must stay smooth, so models are small and plain. The 
 
 ## The order
 
-Build **one** model first: `golden-gate-bridge`. It is judged by eye before anything else is ordered. Do not start the others.
+The list of models and their order comes with the ask. Each model is one pull request. `golden-gate-bridge` was the first.
 
-Next in line, in this order, only when asked: `bay-bridge-west-span`, `alcatraz`. On hold until a legal check: `sfmoma`.
+On hold until a rights check, do not build: the Transamerica Pyramid, Salesforce Tower, SFMOMA, the de Young Museum, Oracle Park, Chase Center, and any building finished after 1990.
 
 ## What you hand in for a landmark
 
@@ -25,22 +25,22 @@ Everything for one landmark lives in `models/<slug>/`:
 | `build.py` | The script that writes the model from numbers. Running it again gives the same file. |
 | `<slug>.glb` | The model the script wrote, committed. |
 | `facts.json` | Name, anchor, measurements with sources (see below). |
-| `preview/front.png`, `side.png`, `three-quarter.png`, `top.png` | Pictures made by `tools/render.py`. Do not make your own renders by other means. |
+| `preview/front.png`, `side.png`, `three-quarter.png`, `top.png` | Pictures made by `tools/render.py`, 1600 x 1000 as it writes them. Do not make your own renders by other means. |
 
-Python 3.11 or newer. Keep dependencies few and list them in `requirements.txt` (numpy, trimesh and pygltflib are enough for most models).
+Python 3.11 or newer. Keep dependencies few and list them in `requirements.txt`, which stays the same on every model branch (numpy and one mesh library are enough for most models). What only one model needs goes into `models/<slug>/requirements.txt`. The tools have their own list in `tools/requirements.txt`.
 
 ## Rules for every model
 
-1. **Format.** glTF 2.0 binary (`.glb`), one file, nothing external. No textures, no images, no animations, no cameras, no lights.
+1. **Format.** glTF 2.0 binary (`.glb`), one file, nothing external. No textures, no images, no animations, no cameras, no lights. No glTF extensions: positions and normals are plain 32-bit floats, so the simplest loader can read the file.
 2. **Size and axes.** Real size, 1 unit = 1 metre. Y is up. +X is east and -Z is north, so the model already points the right way and the app never rotates it.
-3. **Origin.** The origin sits at the anchor point given in `facts.json`, at ground level for a building and at mean sea level for a bridge. Nothing goes below zero except bridge piers, which may go 3 m under.
-4. **Weight.** At most 6,000 triangles for a building and 25,000 for the Golden Gate Bridge. At most 400 KB per file. Fewer is better.
+3. **Origin.** The origin sits at the anchor point given in `facts.json`, at ground level for a building and at mean sea level for a bridge. Nothing goes below zero except bridge piers, which may go 3 m under. The map is flat: ground and water are both at zero and there are no hills. Nothing may float: every support reaches zero, and a roadway that ends does so on a support that reaches zero. Where the real bridge carries on beyond the model, that support is a pier or bent in the bridge's own style; a solid block is only for a real anchorage or abutment. No ramps down to the ground.
+4. **Weight.** At most 6,000 triangles for a building and 25,000 for a bridge. At most 400 KB per file for a building and 1,500 KB for a bridge (1 KB = 1,000 bytes). Fewer is better.
 5. **Materials.** One mesh if you can, three at most. One material named `body`, and one optional material named `accent`. Both use base colour `#F4F1EC`, metallic 0, roughness 1. No vertex colours.
 6. **Edges.** Hard edges where the real thing has edges, with normals exported. Only truly round things (cables, domes) are smooth.
 7. **Clean geometry.** No holes you can see from outside, no faces inside the solid, no two faces on top of each other, normals pointing out.
-8. **Nothing too thin.** No part thinner than 0.6 m, or it flickers and vanishes from far away. Draw cables and railings thicker than they are (main cables at least 1.2 m).
-9. **The outline comes first.** What a person would sketch from memory must be there and in proportion. Detail smaller than about 2 m is left out. No cars, people, water, terrain, signs, text, logos or flags.
-10. **True proportions.** Every main measurement comes from a published source and is listed in `facts.json` with its URL. The model must match each one within 2%.
+8. **Nothing too thin.** No bar, wall, cable or fin thinner than 0.6 m along its length, or it flickers and vanishes from far away. Draw cables and railings thicker than they are (main cables at least 1.2 m). A spire or a roof may still end in a point.
+9. **The outline comes first.** What a person would sketch from memory must be there and in proportion. Detail smaller than about 2 m is left out. No cars, people, water, terrain, signs, text, logos or flags. The one exception to "no terrain" is `alcatraz`, where the rock is the landmark.
+10. **Roughly true proportions.** Good enough is the bar: the model has to read as the place, it does not have to match it part for part. The overall sizes (the height, and the length for a bridge) come from a published source and are listed in `facts.json` with its URL. Every measurement you list needs a source, and the model must match it within 10%. Everything else is your best reading of photos, drawings or open survey data and does not have to be listed.
 
 ## facts.json
 
@@ -61,7 +61,9 @@ Python 3.11 or newer. Keep dependencies few and list them in `requirements.txt` 
 }
 ```
 
-`kind` is `bridge` or `building` and sets the triangle limit. `checkpoints` are real positions where the model must have geometry at least that tall. The check turns each one into model coordinates from the anchor and looks there.
+Two optional marks on a measurement help the check. `"bbox": "height"`, `"length"` or `"width"` says the measurement is the model's own overall size, and the check then measures the model itself (height is the top above the origin; length and width are the sides of the smallest rectangle around the footprint). `"thickened": true` marks a part that rule 8 makes you draw thicker than it is, such as a main cable; the 10% rule does not apply to it, but the model value must not be smaller than the real one.
+
+`kind` is `bridge` or `building` and sets the triangle and file size limits. `checkpoints` are real positions where the model must have geometry at least that tall. The check turns each one into model coordinates from the anchor and looks there. A bridge needs at least two checkpoints at least 100 m apart, so that both its position and its direction are tested.
 
 ## The Golden Gate Bridge
 
@@ -79,12 +81,16 @@ Position. The model must sit on the real bridge. Take the two tower positions fr
 
 The open map data already draws the two towers (22 stacked parts each, up to 225 m). The app hides those and shows your model in their place, so your towers must stand in exactly the same spots.
 
+## Buildings the open map data already draws
+
+Most landmarks other than the bridges and Alcatraz already stand in the open map data as plain stacked boxes, and the model replaces them. For these: `kind` is `building`. Take the building's outline from OpenStreetMap with one small request, keep the model's ground outline within 3 m of it, and anchor on the outline's centre. Say in `facts.json` that the outline comes from OpenStreetMap (© OpenStreetMap contributors, ODbL). Add at least one checkpoint at the highest point. Cite a source for the height and the main sizes.
+
 ## How work is handed in
 
 - One branch and one pull request per landmark, named `model/<slug>`.
 - The pull request text gives: triangle count, file size, the table of real against model measurements, the list of what you simplified, and the four preview pictures.
-- `tools/check.py models/<slug>` must pass before you ask for review. It runs on every push and tests rules 1 to 8, the 2% rule, and the tower positions.
-- Passing the check is not approval. The pictures are judged by eye for one thing: would a person who knows the place name it at a glance? Expect two or three rounds.
+- `tools/check.py models/<slug>` must pass before you ask for review. It runs on every push and tests rules 1 to 8, the 10% rule, the checkpoints, and that nothing hangs in the air.
+- Passing the check is not approval. The pictures are judged by eye for one thing: would a person who knows the place name it at a glance? If yes, the model is done and small flaws stay. Expect one round of fixes at most.
 
 ## Not allowed
 

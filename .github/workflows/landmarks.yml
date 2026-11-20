@@ -1,0 +1,110 @@
+name: landmarks
+
+on:
+  pull_request:
+    paths:
+      - "landmarks/**"
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install requirements
+        run: |
+          python -m pip install -r landmarks/tools/requirements.txt
+          # Model builders list what their build scripts need in landmarks/requirements.txt.
+          if [ -f landmarks/requirements.txt ]; then
+            python -m pip install -r landmarks/requirements.txt
+          fi
+
+      - name: Find changed model folders
+        id: changed
+        env:
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+        run: |
+          set -euo pipefail
+          git diff --name-only "$BASE_SHA" HEAD > "$RUNNER_TEMP/changed.txt"
+          if grep -qE '^landmarks/(tools/|requirements\.txt$)' "$RUNNER_TEMP/changed.txt"; then
+            # The tools changed: every model must still pass.
+            candidates=$(find landmarks/models -mindepth 1 -maxdepth 1 -type d 2>/dev/null | sort || true)
+          else
+            candidates=$(grep -E '^landmarks/models/[^/]+/' "$RUNNER_TEMP/changed.txt" | cut -d/ -f1-3 | sort -u || true)
+          fi
+          models=""
+          for m in $candidates; do
+            if [ -d "$m" ]; then models="$models $m"; fi
+          done
+          echo "Model folders to check:${models:- none}"
+          echo "models=${models# }" >> "$GITHUB_OUTPUT"
+
+      - name: Test the tools
+        run: python landmarks/tools/tests/test_check.py
+
+      - name: Check models
+        if: always() && steps.changed.outputs.models != ''
+        env:
+          MODELS: ${{ steps.changed.outputs.models }}
+        run: |
+          status=0
+          for m in $MODELS; do
+            echo "::group::check $m"
+            # A model may list extra packages its build.py needs next to it.
+            if [ -f "$m/requirements.txt" ]; then
+              python -m pip install -r "$m/requirements.txt" || status=1
+            fi
+            python landmarks/tools/check.py "$m" --rebuild || status=1
+            echo "::endgroup::"
+          done
+          exit $status
+
+      - name: Render previews
+        if: always() && steps.changed.outputs.models != ''
+        env:
+          MODELS: ${{ steps.changed.outputs.models }}
+        run: |
+          set -euo pipefail
+          mkdir -p "$RUNNER_TEMP/previews"
+          for m in $MODELS; do
+            python landmarks/tools/render.py "$m"
+            mkdir -p "$RUNNER_TEMP/previews/$(basename "$m")"
+            cp "$m"/preview/*.png "$RUNNER_TEMP/previews/$(basename "$m")/"
+          done
+
+      - name: Upload previews
+        if: always() && steps.changed.outputs.models != ''
+        uses: actions/upload-artifact@v4
+        with:
+          name: landmark-previews
+          path: ${{ runner.temp }}/previews/
+          if-no-files-found: warn
+
+      - name: Model pull requests stay inside their own folder
+        if: always() && startsWith(github.head_ref, 'model/')
+        env:
+          HEAD_REF: ${{ github.head_ref }}
+        run: |
+          set -euo pipefail
+          slug="${HEAD_REF#model/}"
+          if ! printf '%s' "$slug" | grep -qE '^[a-z0-9]+(-[a-z0-9]+)*$'; then
+            echo "Branch '$HEAD_REF' should be model/<slug> with a lowercase, hyphenated slug."
+            exit 1
+          fi
+          outside=$(grep -vE "^landmarks/models/${slug}/|^landmarks/requirements\.txt$" "$RUNNER_TEMP/changed.txt" || true)
+          if [ -n "$outside" ]; then
+            echo "A model pull request may only change landmarks/models/${slug}/ (and landmarks/requirements.txt). Also changed:"
+            echo "$outside"
+            exit 1
+          fi
+          echo "All changes are inside landmarks/models/${slug}/"
