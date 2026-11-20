@@ -1,0 +1,276 @@
+{
+  "slug": "conservatory-of-flowers",
+  "name": "Conservatory of Flowers",
+  "kind": "building",
+  "anchor": {
+    "lat": 37.77263055,
+    "lon": -122.46023301,
+    "what": "centre of the mapped ground outline at ground level"
+  },
+  "bearing_deg": 84.01382197545499,
+  "measurements_m": [
+    {
+      "what": "Overall height above the base",
+      "real": 20.7264,
+      "model": 20.7264,
+      "source": "https://legacy.seaonc.org/structure/conservatory-of-flowers-at-golden-gate-park/",
+      "bbox": "height"
+    },
+    {
+      "what": "Width across local axis",
+      "real": 35.36,
+      "model": 35.36,
+      "source": "https://www.openstreetmap.org/way/30675038"
+    },
+    {
+      "what": "Length along local axis",
+      "real": 75.104,
+      "model": 75.104,
+      "source": "https://www.openstreetmap.org/way/30675038"
+    }
+  ],
+  "plans": {
+    "base": {
+      "outline": [
+        [
+          17.681,
+          -3.527
+        ],
+        [
+          17.803,
+          -1.414
+        ],
+        [
+          19.173,
+          -1.434
+        ],
+        [
+          19.251,
+          1.969
+        ],
+        [
+          17.661,
+          2.029
+        ],
+        [
+          17.704,
+          4.346
+        ],
+        [
+          10.681,
+          4.32
+        ],
+        [
+          10.669,
+          6.013
+        ],
+        [
+          7.74,
+          9.049
+        ],
+        [
+          7.283,
+          9.053
+        ],
+        [
+          7.302,
+          26.263
+        ],
+        [
+          15.147,
+          26.264
+        ],
+        [
+          16.755,
+          27.761
+        ],
+        [
+          16.83,
+          30.18
+        ],
+        [
+          17.765,
+          30.153
+        ],
+        [
+          17.755,
+          33.255
+        ],
+        [
+          16.776,
+          33.286
+        ],
+        [
+          16.852,
+          35.599
+        ],
+        [
+          15.163,
+          37.167
+        ],
+        [
+          -1.194,
+          37.306
+        ],
+        [
+          -2.596,
+          38.197
+        ],
+        [
+          -4.792,
+          35.982
+        ],
+        [
+          -3.749,
+          34.863
+        ],
+        [
+          -3.67,
+          9.227
+        ],
+        [
+          -6.648,
+          6.261
+        ],
+        [
+          -6.572,
+          35.185
+        ],
+        [
+          -9.768,
+          35.149
+        ],
+        [
+          -9.829,
+          29.671
+        ],
+        [
+          -10.93,
+          29.707
+        ],
+        [
+          -11.02,
+          19.91
+        ],
+        [
+          -15.69,
+          19.753
+        ],
+        [
+          -15.534,
+          4.11
+        ],
+        [
+          -16.109,
+          4.153
+        ],
+        [
+          -16.109,
+          -3.404
+        ],
+        [
+          -15.046,
+          -3.373
+        ],
+        [
+          -14.935,
+          -25.195
+        ],
+        [
+          -12.359,
+          -25.323
+        ],
+        [
+          -12.366,
+          -31.665
+        ],
+        [
+          -6.515,
+          -31.641
+        ],
+        [
+          -6.509,
+          -5.828
+        ],
+        [
+          -3.58,
+          -8.651
+        ],
+        [
+          -3.184,
+          -36.907
+        ],
+        [
+          14.985,
+          -36.801
+        ],
+        [
+          16.846,
+          -35.012
+        ],
+        [
+          16.99,
+          -32.582
+        ],
+        [
+          17.92,
+          -32.547
+        ],
+        [
+          17.993,
+          -29.401
+        ],
+        [
+          16.936,
+          -29.37
+        ],
+        [
+          16.907,
+          -27.09
+        ],
+        [
+          14.885,
+          -25.301
+        ],
+        [
+          7.432,
+          -25.388
+        ],
+        [
+          7.838,
+          -8.634
+        ],
+        [
+          10.817,
+          -5.563
+        ],
+        [
+          10.786,
+          -3.513
+        ]
+      ],
+      "centre": [
+        -0.002,
+        -0.015
+      ],
+      "source": "https://www.openstreetmap.org/way/30675038"
+    }
+  },
+  "checkpoints": [
+    {
+      "what": "Central dome lantern",
+      "lat": 37.77263055,
+      "lon": -122.46023301,
+      "min_height_m": 20.4,
+      "within_m": 5,
+      "source": "https://www.openstreetmap.org/way/30675038"
+    }
+  ],
+  "simplified": [
+    "Opaque shaped roof sections replace the glass panes. The central palm house, matching wings and end pavilions retain their separate profiles.",
+    "Only the large roof ribs, lanterns and the main entrance appear. Rear service spaces use low solids."
+  ],
+  "osm_attribution": "Ground outline from OpenStreetMap, © OpenStreetMap contributors, ODbL.",
+  "origin_of_work": "Written from published measurements for this project. No third-party mesh used.",
+  "shape_source": "https://npgallery.nps.gov/GetAsset/fde34672-6158-4eee-baa7-b3a579511d47"
+}
