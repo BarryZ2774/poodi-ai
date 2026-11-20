@@ -122,15 +122,10 @@ def write_glb(solid):
 
 
 def build():
-    # Join the mapped party walls before extrusion, closing narrow survey seams.
-    ground = md.CrossSection.batch_boolean(
-        [section(FACTS["plans"][k]["outline"]).offset(.05) for k in FACTS["ground_keys"]],
-        md.OpType.Add).offset(-.05)
-    houses = [ground.extrude(.8)]
+    houses = []
     for address in FACTS["ground_keys"]:
         parts=[]
         survey=FACTS["survey"][address]
-        grade=survey["ground_m"]-FACTS["datum_m"]
         peak=survey["height_m"]
         ridge=min(13.15,peak-.55)
         plan = np.asarray(FACTS["plans"][address]["outline"])
@@ -141,9 +136,8 @@ def build():
         # storeys behind it so the bay and the steps articulate the street edge.
         w = right - left - .7
         facade = front + 1.5
-        eaves = 8.65 + .12 * (int(address) % 3)
-        body = front_plate([(x-w/2,-grade-.02), (x+w/2,-grade-.02), (x+w/2,eaves),
-                            (x,ridge), (x-w/2,eaves)], (facade+back)/2, back-facade)
+        eaves = ridge - w/2 * math.tan(math.radians(44.0))
+        body = box(x-w/2, x+w/2, facade, back, 0, eaves-.20)
         # Recess the entry and attic window into the solid elevations.
         body -= box(x-w/2+.75, x-w/2+2.22, facade-.5, facade+1.1, 2.4, 5.3)
 
@@ -153,21 +147,23 @@ def build():
         parts.append(box(x+1.12,x+2.26,back-5.22,back-3.68,peak-.75,peak))
         # The near-frontal survey photograph shows a full-width pediment
         # over both the recess on the north and the polygonal bay on the south.
-        half = w / 2 + .18
-        pediment = front_plate([(x-half,eaves-.1),(x+half,eaves-.1),
-                                (x+half,eaves+.62),(x,ridge),(x-half,eaves+.62)],
-                               front+.85,2.34)
-        pediment -= box(x-.66,x+.66,front-.55,front+.65,eaves+.95,eaves+2.15)
-        parts.append(pediment)
+        # One solid roof from the gable face to the rear wall. Its vertical
+        # fascia stays 0.95 m deep across the entire projecting street eave.
+        roof_front = front-.32
+        roof = front_plate([(x-w/2,eaves-.95),(x+w/2,eaves-.95),
+                            (x+w/2,eaves),(x,ridge),(x-w/2,eaves)],
+                           (roof_front+back)/2,back-roof_front)
+        roof -= box(x-.66,x+.66,roof_front-.4,roof_front+1.0,eaves+.4,eaves+1.7)
+        parts.append(roof)
         porch_left = x-w/2+.08
-        parts.append(box(porch_left,porch_left+.75,front,front+.78,-grade,6.05))
+        parts.append(box(porch_left,porch_left+.75,front,front+.78,0,6.05))
         parts.append(box(porch_left,x+.15,front-.05,facade+.2,5.65,6.45))
         parts.append(box(porch_left,x+.15,front-.05,front+.75,6.4,7.16))
         bay_x = x+1.02
         bay = [(bay_x-1.90,facade+.25),(bay_x-1.90,front+.52),
                (bay_x-1.10,front-.28),(bay_x+1.10,front-.28),
                (bay_x+1.90,front+.52),(bay_x+1.90,facade+.25)]
-        bay_solid=mass(bay,-grade,eaves-.35)
+        bay_solid=mass(bay,0,eaves-.35)
         for z in (2.5,5.65):
             bay_solid-=box(bay_x-.59,bay_x+.59,front-.5,front+.55,z,z+1.75)
         parts.append(bay_solid)
@@ -176,10 +172,8 @@ def build():
                      .translate((bay_x,facade,eaves-.49)))
         for level in range(3):
             parts.append(box(x-w/2+.26,x-w/2+2.25,
-                              front-.90+level*.74,facade+.2,-grade,1.05+level*.70))
-        if grade>0:
-            houses.append(mass(plan,0,grade+.81))
-        houses.append(union(parts).as_original().translate((0,0,grade)))
+                              front-.90+level*.74,facade+.2,0,1.05+level*.70))
+        houses.append(union(parts).as_original())
     finish([union(houses).trim_by_plane((0,0,1),0)],[])
 
 
