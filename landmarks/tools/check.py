@@ -22,6 +22,7 @@ import tempfile
 from pathlib import Path
 
 import numpy as np
+from PIL import Image
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 from glbmesh import GLBError, footprint_rectangle, load_model, weld  # noqa: E402
@@ -39,6 +40,7 @@ MEASURE_TOLERANCE = 0.02
 MAX_HEIGHT = 1000.0
 MAX_SPAN = 5000.0
 PREVIEWS = ("front.png", "side.png", "three-quarter.png", "top.png")
+PREVIEW_SIZE = (1600, 1000)            # what tools/render.py writes
 # Extensions the reader can decode. The brief allows no extensions at all (rule 1), so a
 # file that uses one fails; it is still decoded so the other tests can report their numbers.
 READABLE_EXTENSIONS = ("KHR_mesh_quantization",)
@@ -175,8 +177,22 @@ def check_files(folder: Path, slug: str, rep: Report) -> Path | None:
     if missing:
         rep.warn("files", f"preview pictures missing: {', '.join(missing)} "
                           "(make them with tools/render.py)")
-    else:
-        rep.ok("files", "four preview pictures present")
+    wrong = []
+    for name in PREVIEWS:
+        path = folder / "preview" / name
+        if name in missing:
+            continue
+        try:
+            with Image.open(path) as im:
+                if im.format != "PNG" or im.size != PREVIEW_SIZE:
+                    wrong.append(f"{name} is {im.format} {im.size[0]} x {im.size[1]}")
+        except (OSError, ValueError):
+            wrong.append(f"{name} is not a picture")
+    if wrong:
+        rep.fail("files", "; ".join(wrong) + f" (want PNG {PREVIEW_SIZE[0]} x {PREVIEW_SIZE[1]}): "
+                 "make the pictures with tools/render.py")
+    elif not missing:
+        rep.ok("files", f"four preview pictures present, PNG {PREVIEW_SIZE[0]} x {PREVIEW_SIZE[1]}")
     return glbs[0]
 
 
@@ -276,6 +292,169 @@ def check_extent(model, facts, kind, rep: Report):
     else:
         rep.note("2 up-axis", "not tested: no measurement marked \"bbox\": \"height\" and no "
                               "checkpoints")
+
+
+# ---------------------------------------------------------------- rule 3: nothing floats
+FLOAT_ABOVE = 0.5        # metres; an underside lower than this counts as standing on zero
+FLOAT_MIN_AREA = 2.0     # square metres; smaller undersides (rope ends) are ignored
+FLOAT_JOIN = 2.0         # neighbouring cells join one underside if their heights differ less
+
+
+def _underside_maps(V, F, max_cells=1_500_000):
+    """Look at the model from straight below and from straight above on a grid.
+
+    Returns (low, top, cell, x0, z0): for every grid cell the lowest and highest
+    point of the model over it (inf / -inf where there is nothing).
+    """
+    from render import rasterize      # the same z-buffer the pictures use
+    lo, hi = V[:, [0, 2]].min(axis=0), V[:, [0, 2]].max(axis=0)
+    span = np.maximum(hi - lo, 1e-6)
+    cell = max(0.25, math.sqrt(span[0] * span[1] / max_cells))
+    nx = int(math.ceil(span[0] / cell)) + 2
+    nz = int(math.ceil(span[1] / cell)) + 2
+    x0, z0 = lo[0] - cell, lo[1] - cell
+    gx, gz, y = (V[:, 0] - x0) / cell, (V[:, 2] - z0) / cell, V[:, 1]
+    low, _ = rasterize(gx[F], gz[F], y[F], nx, nz)
+    top, _ = rasterize(gx[F], gz[F], -y[F], nx, nz)
+    top = -top
+    # Walls standing straight up have no area seen from below: walk along every
+    # edge so their bottom and top edges are seen too.
+    P = V[F]
+    for i, j in ((0, 1), (1, 2), (2, 0)):
+        a, b = P[:, i], P[:, j]
+        steps = np.maximum(2, np.ceil(np.linalg.norm((b - a)[:, [0, 2]], axis=1) / (cell / 2))
+                           .astype(np.int64) + 1)
+        k = np.repeat(np.arange(len(a)), steps)
+        start = np.repeat(np.cumsum(steps) - steps, steps)
+        t = (np.arange(int(steps.sum())) - start) / np.repeat(steps - 1, steps)
+        p = a[k] + (b - a)[k] * t[:, None]
+        ci = np.clip(((p[:, 0] - x0) / cell).astype(np.int64), 0, nx - 1)
+        cj = np.clip(((p[:, 2] - z0) / cell).astype(np.int64), 0, nz - 1)
+        np.minimum.at(low, cj * nx + ci, p[:, 1])
+        np.maximum.at(top, cj * nx + ci, p[:, 1])
+    return low.reshape(nz, nx), top.reshape(nz, nx), cell, x0, z0
+
+
+def _neighbours(a, fill):
+    """The four shifted copies of a 2D array, padded with `fill`."""
+    pad = np.pad(a, 1, constant_values=fill)
+    h, w = a.shape
+    return [pad[1 + dj:1 + dj + h, 1 + di:1 + di + w] for dj, di in ((0, 1), (0, -1), (1, 0), (-1, 0))]
+
+
+def floating_parts(V, F):
+    """Undersides that can see the ground straight below them, and whether each is held.
+
+    Neighbouring cells of similar height form one underside. An underside is held
+    when a neighbouring cell reaches lower: the ground itself, or another underside
+    that is held in turn. A wall, pier or tower beside it is what holds it.
+    """
+    low, top, cell, x0, z0 = _underside_maps(V, F)
+    up = np.isfinite(low) & (low > FLOAT_ABOVE)
+    nz, nx = low.shape
+    ids = -np.ones(low.shape, dtype=np.int64)
+    cells = np.flatnonzero(up.ravel())
+    ids.ravel()[cells] = np.arange(len(cells))
+    parent = list(range(len(cells)))
+
+    def find(a):
+        while parent[a] != a:
+            parent[a] = parent[parent[a]]
+            a = parent[a]
+        return a
+
+    with np.errstate(invalid="ignore"):
+        for dj, di in ((0, 1), (1, 0)):
+            both = up[:nz - dj, :nx - di] & up[dj:, di:]
+            both &= np.abs(low[:nz - dj, :nx - di] - low[dj:, di:]) <= FLOAT_JOIN
+            for a, b in zip(ids[:nz - dj, :nx - di][both].tolist(), ids[dj:, di:][both].tolist()):
+                ra, rb = find(a), find(b)
+                if ra != rb:
+                    parent[max(ra, rb)] = min(ra, rb)
+    roots = np.array([find(i) for i in range(len(cells))], dtype=np.int64)
+    _, label = np.unique(roots, return_inverse=True) if len(roots) else (None, roots)
+    G = -np.ones(low.shape, dtype=np.int64)
+    G.ravel()[cells] = label.ravel()
+    n = int(G.max()) + 1
+
+    to_ground = np.zeros(n, dtype=bool)
+    edges = set()
+    boundary = np.zeros(n)
+    held_boundary = np.zeros(n)
+    for nb_low, nb_g in zip(_neighbours(low, np.inf), _neighbours(G, -2)):
+        edge = (G >= 0) & (nb_g != G)
+        np.add.at(boundary, G[edge], 1)
+        lower = edge & (nb_low < low - 0.25)
+        np.add.at(held_boundary, G[lower], 1)
+        g, h = G[lower], nb_g[lower]
+        to_ground[g[h < 0]] = True
+        edges.update(zip(g[h >= 0].tolist(), h[h >= 0].tolist()))
+    holds: dict[int, list[int]] = {}
+    for a, b in edges:
+        holds.setdefault(b, []).append(a)
+    held = to_ground.copy()
+    queue = list(np.flatnonzero(held))
+    while queue:
+        b = queue.pop()
+        for a in holds.get(b, []):
+            if not held[a]:
+                held[a] = True
+                queue.append(a)
+
+    parts = []
+    for g in range(n):
+        jj, ii = np.nonzero(G == g)
+        area = len(jj) * cell * cell
+        if area < FLOAT_MIN_AREA:
+            continue
+        xs, zs = x0 + (ii + 0.5) * cell, z0 + (jj + 0.5) * cell
+        if len(xs) > 2:
+            length, width, _ = footprint_rectangle(np.stack([xs, zs], axis=1))
+        else:
+            length = width = 0.0
+        h = low[jj, ii]
+        parts.append(dict(
+            held=bool(held[g]), area=area, x=float(xs.mean()), z=float(zs.mean()),
+            y_min=float(h.min()), y_med=float(np.median(h)),
+            length=length + cell, width=width + cell,
+            body=float(np.median(top[jj, ii] - h)),
+            held_share=float(held_boundary[g] / max(boundary[g], 1))))
+    return parts, cell
+
+
+def _describe(p):
+    return (f"underside y = {fmt(p['y_min'], 1)} m, {fmt(p['length'], 0)} x {fmt(p['width'], 0)} m, "
+            f"at x={p['x']:.0f}, z={p['z']:.0f}")
+
+
+def check_floating(model, rep: Report):
+    parts, cell = floating_parts(model.V, model.F)
+    loose = sorted((p for p in parts if not p["held"]), key=lambda p: (round(p["y_min"], 1), -p["area"]))
+    if loose:
+        listed = "; ".join(_describe(p) for p in loose[:8])
+        more = f"; and {len(loose) - 8} more" if len(loose) > 8 else ""
+        rep.fail("3 floating", f"{len(loose)} parts end in mid-air: nothing under them reaches "
+                               f"y = 0 and nothing beside them reaches lower (lowest first). "
+                               f"{listed}{more}")
+    else:
+        rep.ok("3 floating", "every underside more than 0.5 m up is held by something beside it "
+                             f"that reaches the ground (seen from below on a {cell:.2f} m grid)")
+    # A heavy, compact block whose underside hangs well above the ground and that
+    # touches something lower on only a small part of its edge is very likely a
+    # support that stops short. A span, a cantilever or a portal can look alike,
+    # so this is a warning, not a failure.
+    heavy = [p for p in parts if p["held"] and p["area"] >= 100 and p["width"] >= 5
+             and p["length"] <= 4 * p["width"] and p["y_min"] >= 2
+             and p["body"] >= p["y_med"] and p["held_share"] < 0.3]
+    for p in sorted(heavy, key=lambda p: -p["area"]):
+        rep.warn("3 floating", f"a block {fmt(p['length'], 0)} x {fmt(p['width'], 0)} m with "
+                               f"{fmt(p['body'], 0)} m of model above it hangs with its underside "
+                               f"{fmt(p['y_min'], 1)} m up at x={p['x']:.0f}, z={p['z']:.0f}, held only "
+                               f"along {p['held_share'] * 100:.0f}% of its edge. If it is a support "
+                               "or an anchorage, it must reach y = 0")
+    rep.note("3 floating", "not caught: parts that float above other parts (only what can see the "
+                           "ground straight below is tested), parts held only from above, and a "
+                           "roadway that runs on past its last support without an abutment")
 
 
 # ---------------------------------------------------------------- rule 4
@@ -382,6 +561,11 @@ class Geometry:
                            | (self.WF[:, 1] == self.WF[:, 2])
                            | (self.WF[:, 0] == self.WF[:, 2]))
         self.good = ~self.degenerate
+        # Faces whose corners collapse to fewer than three points are left out of the
+        # edge count; zero-area faces with three distinct corners (slivers that close a
+        # T-junction) stay in, so they do not leave their neighbours' edges open.
+        self.collapsed = ((self.WF[:, 0] == self.WF[:, 1]) | (self.WF[:, 1] == self.WF[:, 2])
+                          | (self.WF[:, 0] == self.WF[:, 2]))
         self._edges()
         self._components()
 
@@ -389,7 +573,7 @@ class Geometry:
         F = self.WF
         directed = np.concatenate([F[:, [0, 1]], F[:, [1, 2]], F[:, [2, 0]]])
         face_of = np.tile(np.arange(len(F)), 3)
-        keep = np.repeat(self.good[None, :], 3, axis=0).ravel()
+        keep = np.repeat(~self.collapsed[None, :], 3, axis=0).ravel()
         directed, face_of = directed[keep], face_of[keep]
         undirected = np.sort(directed, axis=1)
         key, inverse, counts = np.unique(undirected, axis=0, return_inverse=True, return_counts=True)
@@ -458,6 +642,8 @@ def check_normals(model, geo: Geometry, rep: Report):
     und, faces = und[order], faces[order]
     same = np.all(und[1:] == und[:-1], axis=1)
     fa, fb = faces[:-1][same], faces[1:][same]
+    big = (geo.area[fa] >= 0.01) & (geo.area[fb] >= 0.01)       # slivers have no meaningful normal
+    fa, fb = fa[big], fb[big]
     cosang = np.einsum("ij,ij->i", geo.normal[fa], geo.normal[fb])
     # 80 degrees: smooth round parts with as few as five sides (72 degrees) are fine.
     sharp = int(np.sum(cosang < math.cos(math.radians(80))))
@@ -489,7 +675,9 @@ def _plane_groups(geo: Geometry):
 
 def _overlapping_pairs(geo: Geometry, faces: np.ndarray):
     """Pairs of faces in one plane whose insides overlap by more than OVERLAP_DEPTH."""
-    n = geo.normal[faces].mean(axis=0)
+    fn = geo.normal[faces]
+    fn = fn * np.where(fn @ fn[0] >= 0, 1.0, -1.0)[:, None]    # faces may face either way
+    n = fn.mean(axis=0)
     n /= np.linalg.norm(n)
     helper = np.eye(3)[np.argmin(np.abs(n))]
     u = np.cross(n, helper)
@@ -574,18 +762,21 @@ def check_clean(geo: Geometry, rep: Report):
                  if opposite_pairs else ""))
 
     # Inside-out pieces: a closed piece must enclose positive volume.
-    inside_out, closed = 0, 0
+    # Pieces with a few open edges are still tested: their volume sign is still clear.
+    inside_out, tested = 0, 0
     P = geo.P
     vol = np.einsum("ij,ij->i", P[:, 0], np.cross(P[:, 1], P[:, 2])) / 6.0
     for piece in range(geo.piece_count):
-        faces = (geo.face_piece == piece) & geo.good
-        if np.any(geo.face_on_bad_edge[faces]):
+        faces = (geo.face_piece == piece) & ~geo.collapsed
+        if not faces.any() or np.mean(geo.face_on_bad_edge[faces]) > 0.05:
             continue
-        closed += 1
+        tested += 1
         if vol[faces].sum() < 0:
             inside_out += 1
+    untested = geo.piece_count - tested
     rep.check(inside_out == 0, "7 inside-out",
-              f"{inside_out} of {closed} closed pieces have their faces pointing inwards (limit 0)")
+              f"{inside_out} of {tested} closed or nearly closed pieces have their faces pointing "
+              "inwards (limit 0)" + (f"; {untested} open pieces not tested" if untested else ""))
 
     if geo.boundary_edges or geo.nonmanifold_edges or geo.flipped_edges:
         rep.warn("7 watertight",
@@ -721,6 +912,10 @@ def check_thin(geo: Geometry, rep: Report):
                  f"{fmt(MIN_THICKNESS)} m; thinnest {fmt(w, 3)} m ({nf} faces) near "
                  f"x={c[0]:.1f}, y={c[1]:.1f}, z={c[2]:.1f}, measured along "
                  f"({d[0]:.2f}, {d[1]:.2f}, {d[2]:.2f}). A round part is measured across its flats")
+    elif len(widths) == 1:
+        rep.note("8 thin-pieces", f"the model is one joined piece ({fmt(worst[0], 1)} m at its "
+                                  "thinnest overall), so this says nothing about its parts; "
+                                  "see thin-walls")
     else:
         rep.ok("8 thin-pieces", f"thinnest of {len(widths)} separate pieces is {fmt(worst[0], 3)} m "
                                 f"(limit {fmt(MIN_THICKNESS)} m)")
@@ -867,6 +1062,16 @@ def check_checkpoints(facts, geo: Geometry, rep: Report):
     if not all(isinstance(v, (int, float)) for v in (lat0, lon0)):
         rep.fail("checkpoints", "anchor lat/lon missing, so checkpoints cannot be placed")
         return
+    placed = []
+    for k, cp in enumerate(facts["checkpoints"]):
+        if isinstance(cp, dict) and all(isinstance(cp.get(key), (int, float)) for key in ("lat", "lon")):
+            placed.append(latlon_to_model(cp["lat"], cp["lon"], lat0, lon0))
+    if facts.get("kind") == "bridge":
+        far = max((math.dist(a, b) for i, a in enumerate(placed) for b in placed[i + 1:]), default=0.0)
+        rep.check(len(placed) >= 2 and far >= 100, "checkpoints",
+                  f"a bridge needs at least two checkpoints at least 100 m apart, so that both its "
+                  f"position and its direction are tested; this one has {len(placed)}"
+                  + (f", at most {fmt(far, 0)} m apart" if len(placed) >= 2 else ""))
     for k, cp in enumerate(facts["checkpoints"]):
         if not isinstance(cp, dict) or not all(isinstance(cp.get(key), (int, float))
                                                for key in ("lat", "lon", "min_height_m", "within_m")):
@@ -899,7 +1104,7 @@ def check_rebuild(folder: Path, glb: Path, rep: Report):
         copy = Path(tmp) / folder.name
         shutil.copytree(folder, copy, ignore=shutil.ignore_patterns("preview", "*.glb", "__pycache__"))
         try:
-            run = subprocess.run([sys.executable, "build.py"], cwd=copy, capture_output=True,
+            run = subprocess.run([sys.executable, "-I", "build.py"], cwd=copy, capture_output=True,
                                  text=True, timeout=600)
         except subprocess.TimeoutExpired:
             rep.fail("rebuild", "build.py ran for more than 10 minutes")
@@ -950,6 +1155,7 @@ def run(folder: Path, rebuild: bool = False) -> int:
         check_normals(model, geo, rep)
         check_clean(geo, rep)
         check_thin(geo, rep)
+        check_floating(model, rep)
         check_measurements(facts, geo, rep)
         check_checkpoints(facts, geo, rep)
         rep.note("9 outline", "not tested by machine: the pictures are judged by eye")

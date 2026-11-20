@@ -25,15 +25,15 @@ Everything for one landmark lives in `models/<slug>/`:
 | `build.py` | The script that writes the model from numbers. Running it again gives the same file. |
 | `<slug>.glb` | The model the script wrote, committed. |
 | `facts.json` | Name, anchor, measurements with sources (see below). |
-| `preview/front.png`, `side.png`, `three-quarter.png`, `top.png` | Pictures made by `tools/render.py`. Do not make your own renders by other means. |
+| `preview/front.png`, `side.png`, `three-quarter.png`, `top.png` | Pictures made by `tools/render.py`, 1600 x 1000 as it writes them. Do not make your own renders by other means. |
 
-Python 3.11 or newer. Keep dependencies few and list them in `requirements.txt` (numpy, trimesh and pygltflib are enough for most models).
+Python 3.11 or newer. Keep dependencies few and list them in `requirements.txt`, which stays the same on every model branch (numpy and one mesh library are enough for most models). What only one model needs goes into `models/<slug>/requirements.txt`. The tools have their own list in `tools/requirements.txt`.
 
 ## Rules for every model
 
 1. **Format.** glTF 2.0 binary (`.glb`), one file, nothing external. No textures, no images, no animations, no cameras, no lights. No glTF extensions: positions and normals are plain 32-bit floats, so the simplest loader can read the file.
 2. **Size and axes.** Real size, 1 unit = 1 metre. Y is up. +X is east and -Z is north, so the model already points the right way and the app never rotates it.
-3. **Origin.** The origin sits at the anchor point given in `facts.json`, at ground level for a building and at mean sea level for a bridge. Nothing goes below zero except bridge piers, which may go 3 m under.
+3. **Origin.** The origin sits at the anchor point given in `facts.json`, at ground level for a building and at mean sea level for a bridge. Nothing goes below zero except bridge piers, which may go 3 m under. The map is flat: ground and water are both at zero and there are no hills. Nothing may float: every support reaches zero, and a roadway that ends does so on an abutment that reaches zero.
 4. **Weight.** At most 6,000 triangles for a building and 25,000 for a bridge. At most 400 KB per file for a building and 1,500 KB for a bridge (1 KB = 1,000 bytes). Fewer is better.
 5. **Materials.** One mesh if you can, three at most. One material named `body`, and one optional material named `accent`. Both use base colour `#F4F1EC`, metallic 0, roughness 1. No vertex colours.
 6. **Edges.** Hard edges where the real thing has edges, with normals exported. Only truly round things (cables, domes) are smooth.
@@ -63,7 +63,7 @@ Python 3.11 or newer. Keep dependencies few and list them in `requirements.txt` 
 
 Two optional marks on a measurement help the check. `"bbox": "height"`, `"length"` or `"width"` says the measurement is the model's own overall size, and the check then measures the model itself (height is the top above the origin; length and width are the sides of the smallest rectangle around the footprint). `"thickened": true` marks a part that rule 8 makes you draw thicker than it is, such as a main cable; the 2% rule does not apply to it, but the model value must not be smaller than the real one.
 
-`kind` is `bridge` or `building` and sets the triangle and file size limits. `checkpoints` are real positions where the model must have geometry at least that tall. The check turns each one into model coordinates from the anchor and looks there.
+`kind` is `bridge` or `building` and sets the triangle and file size limits. `checkpoints` are real positions where the model must have geometry at least that tall. The check turns each one into model coordinates from the anchor and looks there. A bridge needs at least two checkpoints at least 100 m apart, so that both its position and its direction are tested.
 
 ## The Golden Gate Bridge
 
@@ -89,7 +89,7 @@ Most landmarks other than the bridges and Alcatraz already stand in the open map
 
 - One branch and one pull request per landmark, named `model/<slug>`.
 - The pull request text gives: triangle count, file size, the table of real against model measurements, the list of what you simplified, and the four preview pictures.
-- `tools/check.py models/<slug>` must pass before you ask for review. It runs on every push and tests rules 1 to 8, the 2% rule, and the tower positions.
+- `tools/check.py models/<slug>` must pass before you ask for review. It runs on every push and tests rules 1 to 8, the 2% rule, the checkpoints, and that nothing hangs in the air.
 - Passing the check is not approval. The pictures are judged by eye for one thing: would a person who knows the place name it at a glance? Expect two or three rounds.
 
 ## Not allowed

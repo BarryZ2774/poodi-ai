@@ -13,6 +13,13 @@ looks along the long side. Both are orthographic with a ground line at y = 0.
 The top view is orthographic with north up. The three-quarter view has a mild
 perspective and looks from the front side and the unlit side, 28 degrees above
 the ground, so two walls read with different shades.
+
+Close-up for a reviewer (one extra picture, the four above are not touched):
+
+    python tools/render.py models/<slug> --camera X Y Z --target X Y Z [--fov 50] [--out close-up.png]
+
+Positions are in model metres (+X east, +Y up, -Z north). Triangles that reach
+behind the camera are cut where they cross a plane 5 cm in front of it.
 """
 from __future__ import annotations
 
@@ -229,8 +236,8 @@ def shade_view(model, cam: Camera, W, H, name, kind_label, ground_line, shadow, 
     draw = ImageDraw.Draw(out)
     font = _font(24)
     small_font = _font(20)
-    draw.text((40, 32), name, fill=TEXT, font=font)
-    draw.text((40, 64), kind_label, fill=TEXT, font=small_font)
+    draw.text((40, 32), plain_text(name, font), fill=TEXT, font=font)
+    draw.text((40, 64), plain_text(kind_label, small_font), fill=TEXT, font=small_font)
     if scale_bar:
         _scale_bar(draw, cam.scale / SS, small_font)
     return out
@@ -371,6 +378,52 @@ def _font(size):
         return ImageFont.load_default()
 
 
+# Plain stand-ins for characters the built-in font may not have.
+_PLAIN = {
+    "‐": "-", "‑": "-", "‒": "-", "–": "-", "—": "-", "―": "-",
+    "−": "-", "‘": "'", "’": "'", "‚": "'", "′": "'",
+    "“": '"', "”": '"', "„": '"', "″": '"', "…": "...",
+    " ": " ", " ": " ", " ": " ", "×": "x", "ß": "ss",
+    "ø": "o", "Ø": "O", "œ": "oe", "Œ": "OE", "æ": "ae", "Æ": "AE",
+    "ł": "l", "Ł": "L", "đ": "d", "Đ": "D", "ð": "d", "Ð": "D",
+    "þ": "th", "Þ": "Th", "ı": "i", "€": "EUR", "→": "->", "←": "<-",
+}
+_HAS_GLYPH: dict = {}
+
+
+def _has_glyph(font, ch):
+    """True when the font draws ch differently from a character it surely lacks."""
+    key = (id(font), ch)
+    if key not in _HAS_GLYPH:
+        def ink(c):
+            im = Image.new("L", (80, 60))
+            ImageDraw.Draw(im).text((10, 10), c, font=font, fill=255)
+            return im.tobytes()
+        _HAS_GLYPH[key] = ink(ch) != ink("\U0010fffd")
+    return _HAS_GLYPH[key]
+
+
+def plain_text(text, font):
+    """Text with every character the font cannot draw replaced by a plain equivalent.
+
+    Plain ASCII passes through unchanged. Other characters are kept when the font
+    has them, else replaced from a short table (dashes to "-", curly quotes to
+    straight ones, and so on), else stripped of accents, else shown as "?".
+    """
+    import unicodedata
+    out = []
+    for ch in text:
+        if ch.isascii() or _has_glyph(font, ch):
+            out.append(ch)
+            continue
+        alt = _PLAIN.get(ch)
+        if alt is None:
+            bare = "".join(c for c in unicodedata.normalize("NFKD", ch) if not unicodedata.combining(c))
+            alt = bare if bare and all(c.isascii() or _has_glyph(font, c) for c in bare) else "?"
+        out.append(alt)
+    return "".join(out)
+
+
 def _scale_bar(draw, px_per_m, font):
     target = 220 / px_per_m
     exp = 10 ** math.floor(math.log10(target))
@@ -508,16 +561,140 @@ def render_folder(folder: Path, verbose=True):
                   f"  ({time.perf_counter() - start:.1f} s)")
 
 
+NEAR = 0.05      # metres in front of the close-up camera where triangles are cut
+
+
+def clip_near(V, N, F, position, forward, near=NEAR):
+    """Cut the triangles against the plane `near` metres in front of the camera.
+
+    Corners behind it are replaced by the points where the edges cross it, so a
+    triangle that reaches behind the camera keeps exactly its visible part (one or
+    two triangles). Normals are interpolated at the new corners. Returns new
+    V, N, F with the original corners first.
+    """
+    d = (V - position) @ forward - near
+    dv = d[F]
+    inside = dv >= 0
+    count = inside.sum(axis=1)
+    keep = F[count == 3]
+    parts_v, parts_n, new_f = [], [], []
+    base = len(V)
+
+    def cut(a, b, da, db):
+        t = (da / (da - db))[:, None]
+        return V[a] + (V[b] - V[a]) * t, N[a] + (N[b] - N[a]) * t
+
+    for want in (1, 2):
+        sel = np.flatnonzero(count == want)
+        if not len(sel):
+            continue
+        fs, ins = F[sel], inside[sel]
+        # Roll each triangle so the odd corner (in when one is in, out when two are)
+        # comes first; the winding stays the same.
+        odd = ins if want == 1 else ~ins
+        r = np.argmax(odd, axis=1)
+        order = (r[:, None] + np.arange(3)[None, :]) % 3
+        tri = np.take_along_axis(fs, order, axis=1)
+        a, b, c = tri[:, 0], tri[:, 1], tri[:, 2]
+        da, db, dc = d[a], d[b], d[c]
+        pab, nab = cut(a, b, da, db)
+        pca, nca = cut(c, a, dc, da)
+        k = len(sel)
+        i_ab = base + np.arange(k)
+        i_ca = base + k + np.arange(k)
+        parts_v += [pab, pca]
+        parts_n += [nab, nca]
+        base += 2 * k
+        if want == 1:                       # a is in: the triangle a, ab, ca
+            new_f.append(np.stack([a, i_ab, i_ca], axis=1))
+        else:                               # a is out: the quad ab, b, c, ca
+            new_f.append(np.stack([i_ab, b, c], axis=1))
+            new_f.append(np.stack([i_ab, c, i_ca], axis=1))
+    V2 = np.vstack([V] + parts_v) if parts_v else V
+    N2 = np.vstack([N] + parts_n) if parts_n else N
+    F2 = np.vstack([keep] + new_f) if new_f else keep
+    # Keep only the corners still in use, so nothing behind the camera is projected.
+    used, F2 = np.unique(F2.reshape(-1), return_inverse=True)
+    return V2[used], N2[used], F2.reshape(-1, 3).astype(F.dtype)
+
+
+def render_close_up(folder: Path, camera, target, fov=50.0, out: Path | None = None, verbose=True):
+    """One extra perspective picture from a chosen camera position towards a target point."""
+    import types
+    glbs = sorted(folder.glob("*.glb"))
+    if len(glbs) != 1:
+        raise SystemExit(f"expected one .glb in {folder}, found {len(glbs)}")
+    model = load_model(glbs[0])
+    if model.triangle_count == 0:
+        raise SystemExit("the model draws no triangles")
+    position = np.asarray(camera, dtype=np.float64)
+    forward = np.asarray(target, dtype=np.float64) - position
+    if np.linalg.norm(forward) < 1e-6:
+        raise SystemExit("the camera and the target are the same point")
+    if not 1 <= fov <= 150:
+        raise SystemExit("--fov must be between 1 and 150 degrees")
+    forward /= np.linalg.norm(forward)
+    up = np.array([0.0, 1.0, 0.0])
+    if abs(forward @ up) > 0.99:            # looking straight up or down: north is up
+        up = np.array([0.0, 0.0, -1.0])
+    cam = Camera(forward, up, False, position)
+    W, H = WIDTH * SS, HEIGHT * SS
+    cam.scale = (W / 2) / math.tan(math.radians(fov) / 2)
+    cam.cx, cam.cy = W / 2, H / 2
+
+    V2, N2, F2 = clip_near(model.V, model.N, model.F, position, cam.f)
+    clipped = types.SimpleNamespace(V=V2, N=N2, F=F2)
+    facts = {}
+    try:
+        facts = json.loads((folder / "facts.json").read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError, UnicodeDecodeError):
+        pass
+    name = str(facts.get("name") or folder.name) if isinstance(facts, dict) else folder.name
+    horizontal = np.array([forward[0], forward[2]])
+    down = math.degrees(math.asin(max(-1.0, min(1.0, -forward[1]))))
+    if np.linalg.norm(horizontal) < 1e-3:
+        looking = "looking straight " + ("down" if forward[1] < 0 else "up")
+    else:
+        tilt = f", {abs(down):.0f} degrees {'down' if down > 0 else 'up'}" if abs(down) >= 1 else ""
+        looking = f"looking {compass(horizontal)}{tilt}"
+    def xyz(p):
+        return ", ".join(f"{v:g}" for v in p)
+    caption = f"close-up from ({xyz(camera)}) towards ({xyz(target)}), {looking}, {fov:g} degree view"
+    start = time.perf_counter()
+    img = shade_view(clipped, cam, W, H, name, caption, False, False, False)
+    out = Path(out) if out else Path("close-up.png")
+    img.save(out, optimize=False)
+    if verbose:
+        print(f"wrote {out}  ({time.perf_counter() - start:.1f} s)")
+    return out
+
+
 def main(argv=None):
-    ap = argparse.ArgumentParser(description="Render the four preview pictures of a model folder.")
+    ap = argparse.ArgumentParser(
+        description="Render the four preview pictures of a model folder, or with --camera and "
+                    "--target one extra close-up picture for a reviewer.")
     ap.add_argument("folder", type=Path)
+    ap.add_argument("--camera", nargs=3, type=float, metavar=("X", "Y", "Z"),
+                    help="close-up: camera position in model metres (+X east, +Y up, -Z north)")
+    ap.add_argument("--target", nargs=3, type=float, metavar=("X", "Y", "Z"),
+                    help="close-up: the point the camera looks at")
+    ap.add_argument("--fov", type=float, default=50.0,
+                    help="close-up: width of the view in degrees (default 50)")
+    ap.add_argument("--out", type=Path, default=None,
+                    help="close-up: where to write the picture (default close-up.png in the "
+                         "current folder; keep it out of the model folder)")
     args = ap.parse_args(argv)
     folder = args.folder.resolve()
     if not folder.is_dir():
         print(f"not a folder: {args.folder}", file=sys.stderr)
         return 2
+    if (args.camera is None) != (args.target is None):
+        ap.error("--camera and --target go together")
     try:
-        render_folder(folder)
+        if args.camera is not None:
+            render_close_up(folder, args.camera, args.target, args.fov, args.out)
+        else:
+            render_folder(folder)
     except GLBError as exc:
         print(f"cannot read the model: {exc}", file=sys.stderr)
         return 1

@@ -285,6 +285,50 @@ def case_slug_mismatch(folder, parts, mats, facts):
     facts["slug"] = "sample-tower"
 
 
+def _drop_footprint_marks(facts):
+    for m in facts["measurements_m"]:
+        if m.get("bbox") in ("length", "width"):
+            m.pop("bbox")
+
+
+def case_floating_block(folder, parts, mats, facts):
+    parts.append(box_part([17, 6, -1.5], [20, 9, 1.5]))               # 6 m up, nothing under it
+    _drop_footprint_marks(facts)
+
+
+def case_heavy_block_at_side(folder, parts, mats, facts):
+    # A 12 m block stuck to the side of the podium 4 m up: held at one side only.
+    parts.append(box_part([14, 4, -6], [26, 16, 6]))
+    _drop_footprint_marks(facts)
+
+
+def case_sliver_closing_seam(folder, parts, mats, facts):
+    # A box on the ground whose top has an extra corner in the middle of one edge,
+    # with a zero-area sliver closing the seam: degenerate, but still closed.
+    box = box_part([20, 0, 20], [23, 3, 23])
+    top = next(i for i, f in enumerate(box["faces"]) if np.all(box["pos"][f][:, 1] == 3))
+    a, b, c = box["faces"][top]
+    k = len(box["pos"])
+    box["pos"] = np.vstack([box["pos"], (box["pos"][a] + box["pos"][b]) / 2])
+    box["nrm"] = np.vstack([box["nrm"], [[0, 1, 0]]])
+    faces = [f for i, f in enumerate(box["faces"].tolist()) if i != top]
+    faces += [[a, k, c], [k, b, c], [a, b, k]]                          # the last one is the sliver
+    box["faces"] = np.array(faces)
+    parts.append(box)
+    _drop_footprint_marks(facts)
+
+
+def case_wrong_preview_size(folder, parts, mats, facts):
+    from PIL import Image
+    path = folder / "preview" / "side.png"
+    with Image.open(path) as im:
+        im.resize((800, 500)).save(path)
+
+
+def case_bridge_checkpoints_close(folder, parts, mats, facts):
+    facts["kind"] = "bridge"                         # its two checkpoints are only 16 m apart
+
+
 CASES = [
     # name, function, rules that must fail, whether those must be the only failures
     ("good sample", case_good, set(), True),
@@ -309,13 +353,23 @@ CASES = [
     ("checkpoint missed", case_checkpoint_missed, {"checkpoints"}, True),
     ("source URL missing", case_missing_source, {"10 sources"}, True),
     ("slug does not match folder", case_slug_mismatch, {"facts"}, True),
+    ("block floating beside the model", case_floating_block, {"3 floating"}, True),
+    ("heavy block held at one side only", case_heavy_block_at_side, set(), True),
+    ("zero-area sliver closing a seam", case_sliver_closing_seam, {"7 degenerate"}, True),
+    ("preview picture the wrong size", case_wrong_preview_size, {"files"}, True),
+    ("bridge checkpoints only 16 m apart", case_bridge_checkpoints_close, {"checkpoints"}, True),
 ]
 
+# Rules that must WARN in a case (on top of the failures above).
+WARNS = {
+    "heavy block held at one side only": {"3 floating"},
+}
 
-def failing_rules(output: str) -> set[str]:
+
+def failing_rules(output: str, word="FAIL") -> set[str]:
     rules = set()
     for line in output.splitlines():
-        if line.startswith("FAIL") and "[" in line:
+        if line.startswith(word) and "[" in line:
             rules.add(line[line.index("[") + 1: line.index("]")])
     return rules
 
@@ -337,6 +391,7 @@ def run_case(tmp: Path, name, fn, expected, exact):
     got = failing_rules(run.stdout)
     ok_exit = (run.returncode == 0) == (not expected)
     ok_rules = got == expected if exact else expected <= got
+    ok_rules &= WARNS.get(name, set()) <= failing_rules(run.stdout, "WARN")
     if not (ok_exit and ok_rules):
         print(run.stdout)
         print(run.stderr)
@@ -353,7 +408,48 @@ def main() -> int:
             print(f"{'ok  ' if ok else 'BAD '} {name:<42} expected to fail: {want:<30} failed: {seen}")
             failures += not ok
     print(f"\n{len(CASES) - failures} of {len(CASES)} cases behave as expected")
-    return 1 if failures else 0
+    render_failures = render_tests()
+    return 1 if failures or render_failures else 0
+
+
+# ---------------------------------------------------------------- render.py
+def render_tests() -> int:
+    """Small tests of render.py: the close-up clipping and the caption characters."""
+    import render
+    bad = 0
+
+    def report(ok, name):
+        nonlocal bad
+        print(f"{'ok  ' if ok else 'BAD '} render: {name}")
+        bad += not ok
+
+    # A triangle from 10 m in front of the camera to 10 m behind it: what is left is
+    # the part in front of the cutting plane, and nothing behind it.
+    V = np.array([[0, 0, -10], [4, 0, 10], [-4, 0, 10]], dtype=float)
+    N = np.tile([0.0, 1.0, 0.0], (3, 1))
+    F = np.array([[0, 1, 2]])
+    pos, fwd = np.zeros(3), np.array([0.0, 0.0, -1.0])
+    V2, N2, F2 = render.clip_near(V, N, F, pos, fwd)
+    depth = (V2 - pos) @ fwd
+    P = V2[F2]
+    area = 0.5 * np.linalg.norm(np.cross(P[:, 1] - P[:, 0], P[:, 2] - P[:, 0]), axis=1).sum()
+    d = 10 - render.NEAR                       # length of the part in front of the plane
+    want = 0.5 * (8 * d / 20) * d
+    report(len(F2) == 1 and depth.min() >= render.NEAR - 1e-9 and abs(area - want) < 1e-6,
+           "a triangle reaching behind the camera is cut at the near plane")
+    V3 = np.array([[0, 0, 10], [4, 0, -10], [-4, 0, -10]], dtype=float)
+    V2, N2, F2 = render.clip_near(V3, N, F, pos, fwd)
+    P = V2[F2]
+    nrm = np.cross(P[:, 1] - P[:, 0], P[:, 2] - P[:, 0])
+    report(len(F2) == 2 and ((V2 - pos) @ fwd).min() >= render.NEAR - 1e-9
+           and np.all(nrm @ np.cross(V3[1] - V3[0], V3[2] - V3[0]) > 0),
+           "a triangle with one corner behind becomes two, facing the same way")
+    font = render._font(24)
+    report(render.plain_text("Bay Bridge – West Span", font) == "Bay Bridge - West Span",
+           "an en dash in a caption becomes a plain dash")
+    ascii_text = "Sample Tower (invented, for testing the tools)"
+    report(render.plain_text(ascii_text, font) == ascii_text, "plain text is left alone")
+    return bad
 
 
 if __name__ == "__main__":

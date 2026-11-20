@@ -60,6 +60,10 @@ jobs:
           status=0
           for m in $MODELS; do
             echo "::group::check $m"
+            # A model may list extra packages its build.py needs next to it.
+            if [ -f "$m/requirements.txt" ]; then
+              python -m pip install -r "$m/requirements.txt" || status=1
+            fi
             python landmarks/tools/check.py "$m" --rebuild || status=1
             echo "::endgroup::"
           done
