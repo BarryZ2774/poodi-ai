@@ -165,47 +165,58 @@ def lancet(x,bottom,spring,rise,width,y,depth):
 def build():
     p=FACTS["plans"]
     plan=p["base"]["outline"]
-    body=mass(plan,0,16.4)
+    aisle_top = 20.8
+    eaves = 29.4
+    ridge = (247-117)*.3048
+    body=mass(plan,0,aisle_top)
     for side in (-1,1):
         for y in np.linspace(-6,29,7):
             body-=lancet(y,3.8,10.7,2.9,3.9,-side*13.4,3.6).rotate((0,0,90))
     body-=lancet(0,2.2,7.4,4.4,6.4,44.25,4.2)
     hard=[body]
-    nave=front_plate([(-7.0104,16.3),(7.0104,16.3),(7.0104,26.2),
-                      (0,32.5),(-7.0104,26.2)],-2.5,85)
+    apse_start = -41.8
+    front = 40
+    nave=front_plate([(-7.0104,aisle_top-.2),(7.0104,aisle_top-.2),(7.0104,eaves),
+                      (.55,ridge),(-.55,ridge),(-7.0104,eaves)],(front+apse_start)/2,front-apse_start)
+    # Radial roof facets converge on the end of the straight choir ridge.
+    apse_plan=[(-7.0104,apse_start),(-7.0104,-43.4),(-5.1,-47.4),(-2.6,-49.68),
+               (0,-50.5),(2.6,-49.68),(5.1,-47.4),(7.0104,-43.4),(7.0104,apse_start)]
+    apse_walls=mass(apse_plan,aisle_top-.2,eaves)
+    apse_roof=md.Manifold.hull_points([(u,v,eaves) for u,v in apse_plan]+[(u,apse_start,ridge) for u in (-.55,.55)])
+    hard.append(apse_walls+apse_roof)
     for side in (-1,1):
         for pos in np.linspace(-6,29,7):
-            nave-=lancet(pos,18.05,22.1,2.5,2.5,-side*7,2.1).rotate((0,0,90))
+            nave-=lancet(pos,21.50,25.25,2.5,2.5,-side*7,2.1).rotate((0,0,90))
         for pos in np.linspace(-8.65,26.35,7):
             # Stepped aisle buttresses follow the divisions between windows.
             ends=sorted((side*12.8,side*14.7))
             hard.append(box(*ends,pos-.64,pos+.64,0,10.2))
             ends=sorted((side*12.8,side*14.1))
-            hard.append(box(*ends,pos-.64,pos+.64,9.9,15.4))
-    hard.append(nave ^ mass(plan,0,38))
+            hard.append(box(*ends,pos-.64,pos+.64,9.9,19.8))
+    hard.append(nave ^ mass(plan,0,45))
     x,y=p["spire"]["centre"]
-    transept=front_plate([(-6.5,16.2),(6.5,16.2),(6.5,23.6),(0,30),(-6.5,23.6)],0,44)
-    transept=transept.rotate((0,0,90)).translate((0,y,0)) ^ mass(plan,0,35)
+    transept=front_plate([(-6.5,20.6),(6.5,20.6),(6.5,29.4),(0,37.1),(-6.5,29.4)],0,44)
+    transept=transept.rotate((0,0,90)).translate((0,y,0)) ^ mass(plan,0,42)
     for side in (-1,1):
-        cut=lancet(y,17.1,21.4,3.35,6.4,-side*21.6,4.0).rotate((0,0,90))
+        cut=lancet(y,21.5,25.6,3.35,6.4,-side*21.6,4.0).rotate((0,0,90))
         transept-=cut
         ends=sorted((side*19.5,side*21.35))
-        hard.append(box(*ends,y-.46,y+.46,16.25,23.45))
+        hard.append(box(*ends,y-.46,y+.46,20.6,28.65))
     hard.append(transept)
     for key in ("north","south"):
         u,v=p[key]["centre"]
-        tower=box(u-4.05,u+4.05,v-5.25,v+5.25,15.7,49)
+        tower=box(u-4.05,u+4.05,v-5.25,v+5.25,15.7,52.55)
         for dx in (-1.72,1.72):
-            tower-=lancet(u+dx,33.8,41,3.6,2.25,v,12)
+            tower-=lancet(u+dx,34.8,46.5,3.6,2.25,v,12)
         hard.append(tower)
         for i in (-1,1):
             for j in (-1,1):
                 px,py=u+i*3.38,v+j*4.53
-                hard.append(pedestal(px,py,[(16,1.62,1.62,.16),(48,1.62,1.62,.16),
-                                            (50.4,1.42,1.42,.15),(53.0352,.68,.68,.12)]))
-    face=front_plate([(-5.15,0),(5.15,0),(5.15,28.5),(0,33),(-5.15,28.5)],41.6,7)
+                hard.append(pedestal(px,py,[(16,1.62,1.62,.16),(51.1,1.62,1.62,.16),
+                                            (52.45,1.42,1.42,.15),(53.0352,.85,.85,.12)]))
+    face=front_plate([(-5.15,0),(5.15,0),(5.15,30.8),(0,37.2),(-5.15,30.8)],41.6,7)
     face-=lancet(0,2.2,7.4,4.4,6.4,44.1,3.8)
-    rose=md.Manifold.cylinder(2.2,3.65,circular_segments=24).rotate((90,0,0)).translate((0,46,22.5))
+    rose=md.Manifold.cylinder(2.2,3.81,circular_segments=24).rotate((90,0,0)).translate((0,46,22.5))
     hard.append(face-rose)
     hard.append(drum(x,y,[(28.5,2.35,2.35),(39.4,2.35,2.35),(42,1.55,1.55),
                           (52,1.5,1.5),(54,2.0,2.0),(57,1.35,1.35),(75.2856,.38,.38)],8))
