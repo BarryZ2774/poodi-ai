@@ -1,0 +1,615 @@
+{
+  "slug": "legion-of-honor",
+  "name": "Legion of Honor",
+  "kind": "building",
+  "anchor": {
+    "lat": 37.784512622,
+    "lon": -122.500789862,
+    "what": "centre of the mapped ground outline at ground level"
+  },
+  "bearing_deg": 49.03,
+  "measurements_m": [
+    {
+      "what": "Overall height above the base",
+      "real": 21,
+      "model": 21,
+      "source": "https://www.openstreetmap.org/way/1410202318",
+      "bbox": "height"
+    },
+    {
+      "what": "Width across local axis",
+      "real": 60.435,
+      "model": 60.435,
+      "source": "https://www.openstreetmap.org/relation/21115818"
+    },
+    {
+      "what": "Length along local axis",
+      "real": 93.828,
+      "model": 93.828,
+      "source": "https://www.openstreetmap.org/relation/21115818"
+    },
+    {
+      "what": "Gallery ridge",
+      "real": 17,
+      "model": 17,
+      "source": "https://www.openstreetmap.org/way/1540337302"
+    },
+    {
+      "what": "Entablature of court colonnades",
+      "real": 11,
+      "model": 11,
+      "source": "https://www.openstreetmap.org/way/1540327030"
+    },
+    {
+      "what": "Entrance arch crown",
+      "real": 16,
+      "model": 16,
+      "source": "https://www.openstreetmap.org/way/1540333313"
+    }
+  ],
+  "plans": {
+    "base": {
+      "outline": [
+        [
+          -17.796,
+          49.095
+        ],
+        [
+          -17.797,
+          50.38
+        ],
+        [
+          -30.205,
+          50.328
+        ],
+        [
+          -30.211,
+          -37.808
+        ],
+        [
+          -6.722,
+          -37.707
+        ],
+        [
+          -5.991,
+          -39.777
+        ],
+        [
+          -4.628,
+          -41.509
+        ],
+        [
+          -2.606,
+          -42.786
+        ],
+        [
+          -0.509,
+          -43.266
+        ],
+        [
+          2.537,
+          -42.772
+        ],
+        [
+          4.412,
+          -41.612
+        ],
+        [
+          5.807,
+          -39.954
+        ],
+        [
+          6.669,
+          -37.657
+        ],
+        [
+          30.216,
+          -37.559
+        ],
+        [
+          30.224,
+          50.562
+        ],
+        [
+          17.845,
+          50.509
+        ],
+        [
+          17.844,
+          49.238
+        ],
+        [
+          5.255,
+          49.181
+        ],
+        [
+          5.255,
+          49.705
+        ],
+        [
+          -5.466,
+          49.717
+        ],
+        [
+          -5.47,
+          49.137
+        ]
+      ],
+      "centre": [
+        0.004,
+        5.579
+      ],
+      "source": "https://www.openstreetmap.org/relation/21115818"
+    },
+    "court": {
+      "outline": [
+        [
+          15.023,
+          4.38
+        ],
+        [
+          15.039,
+          45.467
+        ],
+        [
+          5.235,
+          45.417
+        ],
+        [
+          5.231,
+          44.803
+        ],
+        [
+          -5.496,
+          44.808
+        ],
+        [
+          -5.492,
+          45.388
+        ],
+        [
+          -14.984,
+          45.359
+        ],
+        [
+          -15.006,
+          4.265
+        ],
+        [
+          -6.384,
+          4.291
+        ],
+        [
+          -6.379,
+          10.831
+        ],
+        [
+          6.301,
+          10.892
+        ],
+        [
+          6.29,
+          4.345
+        ]
+      ],
+      "centre": [
+        0.022,
+        26.001
+      ],
+      "source": "https://www.openstreetmap.org/way/1540340819"
+    },
+    "north": {
+      "outline": [
+        [
+          -6.722,
+          -37.707
+        ],
+        [
+          -6.832,
+          -36.328
+        ],
+        [
+          -6.393,
+          -34.096
+        ],
+        [
+          -6.385,
+          1.48
+        ],
+        [
+          -17.812,
+          1.44
+        ],
+        [
+          -17.797,
+          50.38
+        ],
+        [
+          -30.205,
+          50.328
+        ],
+        [
+          -30.211,
+          -37.808
+        ]
+      ],
+      "centre": [
+        -20.557,
+        -0.782
+      ],
+      "source": "https://www.openstreetmap.org/way/1540337302"
+    },
+    "south": {
+      "outline": [
+        [
+          6.291,
+          1.486
+        ],
+        [
+          6.292,
+          -33.911
+        ],
+        [
+          6.777,
+          -36.281
+        ],
+        [
+          6.669,
+          -37.657
+        ],
+        [
+          30.216,
+          -37.559
+        ],
+        [
+          30.224,
+          50.562
+        ],
+        [
+          17.845,
+          50.509
+        ],
+        [
+          17.838,
+          1.527
+        ]
+      ],
+      "centre": [
+        20.536,
+        -0.685
+      ],
+      "source": "https://www.openstreetmap.org/way/1540337304"
+    },
+    "central": {
+      "outline": [
+        [
+          6.291,
+          5.277
+        ],
+        [
+          -6.386,
+          5.237
+        ],
+        [
+          -6.364,
+          -34.028
+        ],
+        [
+          -5.201,
+          -32.063
+        ],
+        [
+          -4.323,
+          -31.204
+        ],
+        [
+          -2.298,
+          -30.057
+        ],
+        [
+          -0.014,
+          -29.661
+        ],
+        [
+          1.228,
+          -29.771
+        ],
+        [
+          3.391,
+          -30.564
+        ],
+        [
+          5.189,
+          -32.066
+        ],
+        [
+          6.292,
+          -33.911
+        ]
+      ],
+      "centre": [
+        -0.043,
+        -12.845
+      ],
+      "source": "https://www.openstreetmap.org/way/1540337303"
+    },
+    "rotunda": {
+      "outline": [
+        [
+          4.294,
+          -31.184
+        ],
+        [
+          1.228,
+          -29.771
+        ],
+        [
+          -1.222,
+          -29.766
+        ],
+        [
+          -3.414,
+          -30.581
+        ],
+        [
+          -5.201,
+          -32.063
+        ],
+        [
+          -6.393,
+          -34.096
+        ],
+        [
+          -6.832,
+          -36.328
+        ],
+        [
+          -6.42,
+          -38.833
+        ],
+        [
+          -4.628,
+          -41.509
+        ],
+        [
+          -2.606,
+          -42.786
+        ],
+        [
+          0.5,
+          -43.255
+        ],
+        [
+          3.485,
+          -42.289
+        ],
+        [
+          5.157,
+          -40.871
+        ],
+        [
+          6.314,
+          -38.912
+        ],
+        [
+          6.777,
+          -36.281
+        ],
+        [
+          6.292,
+          -33.911
+        ],
+        [
+          5.189,
+          -32.066
+        ]
+      ],
+      "centre": [
+        -0.023,
+        -36.457
+      ],
+      "source": "https://www.openstreetmap.org/way/1410202318"
+    },
+    "northWalk": {
+      "outline": [
+        [
+          -6.384,
+          4.291
+        ],
+        [
+          -15.006,
+          4.265
+        ],
+        [
+          -14.984,
+          45.359
+        ],
+        [
+          -5.492,
+          45.388
+        ],
+        [
+          -5.47,
+          49.137
+        ],
+        [
+          -17.796,
+          49.095
+        ],
+        [
+          -17.812,
+          1.44
+        ],
+        [
+          -6.385,
+          1.48
+        ]
+      ],
+      "centre": [
+        -14.552,
+        26.516
+      ],
+      "source": "https://www.openstreetmap.org/way/1540327030"
+    },
+    "southWalk": {
+      "outline": [
+        [
+          6.29,
+          4.345
+        ],
+        [
+          6.291,
+          1.486
+        ],
+        [
+          17.838,
+          1.527
+        ],
+        [
+          17.844,
+          49.238
+        ],
+        [
+          5.255,
+          49.181
+        ],
+        [
+          5.235,
+          45.417
+        ],
+        [
+          15.039,
+          45.467
+        ],
+        [
+          15.023,
+          4.38
+        ]
+      ],
+      "centre": [
+        14.515,
+        26.629
+      ],
+      "source": "https://www.openstreetmap.org/way/1540327029"
+    },
+    "portico": {
+      "outline": [
+        [
+          6.291,
+          5.277
+        ],
+        [
+          6.301,
+          10.892
+        ],
+        [
+          -6.379,
+          10.831
+        ],
+        [
+          -6.386,
+          5.237
+        ]
+      ],
+      "centre": [
+        -0.039,
+        8.06
+      ],
+      "source": "https://www.openstreetmap.org/way/1540337305"
+    },
+    "gateA": {
+      "outline": [
+        [
+          -2.469,
+          49.716
+        ],
+        [
+          -5.466,
+          49.717
+        ],
+        [
+          -5.496,
+          44.808
+        ],
+        [
+          -2.498,
+          44.806
+        ]
+      ],
+      "centre": [
+        -3.982,
+        47.262
+      ],
+      "source": "https://www.openstreetmap.org/way/1410202325"
+    },
+    "gateB": {
+      "outline": [
+        [
+          2.248,
+          44.804
+        ],
+        [
+          5.231,
+          44.803
+        ],
+        [
+          5.255,
+          49.705
+        ],
+        [
+          2.277,
+          49.713
+        ]
+      ],
+      "centre": [
+        3.752,
+        47.255
+      ],
+      "source": "https://www.openstreetmap.org/way/1540333314"
+    },
+    "gateTop": {
+      "outline": [
+        [
+          2.248,
+          44.804
+        ],
+        [
+          2.277,
+          49.713
+        ],
+        [
+          -2.469,
+          49.716
+        ],
+        [
+          -2.498,
+          44.806
+        ]
+      ],
+      "centre": [
+        -0.111,
+        47.26
+      ],
+      "source": "https://www.openstreetmap.org/way/1540333313"
+    }
+  },
+  "checkpoints": [
+    {
+      "what": "Rotunda roof",
+      "lat": 37.784297355,
+      "lon": -122.501102662,
+      "min_height_m": 20.7,
+      "within_m": 5,
+      "source": "https://www.openstreetmap.org/way/1410202318"
+    }
+  ],
+  "simplified": [
+    "The open court retains the side colonnades, entrance arch and pedimented rear portico. Roof lanterns and capitals replace individual carvings.",
+    "The rotunda, galleries and court share one grade. Artworks, fountains, inscriptions, underground galleries and the surrounding park are omitted."
+  ],
+  "osm_attribution": "Ground outline from OpenStreetMap, © OpenStreetMap contributors, ODbL.",
+  "origin_of_work": "Written from published measurements for this project. No third-party mesh used.",
+  "courtyard_keys": [
+    "court"
+  ]
+}

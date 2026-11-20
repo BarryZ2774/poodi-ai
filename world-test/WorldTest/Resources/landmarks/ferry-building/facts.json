@@ -1,0 +1,132 @@
+{
+  "slug": "ferry-building",
+  "name": "San Francisco Ferry Building",
+  "kind": "building",
+  "anchor": {
+    "lat": 37.795532468,
+    "lon": -122.393439784,
+    "what": "centre of the mapped ground outline at ground level"
+  },
+  "bearing_deg": -36.30636086675108,
+  "measurements_m": [
+    {
+      "what": "Overall height above the base",
+      "real": 74.676,
+      "model": 74.676,
+      "source": "https://www.ferrybuildingmarketplace.com/about/",
+      "bbox": "height"
+    },
+    {
+      "what": "Width across local axis",
+      "real": 56.185,
+      "model": 56.185,
+      "source": "https://www.openstreetmap.org/way/558731934"
+    },
+    {
+      "what": "Length along local axis",
+      "real": 201.479,
+      "model": 201.479,
+      "source": "https://www.openstreetmap.org/way/558731934"
+    },
+    {
+      "what": "Diameter of four clock faces",
+      "real": 6.7056,
+      "model": 6.7056,
+      "source": "https://www.sfport.com/media/9505/download"
+    },
+    {
+      "what": "Length of skylit nave",
+      "real": 201.168,
+      "model": 201.168,
+      "source": "https://www.ferrybuildingmarketplace.com/about/"
+    }
+  ],
+  "plans": {
+    "base": {
+      "outline": [
+        [
+          -22.576,
+          -100.562
+        ],
+        [
+          24.732,
+          -100.778
+        ],
+        [
+          24.72,
+          100.511
+        ],
+        [
+          -22.552,
+          100.701
+        ],
+        [
+          -22.553,
+          22.456
+        ],
+        [
+          -31.453,
+          22.481
+        ],
+        [
+          -31.449,
+          -20.77
+        ],
+        [
+          -22.542,
+          -20.8
+        ]
+      ],
+      "centre": [
+        -0.006,
+        -0.007
+      ],
+      "source": "https://www.openstreetmap.org/way/558731934"
+    },
+    "tower": {
+      "outline": [
+        [
+          -23.092,
+          6.655
+        ],
+        [
+          -23.279,
+          -5.397
+        ],
+        [
+          -12.114,
+          -5.612
+        ],
+        [
+          -11.92,
+          6.434
+        ]
+      ],
+      "centre": [
+        -17.602,
+        0.521
+      ],
+      "source": "https://www.openstreetmap.org/way/404449724"
+    }
+  },
+  "checkpoints": [
+    {
+      "what": "Clock tower crown",
+      "lat": 37.795442353,
+      "lon": -122.393604333,
+      "min_height_m": 74.376,
+      "within_m": 5,
+      "source": "https://www.openstreetmap.org/way/404449724"
+    }
+  ],
+  "simplified": [
+    "The 245 ft clocktower height follows the Marketplace operator. Four recessed dials show hands without numerals or lettering.",
+    "The long front arcade uses repeated open recesses and a deeper central entrance. The nave skylight is one raised pitched roof. Individual panes, stalls and waterfront gates are omitted."
+  ],
+  "osm_attribution": "Ground outline from OpenStreetMap, © OpenStreetMap contributors, ODbL.",
+  "origin_of_work": "Written from published measurements for this project. No third-party mesh used.",
+  "front_local_direction": [
+    1,
+    0
+  ]
+}

@@ -1,0 +1,172 @@
+[
+  {
+    "slug": "alcatraz",
+    "name": "Alcatraz Island",
+    "kind": "building",
+    "anchor": {
+      "lat": 37.826630158,
+      "lon": -122.422931626
+    },
+    "commit": "2d1fd80"
+  },
+  {
+    "slug": "coit-tower",
+    "name": "Coit Tower",
+    "kind": "building",
+    "anchor": {
+      "lat": 37.802374164,
+      "lon": -122.405833827
+    },
+    "commit": "2d62933"
+  },
+  {
+    "slug": "conservatory-of-flowers",
+    "name": "Conservatory of Flowers",
+    "kind": "building",
+    "anchor": {
+      "lat": 37.77263055,
+      "lon": -122.46023301
+    },
+    "commit": "d318059"
+  },
+  {
+    "slug": "dutch-windmill",
+    "name": "Dutch Windmill",
+    "kind": "building",
+    "anchor": {
+      "lat": 37.770440892,
+      "lon": -122.509405798
+    },
+    "commit": "87432c0"
+  },
+  {
+    "slug": "fort-point",
+    "name": "Fort Point",
+    "kind": "building",
+    "anchor": {
+      "lat": 37.810553412,
+      "lon": -122.477111712
+    },
+    "commit": "fc9a90d"
+  },
+  {
+    "slug": "golden-gate-bridge",
+    "name": "Golden Gate Bridge",
+    "kind": "bridge",
+    "anchor": {
+      "lat": 37.8197584999,
+      "lon": -122.4785625925
+    },
+    "commit": "3753d52"
+  },
+  {
+    "slug": "grace-cathedral",
+    "name": "Grace Cathedral",
+    "kind": "building",
+    "anchor": {
+      "lat": 37.791849722,
+      "lon": -122.413472099
+    },
+    "commit": "6890222"
+  },
+  {
+    "slug": "legion-of-honor",
+    "name": "Legion of Honor",
+    "kind": "building",
+    "anchor": {
+      "lat": 37.784512622,
+      "lon": -122.500789862
+    },
+    "commit": "d36e937"
+  },
+  {
+    "slug": "mission-dolores",
+    "name": "Mission Dolores and Basilica",
+    "kind": "building",
+    "anchor": {
+      "lat": 37.764314211,
+      "lon": -122.42691978
+    },
+    "commit": "61716f4"
+  },
+  {
+    "slug": "painted-ladies",
+    "name": "Painted Ladies",
+    "kind": "building",
+    "anchor": {
+      "lat": 37.776227679,
+      "lon": -122.432739088
+    },
+    "commit": "c030467"
+  },
+  {
+    "slug": "palace-of-fine-arts",
+    "name": "Palace of Fine Arts",
+    "kind": "building",
+    "anchor": {
+      "lat": 37.802918453,
+      "lon": -122.448396631
+    },
+    "commit": "335a248"
+  },
+  {
+    "slug": "saints-peter-and-paul-church",
+    "name": "Saints Peter and Paul Church",
+    "kind": "building",
+    "anchor": {
+      "lat": 37.801601109,
+      "lon": -122.410236744
+    },
+    "commit": "b30102d"
+  },
+  {
+    "slug": "city-hall",
+    "name": "San Francisco City Hall",
+    "kind": "building",
+    "anchor": {
+      "lat": 37.779275892,
+      "lon": -122.419238999
+    },
+    "commit": "aeb4c4c"
+  },
+  {
+    "slug": "ferry-building",
+    "name": "San Francisco Ferry Building",
+    "kind": "building",
+    "anchor": {
+      "lat": 37.795532468,
+      "lon": -122.393439784
+    },
+    "commit": "471e08a"
+  },
+  {
+    "slug": "bay-bridge-east-span",
+    "name": "San Francisco\u2013Oakland Bay Bridge, East Span",
+    "kind": "bridge",
+    "anchor": {
+      "lat": 37.8152652,
+      "lon": -122.35850585
+    },
+    "commit": "bfe4a2b"
+  },
+  {
+    "slug": "bay-bridge-west-span",
+    "name": "San Francisco\u2013Oakland Bay Bridge, West Span",
+    "kind": "bridge",
+    "anchor": {
+      "lat": 37.79818985,
+      "lon": -122.37786045
+    },
+    "commit": "8b61dc0"
+  },
+  {
+    "slug": "sutro-tower",
+    "name": "Sutro Tower",
+    "kind": "building",
+    "anchor": {
+      "lat": 37.75524132,
+      "lon": -122.452852702
+    },
+    "commit": "8fc9d7c"
+  }
+]
