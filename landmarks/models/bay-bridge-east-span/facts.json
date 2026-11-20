@@ -1,0 +1,135 @@
+{
+  "slug": "bay-bridge-east-span",
+  "name": "San Francisco–Oakland Bay Bridge, East Span",
+  "kind": "bridge",
+  "anchor": {
+    "lat": 37.8152652,
+    "lon": -122.35850585,
+    "what": "OSM centre of the single suspension tower at mean sea level"
+  },
+  "bearing_deg": 54.22621,
+  "measurements_m": [
+    {
+      "what": "Tower above water",
+      "real": 160,
+      "model": 160,
+      "source": "https://ascelibrary.com/doi/10.1061/JSENDH.STENG-11725"
+    },
+    {
+      "what": "Tower above road at tower",
+      "real": 107,
+      "model": 107,
+      "source": "https://ascelibrary.com/doi/10.1061/JSENDH.STENG-11725"
+    },
+    {
+      "what": "Tower above footings",
+      "real": 157,
+      "model": 157,
+      "source": "https://ascelibrary.com/doi/10.1061/JSENDH.STENG-11725"
+    },
+    {
+      "what": "Principal suspended span",
+      "real": 385,
+      "model": 385,
+      "source": "https://ascelibrary.com/doi/10.1061/JSENDH.STENG-11725"
+    },
+    {
+      "what": "Suspended backspan",
+      "real": 180,
+      "model": 180,
+      "source": "https://ascelibrary.com/doi/10.1061/JSENDH.STENG-11725"
+    },
+    {
+      "what": "SAS deck extent",
+      "real": 622.5,
+      "model": 622.5,
+      "source": "https://ascelibrary.com/doi/10.1061/JSENDH.STENG-11725"
+    },
+    {
+      "what": "Width of each suspended box girder",
+      "real": 27.88,
+      "model": 27.88,
+      "source": "https://ascelibrary.com/doi/10.1061/JSENDH.STENG-11725"
+    }
+  ],
+  "checkpoints": [
+    {
+      "what": "Tower T1 saddle housing",
+      "lon": -122.35850585,
+      "lat": 37.8152652,
+      "min_height_m": 155,
+      "within_m": 5,
+      "source": "https://www.openstreetmap.org/way/237735191"
+    }
+  ],
+  "simplified": [
+    "One continuous cable follows both eastern dead ends over the saddle and around the western turning beam. The bend is shown just above the western crossbeam so it can be read at map scale.",
+    "The adjacent box girders use a bevelled soffit. The approach to Oakland includes 600 m along the mapped skyway curve and four intermediate support stations.",
+    "Four tapered tower shafts, enlarged linking beams, simplified suspenders and a single saddle housing replace the smaller steelwork. The bicycle path and road furniture are omitted."
+  ],
+  "osm_attribution": "© OpenStreetMap contributors, ODbL",
+  "origin_of_work": "Written from published measurements for this project. No third-party mesh used.",
+  "skyway_guide": [
+    [
+      -217.5,
+      1.856
+    ],
+    [
+      -180,
+      1.662
+    ],
+    [
+      -100,
+      1.199
+    ],
+    [
+      0,
+      1.196
+    ],
+    [
+      100,
+      1.192
+    ],
+    [
+      225,
+      1.189
+    ],
+    [
+      385,
+      1.81
+    ],
+    [
+      405,
+      1.664
+    ],
+    [
+      505,
+      8.101
+    ],
+    [
+      605,
+      23.94
+    ],
+    [
+      705,
+      49.821
+    ],
+    [
+      805,
+      86.211
+    ],
+    [
+      905,
+      132.37
+    ],
+    [
+      1005,
+      179.705
+    ]
+  ],
+  "plan_sources": [
+    "https://www.openstreetmap.org/way/1000066963",
+    "https://www.openstreetmap.org/way/1006027483",
+    "https://mtc.ca.gov/news/new-bay-bridge-east-span-construction-goes-vertical"
+  ]
+}
