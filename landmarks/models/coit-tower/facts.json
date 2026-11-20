@@ -41,7 +41,7 @@
       "source": "https://commissions.sfplanning.org/hpcpackets/2017-015688FED.pdf"
     },
     {
-      "what": "Shaft at its foot",
+      "what": "Shaft diameter at its foot, scaled from the undimensioned city section",
       "real": 12.9,
       "model": 12.9,
       "source": "https://sfgov.legistar.com/View.ashx?GUID=11D1B120-E1AE-4488-A3D6-6CE77C670DCC&ID=4151667&M=F#page=57",
@@ -316,7 +316,8 @@
   ],
   "simplified": [
     "The north-facing porch follows the city's National Register description and the aerial in Exhibit A. Eight broad flutes continue into the belvedere piers.",
-    "Tall lower belvedere bays, grouped small lights and a shorter open lantern follow the park's exterior photograph. The floor is 32 ft below the rim. Diameters are scaled estimates from the city's north/south section, with line-weight uncertainty of roughly 0.3 m."
+    "Tall lower belvedere bays, grouped small lights and a shorter open lantern follow the park's exterior photograph. The floor is 32 ft below the rim. Diameters are scaled estimates from the city's north/south section, with line-weight uncertainty of roughly 0.3 m.",
+    "The window jambs follow radial planes. Wider piers separate the eight lower arches, sixteen intermediate lights and eight upper openings."
   ],
   "osm_attribution": "Ground outline from OpenStreetMap, © OpenStreetMap contributors, ODbL.",
   "origin_of_work": "Written from published measurements for this project. No third-party mesh used.",

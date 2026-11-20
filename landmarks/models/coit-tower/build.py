@@ -154,11 +154,12 @@ def build():
             continue
         opening=box(-.85,.85,-.95,.95,3,5.8).rotate((0,0,math.degrees(math.atan2(edge[1],edge[0]))))
         plinth-=opening.translate((*(a+b)/2,0))
-    hard=[plinth,drum(x,y,[(9.65,6.45,6.45),(10.55,6.45,6.45),(11.45,6.42,6.42)])]
+    crown_segments=80
+    hard=[plinth,drum(x,y,[(9.65,6.45,6.45),(10.55,6.45,6.45),(11.45,6.42,6.42)],crown_segments)]
     for u in (-2.55,2.55):
         hard.append(md.Manifold.cylinder(6.45,0.78,circular_segments=16).translate((u,-9.75,0.8)))
     # Alternating channels follow the depth of the fluting to the belvedere.
-    angles=np.arange(64)*math.tau/64
+    angles=np.arange(crown_segments)*math.tau/crown_segments
     rings=[]
     for z,r,relief in [(9.5,6.45,.06),(12.5,6.4,.38),(45.6,5.86,.38),(46.6,5.8,0)]:
         rings.append([(x+(r-relief*(1-math.cos(8*t))/2)*math.cos(t),
@@ -167,14 +168,16 @@ def build():
     # Build the round arcade sector by sector. The reveals run radially and
     # retain their full wall depth all the way round each arch.
     deck=high-32*.3048
-    crown=[drum(x,y,[(46.6,5.8,5.8),(47.6,5.8,5.8)],64),
-           drum(x,y,[(47.56,3.66,3.66),(deck,3.66,3.66)],64)]
+    # The 80-station ring leaves a third solid station between each of the
+    # sixteen intermediate lights and six between the larger crown arches.
+    crown=[drum(x,y,[(46.6,5.8,5.8),(47.6,5.8,5.8)],crown_segments),
+           drum(x,y,[(47.56,3.66,3.66),(deck,3.66,3.66)],crown_segments)]
     def window_tier(z0,z1,ri,ro,sill,spring,half_steps,repeat):
         # Indexed rings keep every reveal radial. Neighbouring bays share their
         # endpoints, including on the back of the lantern wall.
         vertices=[]
         faces=[]
-        count=64
+        count=crown_segments
         period=count//repeat
         def offset(i):
             return (i+period/2)%period-period/2
