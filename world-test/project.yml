@@ -25,7 +25,13 @@ targets:
         excludes:
           - glyphs
           - glyphs/**
+          - landmarks
+          - landmarks/**
       - path: WorldTest/Resources/glyphs
+        type: folder
+        buildPhase: resources
+      # One folder per landmark model: <slug>/<slug>.glb and <slug>/facts.json (anchor).
+      - path: WorldTest/Resources/landmarks
         type: folder
         buildPhase: resources
       - path: Config

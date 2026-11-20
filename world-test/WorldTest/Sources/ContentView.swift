@@ -30,12 +30,24 @@ struct ContentView: View {
                 Spacer()
 
                 VStack(spacing: 10) {
-                    HStack(spacing: 8) {
-                        ForEach(CameraPreset.allCases) { preset in
-                            Button(preset.title) { model.go(to: preset) }
-                                .buttonStyle(.bordered)
-                                .tint(.primary)
+                    HStack(spacing: 6) {
+                        presetButton(.downtown)
+                        Menu {
+                            ForEach(model.landmarks.filter { $0.model != nil }) { landmark in
+                                Button(landmark.name) { model.go(to: landmark) }
+                            }
+                        } label: {
+                            Text("Landmarks")
                         }
+                        .menuOrder(.fixed)          // A to Z from the top, even when the menu opens upwards
+                        .font(.subheadline)
+                        .lineLimit(1)
+                        .fixedSize()
+                        .buttonStyle(.bordered)
+                        .tint(.primary)
+                        .disabled(model.landmarks.allSatisfy { $0.model == nil })
+                        presetButton(.top)
+                        presetButton(.model)
                     }
                     Toggle("Colour my places", isOn: $model.colourPlaces)
                         .font(.subheadline)
@@ -59,7 +71,7 @@ struct ContentView: View {
         }
         .onAppear { model.perf.start() }
         .task {
-            // Launch argument "-autoTour YES": fly through the three presets in a loop (for measuring fps).
+            // Launch argument "-autoTour YES": fly through the presets in a loop (for measuring fps).
             guard UserDefaults.standard.bool(forKey: "autoTour") else { return }
             var index = 0
             while !Task.isCancelled {
@@ -69,6 +81,17 @@ struct ContentView: View {
             }
         }
         .onChange(of: model.engine) { model.perf.reset() }
+    }
+}
+
+extension ContentView {
+    private func presetButton(_ preset: CameraPreset) -> some View {
+        Button(preset.title) { model.go(to: preset) }
+            .font(.subheadline)
+            .lineLimit(1)
+            .fixedSize()
+            .buttonStyle(.bordered)
+            .tint(.primary)
     }
 }
 

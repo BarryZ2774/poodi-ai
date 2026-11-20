@@ -1,0 +1,110 @@
+{
+  "slug": "saints-peter-and-paul-church",
+  "name": "Saints Peter and Paul Church",
+  "kind": "building",
+  "anchor": {
+    "lat": 37.801601109,
+    "lon": -122.410236744,
+    "what": "centre of the mapped ground outline at ground level"
+  },
+  "bearing_deg": -9.178344313990864,
+  "measurements_m": [
+    {
+      "what": "Overall height above the base",
+      "real": 58.216800000000006,
+      "model": 58.216800000000006,
+      "source": "https://www.salesiansspp.org/our-history",
+      "bbox": "height"
+    },
+    {
+      "what": "Width across local axis",
+      "real": 41.751,
+      "model": 41.751,
+      "source": "https://www.openstreetmap.org/way/29902626"
+    },
+    {
+      "what": "Length along local axis",
+      "real": 48.08,
+      "model": 48.08,
+      "source": "https://www.openstreetmap.org/way/29902626"
+    },
+    {
+      "what": "Filbert Street main façade width",
+      "real": 30.48,
+      "model": 30.48,
+      "source": "https://www.salesiansspp.org/our-history"
+    },
+    {
+      "what": "Front-to-rear length of church",
+      "real": 48.768,
+      "model": 48.08,
+      "source": "https://www.salesiansspp.org/our-history"
+    },
+    {
+      "what": "Rose window diameter",
+      "real": 4.2672,
+      "model": 4.2672,
+      "source": "https://www.salesiansspp.org/our-history"
+    }
+  ],
+  "plans": {
+    "base": {
+      "outline": [
+        [
+          -15.328,
+          -25.048
+        ],
+        [
+          17.493,
+          -25.044
+        ],
+        [
+          17.562,
+          23.032
+        ],
+        [
+          -24.189,
+          23.032
+        ],
+        [
+          -24.171,
+          13.203
+        ],
+        [
+          -15.384,
+          13.2
+        ]
+      ],
+      "centre": [
+        0.001,
+        0
+      ],
+      "source": "https://www.openstreetmap.org/way/29902626"
+    }
+  },
+  "checkpoints": [
+    {
+      "what": "West spire",
+      "lat": 37.801405152,
+      "lon": -122.410313011,
+      "min_height_m": 58,
+      "within_m": 4,
+      "source": "https://www.openstreetmap.org/way/29902626"
+    },
+    {
+      "what": "East spire",
+      "lat": 37.801437055,
+      "lon": -122.410064162,
+      "min_height_m": 58,
+      "within_m": 4,
+      "source": "https://www.openstreetmap.org/way/29902626"
+    }
+  ],
+  "simplified": [
+    "Three arched portals, a recessed rose, two open belfries and the tapering pair of spires define the front.",
+    "The mapped rear extension is included at a lower height. Ornament, lettering, small statues and glazing use the single body finish.",
+    "Four engaged entrance pillars and a raised band stand in for the sculpture and inscription. A projecting rim and two broad mullions suggest rose-window tracery."
+  ],
+  "osm_attribution": "Ground outline from OpenStreetMap, © OpenStreetMap contributors, ODbL.",
+  "origin_of_work": "Written from published measurements for this project. No third-party mesh used."
+}

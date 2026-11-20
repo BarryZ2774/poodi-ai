@@ -1,0 +1,329 @@
+{
+  "slug": "coit-tower",
+  "name": "Coit Tower",
+  "kind": "building",
+  "anchor": {
+    "lat": 37.802374164,
+    "lon": -122.405833827,
+    "what": "centre of the mapped ground outline at ground level"
+  },
+  "bearing_deg": 170,
+  "measurements_m": [
+    {
+      "what": "Overall height above the base",
+      "real": 64.008,
+      "model": 64.008,
+      "source": "https://sfrecpark.org/m/newsflash/Archive/Item/539?arcId=520",
+      "bbox": "height"
+    },
+    {
+      "what": "Width across local axis",
+      "real": 22.278,
+      "model": 22.278,
+      "source": "https://www.openstreetmap.org/way/28824850"
+    },
+    {
+      "what": "Length along local axis",
+      "real": 22.665,
+      "model": 22.665,
+      "source": "https://www.openstreetmap.org/way/28824850"
+    },
+    {
+      "what": "Cubic base height",
+      "real": 9.7536,
+      "model": 9.7536,
+      "source": "https://commissions.sfplanning.org/hpcpackets/2017-015688FED.pdf"
+    },
+    {
+      "what": "Lantern deck below the rim",
+      "real": 9.7536,
+      "model": 9.7536,
+      "source": "https://commissions.sfplanning.org/hpcpackets/2017-015688FED.pdf"
+    },
+    {
+      "what": "Shaft at its foot",
+      "real": 12.9,
+      "model": 12.9,
+      "source": "https://sfgov.legistar.com/View.ashx?GUID=11D1B120-E1AE-4488-A3D6-6CE77C670DCC&ID=4151667&M=F#page=57",
+      "method": "Approximate scaled reading from Exhibit A, north/south section, normalized to the adopted 64 m exterior height; no dimension label."
+    },
+    {
+      "what": "Shaft just beneath the belvedere",
+      "real": 11.6,
+      "model": 11.6,
+      "source": "https://sfgov.legistar.com/View.ashx?GUID=11D1B120-E1AE-4488-A3D6-6CE77C670DCC&ID=4151667&M=F#page=57",
+      "method": "Approximate scaled reading from Exhibit A, north/south section, normalized to the adopted 64 m exterior height; no dimension label."
+    },
+    {
+      "what": "Lower crown diameter",
+      "real": 11.6,
+      "model": 11.6,
+      "source": "https://sfgov.legistar.com/View.ashx?GUID=11D1B120-E1AE-4488-A3D6-6CE77C670DCC&ID=4151667&M=F#page=57",
+      "method": "Approximate scaled reading from Exhibit A, north/south section, normalized to the adopted 64 m exterior height; no dimension label."
+    },
+    {
+      "what": "Lantern rim diameter",
+      "real": 10,
+      "model": 10,
+      "source": "https://sfgov.legistar.com/View.ashx?GUID=11D1B120-E1AE-4488-A3D6-6CE77C670DCC&ID=4151667&M=F#page=57",
+      "method": "Approximate scaled reading from Exhibit A, north/south section, normalized to the adopted 64 m exterior height; no dimension label."
+    },
+    {
+      "what": "Height from start of lower crown to rim",
+      "real": 17.4,
+      "model": 17.4,
+      "source": "https://sfgov.legistar.com/View.ashx?GUID=11D1B120-E1AE-4488-A3D6-6CE77C670DCC&ID=4151667&M=F#page=57",
+      "method": "Approximate scaled reading from Exhibit A, north/south section, normalized to the adopted 64 m exterior height; no dimension label."
+    }
+  ],
+  "plans": {
+    "base": {
+      "outline": [
+        [
+          6.683,
+          -10.469
+        ],
+        [
+          6.477,
+          -7.886
+        ],
+        [
+          9.431,
+          -7.663
+        ],
+        [
+          9.218,
+          -4.966
+        ],
+        [
+          10.169,
+          -4.897
+        ],
+        [
+          11.079,
+          -1.969
+        ],
+        [
+          11.188,
+          0.627
+        ],
+        [
+          10.558,
+          3.848
+        ],
+        [
+          9.259,
+          6.523
+        ],
+        [
+          8.308,
+          6.454
+        ],
+        [
+          8.068,
+          9.404
+        ],
+        [
+          5.122,
+          9.18
+        ],
+        [
+          4.642,
+          10.516
+        ],
+        [
+          0.706,
+          11.322
+        ],
+        [
+          -3.585,
+          10.771
+        ],
+        [
+          -6.175,
+          9.673
+        ],
+        [
+          -6.157,
+          8.306
+        ],
+        [
+          -9.439,
+          8.051
+        ],
+        [
+          -9.201,
+          5.09
+        ],
+        [
+          -10.523,
+          4.996
+        ],
+        [
+          -11.09,
+          0.869
+        ],
+        [
+          -10.868,
+          -3.351
+        ],
+        [
+          -9.613,
+          -6.424
+        ],
+        [
+          -8.297,
+          -6.318
+        ],
+        [
+          -8.076,
+          -9.017
+        ],
+        [
+          -4.802,
+          -8.76
+        ],
+        [
+          -4.596,
+          -11.343
+        ]
+      ],
+      "centre": [
+        0,
+        -0.001
+      ],
+      "source": "https://www.openstreetmap.org/way/28824850"
+    },
+    "shaft": {
+      "outline": [
+        [
+          1.196,
+          -5.377
+        ],
+        [
+          2.513,
+          -4.955
+        ],
+        [
+          3.672,
+          -4.213
+        ],
+        [
+          4.619,
+          -3.208
+        ],
+        [
+          5.28,
+          -1.994
+        ],
+        [
+          5.623,
+          -0.657
+        ],
+        [
+          5.615,
+          0.719
+        ],
+        [
+          5.269,
+          2.053
+        ],
+        [
+          4.596,
+          3.254
+        ],
+        [
+          3.645,
+          4.256
+        ],
+        [
+          2.478,
+          4.991
+        ],
+        [
+          1.158,
+          5.416
+        ],
+        [
+          -0.222,
+          5.501
+        ],
+        [
+          -1.573,
+          5.244
+        ],
+        [
+          -2.83,
+          4.654
+        ],
+        [
+          -3.889,
+          3.77
+        ],
+        [
+          -4.702,
+          2.662
+        ],
+        [
+          -5.206,
+          1.376
+        ],
+        [
+          -5.375,
+          0.008
+        ],
+        [
+          -5.195,
+          -1.353
+        ],
+        [
+          -4.68,
+          -2.639
+        ],
+        [
+          -3.865,
+          -3.752
+        ],
+        [
+          -2.795,
+          -4.628
+        ],
+        [
+          -1.547,
+          -5.209
+        ],
+        [
+          -0.189,
+          -5.471
+        ]
+      ],
+      "centre": [
+        0.144,
+        0.017
+      ],
+      "source": "https://www.openstreetmap.org/way/451331530"
+    }
+  },
+  "checkpoints": [
+    {
+      "what": "Open lantern crown",
+      "lat": 37.802373787,
+      "lon": -122.405835403,
+      "min_height_m": 63.708,
+      "within_m": 5,
+      "source": "https://www.openstreetmap.org/way/451331530"
+    }
+  ],
+  "simplified": [
+    "The north-facing porch follows the city's National Register description and the aerial in Exhibit A. Eight broad flutes continue into the belvedere piers.",
+    "Tall lower belvedere bays, grouped small lights and a shorter open lantern follow the park's exterior photograph. The floor is 32 ft below the rim. Diameters are scaled estimates from the city's north/south section, with line-weight uncertainty of roughly 0.3 m."
+  ],
+  "osm_attribution": "Ground outline from OpenStreetMap, © OpenStreetMap contributors, ODbL.",
+  "origin_of_work": "Written from published measurements for this project. No third-party mesh used.",
+  "shape_sources": [
+    "https://commissions.sfplanning.org/hpcpackets/2012.0882E.pdf",
+    "https://commissions.sfplanning.org/hpcpackets/2017-015688FED.pdf",
+    "https://sfgov.legistar.com/View.ashx?GUID=11D1B120-E1AE-4488-A3D6-6CE77C670DCC&ID=4151667&M=F#page=57",
+    "https://www.pioneerparksf.org/coit-tower"
+  ]
+}

@@ -10,7 +10,7 @@ struct OursMapView: UIViewRepresentable {
     func makeCoordinator() -> Coordinator { Coordinator(model: model) }
 
     func makeUIView(context: Context) -> MLNMapView {
-        let mapView = MLNMapView(frame: UIScreen.main.bounds, styleURL: Self.styleURL())
+        let mapView = MLNMapView(frame: UIScreen.main.bounds, styleURL: Self.styleURL(landmarks: model.landmarks))
         mapView.delegate = context.coordinator
         mapView.logoView.isHidden = true            // credit is shown by ContentView
         mapView.attributionButton.isHidden = true
@@ -30,10 +30,14 @@ struct OursMapView: UIViewRepresentable {
             coordinator.apply(command.camera, animated: command.animated)
         }
         coordinator.setColourPlaces(colourPlaces)
+        coordinator.modelLayers.forEach { $0.highlighted = colourPlaces }
     }
 
     /// Fills the style template's placeholders with bundle file URLs and writes it to Caches.
-    static func styleURL() -> URL {
+    /// Where a landmark model stands, the map's own buildings and bridge roads are left out, so the map
+    /// does not also draw its own version underneath. The filters use tile ids (the same at every zoom)
+    /// and a fixed outline, so they hold while tiles reload.
+    static func styleURL(landmarks: [Landmark]) -> URL {
         let bundle = Bundle.main
         guard let template = bundle.url(forResource: "porcelain-style", withExtension: "json"),
               var json = try? String(contentsOf: template, encoding: .utf8),
@@ -42,8 +46,15 @@ struct OursMapView: UIViewRepresentable {
               let glyphs = bundle.url(forResource: "glyphs", withExtension: nil) else {
             fatalError("Bundled map data is missing")
         }
-        let ids = Place.loadAll().flatMap(\.buildingIds)
-        let idsJSON = String(data: try! JSONEncoder().encode(ids), encoding: .utf8)!
+        let places = Place.loadAll()
+        let idsJSON = String(data: try! JSONEncoder().encode(places.flatMap(\.buildingIds)), encoding: .utf8)!
+        let tileIDsJSON = String(data: try! JSONEncoder().encode(places.flatMap(\.buildingTileIds).compactMap { Int($0) }),
+                                 encoding: .utf8)!
+        func encoded(_ value: some Encodable) -> String { String(data: try! JSONEncoder().encode(value), encoding: .utf8)! }
+        let shown = landmarks.filter { $0.model != nil }
+        let outlines = shown.compactMap(\.bridgeOutline).map { [$0] }      // MultiPolygon: polygons of rings
+        let bridgeFilter = outlines.isEmpty ? "true"
+            : #"["!", ["all", ["==", ["get", "is_bridge"], true], ["within", {"type": "MultiPolygon", "coordinates": \#(encoded(outlines))}]]]"#
         var glyphsURL = glyphs.absoluteString
         if glyphsURL.hasSuffix("/") { glyphsURL.removeLast() }
         json = json
@@ -51,6 +62,10 @@ struct OursMapView: UIViewRepresentable {
             .replacingOccurrences(of: "__BUILDINGS__", with: buildings.absoluteString)
             .replacingOccurrences(of: "__GLYPHS__", with: glyphsURL)
             .replacingOccurrences(of: "__VISITED_BUILDING_IDS__", with: idsJSON)
+            .replacingOccurrences(of: "__VISITED_BUILDING_TILE_IDS__", with: tileIDsJSON)
+            .replacingOccurrences(of: "__HIDDEN_BUILDING_TILE_IDS__", with: encoded(shown.flatMap(\.hiddenBuildings)))
+            .replacingOccurrences(of: "__HIDDEN_PART_TILE_IDS__", with: encoded(shown.flatMap(\.hiddenParts)))
+            .replacingOccurrences(of: "__BRIDGE_ROAD_FILTER__", with: bridgeFilter)
         let out = FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask)[0]
             .appendingPathComponent("porcelain-style.json")
         try? json.write(to: out, atomically: true, encoding: .utf8)
@@ -65,6 +80,7 @@ struct OursMapView: UIViewRepresentable {
         private var appliedColour: Bool?
         private var usingFallback = false
         private var basePredicates: [String: NSPredicate] = [:]
+        private(set) var modelLayers: [ModelLayer] = []
 
         init(model: AppModel) { self.model = model }
 
@@ -120,14 +136,18 @@ struct OursMapView: UIViewRepresentable {
         /// Fallback: show the filtered terracotta layers and hide the same buildings from the pale layers,
         /// so the two never draw the same walls.
         private func setFallback(_ on: Bool, in style: MLNStyle) {
+            // Buildings carry only a numeric feature id in the tiles; building parts carry their building's Overture id.
+            let tileIDs = model.places.flatMap(\.buildingTileIds).compactMap { Int($0) }
             let ids = model.places.flatMap(\.buildingIds)
-            for (layerID, key) in [("buildings", "id"), ("building-parts", "building_id")] {
+            let exclusions = [
+                "buildings": NSPredicate(format: "NOT ($featureIdentifier IN %@)", tileIDs),
+                "building-parts": NSPredicate(format: "NOT (building_id IN %@)", ids),
+            ]
+            for (layerID, exclusion) in exclusions {
                 guard let layer = style.layer(withIdentifier: layerID) as? MLNVectorStyleLayer else { continue }
                 if basePredicates[layerID] == nil { basePredicates[layerID] = layer.predicate ?? NSPredicate(value: true) }
                 let base = basePredicates[layerID]!
-                layer.predicate = on
-                    ? NSCompoundPredicate(andPredicateWithSubpredicates: [base, NSPredicate(format: "NOT (%K IN %@)", key, ids)])
-                    : base
+                layer.predicate = on ? NSCompoundPredicate(andPredicateWithSubpredicates: [base, exclusion]) : base
             }
             for id in ["visited-fallback", "visited-parts-fallback"] {
                 style.layer(withIdentifier: id)?.isVisible = on
@@ -140,6 +160,39 @@ struct OursMapView: UIViewRepresentable {
         func mapView(_ mapView: MLNMapView, didFinishLoading style: MLNStyle) {
             styleLoaded = false
             appliedColour = nil
+            addModels(to: style)
+        }
+
+        // MARK: Landmark models
+
+        /// Landmark models drawn by our own Metal layer, above the buildings and below the labels.
+        private func addModels(to style: MLNStyle) {
+            modelLayers = []
+            // Debug: "-noModels YES" leaves all models out, to compare with the map's own buildings.
+            guard !UserDefaults.standard.bool(forKey: "noModels") else { return }
+            // Debug: "-testModelAt 37.7936,-122.3966" moves the test model, e.g. next to tall buildings.
+            var testAnchor = CameraPreset.testModelAnchor
+            if let v = UserDefaults.standard.string(forKey: "testModelAt")?.split(separator: ",").compactMap({ Double($0) }), v.count == 2 {
+                testAnchor = CLLocationCoordinate2D(latitude: v[0], longitude: v[1])
+            }
+            // Test model from tools/make_test_glb.py, standing in the water west of Alcatraz.
+            var models: [(id: String, model: GLBModel, anchor: CLLocationCoordinate2D)] = []
+            if let url = Bundle.main.url(forResource: "test-tower", withExtension: "glb") {
+                do { models.append(("model-test-tower", try GLBModel(url: url), testAnchor)) } catch {
+                    print("[WorldTest] Test model not shown: \(error)")
+                }
+            }
+            // Landmark models from landmarks/index.json, each at its facts.json anchor, never turned.
+            // Bridges have their origin at sea level and buildings at ground level; the map is flat at 0 m.
+            models += self.model.landmarks.compactMap { l in l.model.map { ("model-\(l.slug)", $0, l.anchor) } }
+            let below = style.layer(withIdentifier: "label-water")
+            for m in models {
+                let layer = ModelLayer(identifier: m.id, model: m.model, anchor: m.anchor)
+                layer.highlighted = self.model.colourPlaces
+                if let below { style.insertLayer(layer, below: below) } else { style.addLayer(layer) }
+                modelLayers.append(layer)
+                print("[WorldTest] Model \(m.id): \(m.model.triangleCount) triangles, \(m.model.maxY - m.model.minY) m tall")
+            }
         }
 
         /// Feature state set before the first frame is dropped (the render source does not exist yet),
@@ -148,6 +201,26 @@ struct OursMapView: UIViewRepresentable {
             guard !styleLoaded else { return }
             styleLoaded = true
             setColourPlaces(model.colourPlaces)
+            startOrbitIfAsked()
+        }
+
+        // MARK: Orbit (launch argument "-orbit YES", for measuring fps)
+
+        private var orbiting = false
+
+        private func startOrbitIfAsked() {
+            guard UserDefaults.standard.bool(forKey: "orbit"), !orbiting else { return }
+            orbiting = true
+            orbitStep()
+        }
+
+        /// Turns the camera a quarter turn around the map centre in four seconds, forever.
+        private func orbitStep() {
+            guard let mapView, let camera = mapView.camera.copy() as? MLNMapCamera else { return }
+            camera.heading = (camera.heading + 90).truncatingRemainder(dividingBy: 360)
+            mapView.setCamera(camera, withDuration: 4, animationTimingFunction: CAMediaTimingFunction(name: .linear)) { [weak self] in
+                self?.orbitStep()
+            }
         }
 
         func mapView(_ mapView: MLNMapView, regionIsChangingWith reason: MLNCameraChangeReason) {
