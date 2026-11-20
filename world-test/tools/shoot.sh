@@ -17,11 +17,18 @@ shot() { # name, launch args...
   echo "$OUT/$name.png"
 }
 shot ours-downtown -preset downtown -colour NO
-shot ours-bridge -preset bridge -colour NO
+shot ours-bridge -landmark golden-gate-bridge -colour NO
 shot ours-top -preset top -colour NO
 shot ours-downtown-coloured -preset downtown -colour YES
 # Zoom series (lat,lon,zoom,bearing,pitch): the city must look whole from zoom 11 to 14.
 for z in 11 12 13 14; do
   shot ours-zoom-$z-downtown -camera "37.7915,-122.4040,$z,30,50"
   shot ours-zoom-$z-sunset -camera "37.755,-122.49,$z,30,50"
+done
+# One three-quarter view per landmark, plus each bridge from above.
+for slug in $(python3 -I -c "import json; print(' '.join(e['slug'] for e in json.load(open('WorldTest/Resources/landmarks/index.json'))))"); do
+  shot landmark-$slug -landmark $slug
+done
+for slug in golden-gate-bridge bay-bridge-west-span bay-bridge-east-span; do
+  shot landmark-$slug-top -landmark $slug -landmarkTop YES
 done
