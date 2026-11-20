@@ -166,8 +166,10 @@ def build():
     plan=FACTS["plans"]["base"]["outline"]
     church=mass(plan,0,12.8)
     # The nave is narrower than the mapped rear extension.
-    nave=front_plate([(-13.7,12.55),(15.7,12.55),(15.7,16.3),
-                      (1,23.0),(-13.7,16.3)],0,45.8)
+    # The LiDAR transect resolves a shallow central roof above both aisles.
+    nave=front_plate([(-13.7,12.55),(15.7,12.55),(15.7,20.65),
+                      (9.8,20.65),(9.8,22.55),(2.8,22.85),
+                      (-4.2,22.55),(-4.2,20.65),(-13.7,20.65)],0,45.8)
     church+=nave
     facade=front_plate([(-14.24,0),(16.24,0),(16.24,15.6),(11.6,16.4),
                         (6.4,21),(1,25.7),(-4.4,21),(-9.6,16.4),(-14.24,15.6)],-22.9,4.2)
@@ -190,8 +192,10 @@ def build():
     church+=box(-1.3,3.3,-24.42,-22.78,17.33,18.07)
     hard=[church]
     for x in (-10.1,12.1):
-        y=-20.4
-        shaft=pedestal(x,y,[(12,7.4,8.2,.65),(21,7.4,8.2,.65),(22,6.35,7.15,.6),
+        # The front faces lead the central facade by 0.85 m all the way
+        # to the street. The entry pillars stand slightly farther forward.
+        y=-21.75
+        shaft=pedestal(x,y,[(0,7.4,8.2,.65),(21,7.4,8.2,.65),(22,6.35,7.15,.6),
                             (32,6.35,7.15,.6),(32.8,7.15,7.65,.65),(34,7.15,7.65,.65),
                             (34,5.65,6.1,.6),(40.4,5.65,6.1,.6)])
         for z,spring,r in [(24,28.3,1.55),(34.8,37.4,1.3)]:

@@ -17,13 +17,13 @@
       "bbox": "height"
     },
     {
-      "what": "Width across local axis",
+      "what": "Mapped ground footprint width including rear extension",
       "real": 41.751,
       "model": 41.751,
       "source": "https://www.openstreetmap.org/way/29902626"
     },
     {
-      "what": "Length along local axis",
+      "what": "Mapped wall footprint length excluding projecting entrance pillars",
       "real": 48.08,
       "model": 48.08,
       "source": "https://www.openstreetmap.org/way/29902626"
@@ -35,16 +35,38 @@
       "source": "https://www.salesiansspp.org/our-history"
     },
     {
-      "what": "Front-to-rear length of church",
+      "what": "Overall length including projecting entrance pillars",
       "real": 48.768,
-      "model": 48.08,
-      "source": "https://www.salesiansspp.org/our-history"
+      "model": 49.207,
+      "source": "https://www.salesiansspp.org/our-history",
+      "method": "Parish gives 160 ft; the model extends from the leading portal pillar to the rear wall (49.207 m). The mapped wall footprint spans 48.08 m."
     },
     {
       "what": "Rose window diameter",
       "real": 4.2672,
       "model": 4.2672,
       "source": "https://www.salesiansspp.org/our-history"
+    },
+    {
+      "what": "Main nave roof ridge above Filbert Street, survey estimate",
+      "real": 22.85,
+      "model": 22.85,
+      "source": "https://www.fisheries.noaa.gov/inport/item/73386/full-list",
+      "method": "USGS 2023 central roof returns of approximately 47.4 m minus the central frontage ground datum of approximately 24.55 m. Roof covering rises shallowly above the two aisle roofs."
+    },
+    {
+      "what": "Upper tower shaft cornice above Filbert Street, survey estimate",
+      "real": 40.35,
+      "model": 40.4,
+      "source": "https://www.fisheries.noaa.gov/inport/item/73386/full-list",
+      "method": "USGS 2023 returns on the upper belfry cornice around both spires measure approximately 64.9 m above the survey datum. Subtract the street datum of 24.55 m."
+    },
+    {
+      "what": "Aisle roof level, survey estimate",
+      "real": 20.65,
+      "model": 20.65,
+      "source": "https://www.fisheries.noaa.gov/inport/item/73386/full-list",
+      "method": "USGS 2023 roof returns on both side aisles at local y=2 and y=8 m are approximately 45.2 m. Subtract the central frontage street datum."
     }
   ],
   "plans": {
@@ -103,8 +125,10 @@
   "simplified": [
     "Three arched portals, a recessed rose, two open belfries and the tapering pair of spires define the front.",
     "The mapped rear extension is included at a lower height. Ornament, lettering, small statues and glazing use the single body finish.",
-    "Four engaged entrance pillars and a raised band stand in for the sculpture and inscription. A projecting rim and two broad mullions suggest rose-window tracery."
+    "Four engaged entrance pillars and a raised band stand in for the sculpture and inscription. A projecting rim and two broad mullions suggest rose-window tracery.",
+    "Both tower bases meet the map plane, projecting 0.85 m ahead of the main frontage. Broad stepped roof planes group the nave and aisle coverings."
   ],
   "osm_attribution": "Ground outline from OpenStreetMap, © OpenStreetMap contributors, ODbL.",
-  "origin_of_work": "Written from published measurements for this project. No third-party mesh used."
+  "origin_of_work": "Written from published measurements for this project. No third-party mesh used.",
+  "roof_survey": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/CA_SanFrancisco_1_B23/ept.json"
 }
