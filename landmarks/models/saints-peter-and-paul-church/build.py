@@ -175,7 +175,19 @@ def build():
     for x in (-3.9,1,5.9):
         church-=arch_cut(x,.85,5.2,1.85,-24.2,4.7)
     rose=md.Manifold.cylinder(3.8,2.1336,circular_segments=32).rotate((90,0,0))
+    for station in (-11,-4.5,2,8.5,16.8):
+        for side in ((-24.18 if station>13 else -15.35),17.53):
+            church-=arch_cut(station,4.4,8.0,1.62,-side,3.4).rotate((0,0,90))
+    for u in (-6.55,-1.45,3.45,8.55):
+        church+=pedestal(u,-25.25,[(0,1.65,1.85,.15),(.95,1.65,1.85,.15),
+                                  (.95,1.13,1.28,.14),(8.45,1.13,1.28,.14),
+                                  (8.95,1.7,1.85,.18),(9.78,1.7,1.85,.18)])
+    church+=box(-7.3,9.3,-25.77,-24.5,8.1,8.9)
+    frame=md.Manifold.cylinder(1.1,3.05,circular_segments=32).rotate((90,0,0))
+    church+=frame.translate((1,-24.72,17.7))
     church-=rose.translate((1,-22.8,17.7))
+    church+=box(.6,1.4,-24.42,-22.78,15.35,20.05)
+    church+=box(-1.3,3.3,-24.42,-22.78,17.33,18.07)
     hard=[church]
     for x in (-10.1,12.1):
         y=-20.4
