@@ -95,7 +95,7 @@ def hip(x, y, width, length, eave, ridge, ridge_length=0):
 def arch_cut(x, bottom, spring, radius, station, depth):
     """Round-headed opening in a wall normal to the station axis."""
     arc = [(x+radius*math.cos(t), spring+radius*math.sin(t))
-           for t in np.linspace(0, math.pi, 13)]
+           for t in np.linspace(0, math.pi, 6)]
     return front_plate([(x-radius,bottom),(x+radius,bottom)]+arc, station, depth)
 
 
@@ -184,41 +184,55 @@ def write_glb(solid):
 def build():
     base=FACTS["plans"]["base"]["outline"]
     x,y=FACTS["plans"]["tower"]["centre"]
-    hall=mass(base,0,15.5)
+    hall=mass(base,0,15.8)
     # Along the Embarcadero the central pavilion projects beyond the side wings.
-    for s in [*np.linspace(-95,-24.8,12), *np.linspace(-17,18.5,7), *np.linspace(26,95,12)]:
-        front=-31.45 if -20.7<s<22.4 else -22.55
-        cut=arch_cut(s,0.8,6.2,2.25,-front-2.4,10).rotate((0,0,90))
-        hall -= cut
-        hall-=box(front-1,front+1.5,s-1.28,s+1.28,10.5,13.45)
-    hard=[hall,hip(3,0,28,201.168,15.25,20.2,192) ^ mass(base,0,25)]
+    for station in [*np.linspace(-96,-24.6,13),*np.linspace(26,96,13)]:
+        for bottom,spring,radius in [(.75,3.12,1.65),(6.4,10.45,1.9)]:
+            hall-=arch_cut(station,bottom,spring,radius,21.4,5.3).rotate((0,0,90))
+    for u in (-17.0,-9.1,.5,10.1,18.0):
+        large=abs(u)<12
+        cut=arch_cut(u,.75,8.75 if large else 5.9,3.45 if large else 2.0,29.8,6.2)
+        hall-=cut.rotate((0,0,90))
+    for station in np.linspace(-96,96,27):
+        hall-=arch_cut(station,6.4,10.3,1.9,-24.4,3.6).rotate((0,0,90))
+        hall-=box(22.85,25.5,station-1.65,station+1.65,1,4.35)
+    hard=[hall,hip(3,0,28,201.168,15.55,19.45,192) ^ mass(base,0,25)]
     # Two shallow hipped roofs flank the centre of the raised skylit nave.
     for s in (-55,55):
         hard.append(hip(-14,s,14.5,82,15.2,17.8,73))
-    hard.append(hip(3,0,6.2,185,19.05,21.9,177))
-    shaft=box(-6.2,6.2,-6.2,6.2,14.9,46)
+    hard.append(hip(3,0,6.2,185,17.7,20.7,177))
+    half=32*.3048/2
+    shaft=box(-half,half,-half,half,14.9,43.55)
     for k in range(4):
-        for u in (-2.1,2.1):
-            recess=arch_cut(u,22.2,38.2,1.05,-6.1,2)
+        for u in (-2.14,2.14):
+            recess=arch_cut(u,19.05,31.9,.76,-4.85,1.55)
             shaft-=recess.rotate((0,0,k*90))
+        dial=md.Manifold.cylinder(1.65,6.7056/2,circular_segments=32)
+        dial=dial.rotate((90,0,0)).translate((0,-3.86,37.6))
+        shaft-=dial.rotate((0,0,90*k))
+        for a,b in [((0,-4.08,37.6),(1.7,-4.08,39.6)),((0,-4.08,37.6),(-1.6,-4.08,38.15))]:
+            hard.append(bar(a,b,.67,.75).rotate((0,0,90*k)).translate((x,y,0)))
     hard.append(shaft.translate((x,y,0)))
-    hard.append(box(x-6.6,x+6.6,y-6.6,y+6.6,44.5,46.6))
-    clock=box(-5.9,5.9,-5.9,5.9,45.9,55)
-    for k in range(4):
-        dial=md.Manifold.cylinder(2,6.7056/2,circular_segments=32)
-        dial=dial.rotate((90,0,0)).translate((0,-4.95,50.6))
-        clock -= dial.rotate((0,0,90*k))
-        for a,b in [((0,-5.28,50.6),(1.7,-5.28,52.6)),((0,-5.28,50.6),(-1.6,-5.28,51.15))]:
-            hand=bar(a,b,0.67,0.75).rotate((0,0,90*k)).translate((x,y,0))
-            hard.append(hand)
-    hard.append(clock.translate((x,y,0)))
-    bell=box(-4.8,4.8,-4.8,4.8,54.8,62.8)
-    for k in (0,90):
-        bell-=arch_cut(0,55.9,59.3,2.1,0,12).rotate((0,0,k))
-    hard.append(bell.translate((x,y,0)))
-    hard.append(pedestal(x,y,[(62.5,10,10,.75),(63.5,10,10,.75),
-                              (68,5.5,5.5,.7),(69.3,5.2,5.2,.65)]))
-    hard.append(drum(x,y,[(69,2.1,2.1),(71.2,2.1,2.1),(74.676,.4,.4)],8))
+    hard.append(pedestal(x,y,[(43.5,10.4,10.4,.25),(45.75,10.4,10.4,.25),
+                              (46.30,11.1,11.1,.25),(47.05,11.1,11.1,.25)]))
+    # The broad columned belfry and the narrower open lanterns step back.
+    for z0,z1,halfwidth,openings in [(47.05,54.1,4.72,(-2.4,0,2.4)),
+                                      (59.6,64.7,2.65,(-1.15,1.15)),
+                                      (65.35,68.7,1.78,(0,)),(69.3,72.0,1.38,(0,))]:
+        stage=box(-halfwidth,halfwidth,-halfwidth,halfwidth,z0,z1)
+        for a in (0,90):
+            for u in openings:
+                r=.65 if halfwidth<3 else .80
+                cut=arch_cut(u,z0+.69,z1-1.42,r,0,2*halfwidth+1)
+                stage-=cut.rotate((0,0,a))
+        hard.append(stage.translate((x,y,0)))
+        lip=halfwidth+.34
+        hard.append(box(x-lip,x+lip,y-lip,y+lip,z1-.12,z1+.65))
+    hard.append(pedestal(x,y,[(54.6,9.3,9.3,.3),(55.7,9.3,9.3,.3),
+                              (56.15,7.35,7.35,.35),(58.7,7.35,7.35,.35),
+                              (59.6,6.1,6.1,.4)]))
+    hard.append(drum(x,y,[(72.6,1.47,1.47),(73.28,1.47,1.47),
+                          (74.15,.83,.83),(74.676,.35,.35)],12))
     finish(hard,[])
 
 

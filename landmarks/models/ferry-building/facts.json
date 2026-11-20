@@ -39,6 +39,54 @@
       "real": 201.168,
       "model": 201.168,
       "source": "https://www.ferrybuildingmarketplace.com/about/"
+    },
+    {
+      "what": "Clock tower shaft width",
+      "real": 9.7536,
+      "model": 9.7536,
+      "source": "https://tile.loc.gov/storage-services/master/pnp/habshaer/ca/ca0600/ca0641/data/ca0641data.pdf#page=4"
+    },
+    {
+      "what": "Hall west eave",
+      "real": 15.8,
+      "model": 15.8,
+      "source": "https://www.sfport.com/media/9505/download#page=17",
+      "method": "Estimated from Appendix A's west elevation relative to the published 245 ft tower height, excluding the flagpole. Elevation diagram is not dimensioned; precision approximately 0.5 m."
+    },
+    {
+      "what": "High nave roof",
+      "real": 20.7,
+      "model": 20.7,
+      "source": "https://www.sfport.com/media/9505/download#page=17",
+      "method": "Estimated from Appendix A's west elevation relative to the published 245 ft tower height, excluding the flagpole. Elevation diagram is not dimensioned; precision approximately 0.5 m."
+    },
+    {
+      "what": "Clock dial center above grade",
+      "real": 37.6,
+      "model": 37.6,
+      "source": "https://www.sfport.com/media/9505/download#page=17",
+      "method": "Estimated from Appendix A's west elevation relative to the published 245 ft tower height, excluding the flagpole. Elevation diagram is not dimensioned; precision approximately 0.5 m."
+    },
+    {
+      "what": "Belfry base above grade",
+      "real": 47.05,
+      "model": 47.05,
+      "source": "https://www.sfport.com/media/9505/download#page=17",
+      "method": "Estimated from Appendix A's west elevation relative to the published 245 ft tower height, excluding the flagpole. Elevation diagram is not dimensioned; precision approximately 0.5 m."
+    },
+    {
+      "what": "Belfry cornice above grade",
+      "real": 54.1,
+      "model": 54.1,
+      "source": "https://www.sfport.com/media/9505/download#page=17",
+      "method": "Estimated from Appendix A's west elevation relative to the published 245 ft tower height, excluding the flagpole. Elevation diagram is not dimensioned; precision approximately 0.5 m."
+    },
+    {
+      "what": "First lantern base above grade",
+      "real": 59.6,
+      "model": 59.6,
+      "source": "https://www.sfport.com/media/9505/download#page=17",
+      "method": "Estimated from Appendix A's west elevation relative to the published 245 ft tower height, excluding the flagpole. Elevation diagram is not dimensioned; precision approximately 0.5 m."
     }
   ],
   "plans": {
@@ -121,7 +169,8 @@
   ],
   "simplified": [
     "The 245 ft clocktower height follows the Marketplace operator. Four recessed dials show hands without numerals or lettering.",
-    "The long front arcade uses repeated open recesses and a deeper central entrance. The nave skylight is one raised pitched roof. Individual panes, stalls and waterfront gates are omitted."
+    "The long front arcade uses repeated open recesses and a deeper central entrance. The nave skylight is one raised pitched roof. Individual panes, stalls and waterfront gates are omitted.",
+    "Five central entrance bays include three larger openings. Both sides have grouped arcades. The broad belfry, receding lantern stages and small domed cap follow the Port's west elevation. The architectural tip carries the adopted overall height; flag and pole are omitted."
   ],
   "osm_attribution": "Ground outline from OpenStreetMap, © OpenStreetMap contributors, ODbL.",
   "origin_of_work": "Written from published measurements for this project. No third-party mesh used.",
