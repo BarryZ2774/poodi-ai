@@ -56,7 +56,7 @@ def mass(outline, low, high):
 
 def drum(x, y, levels, sides=32):
     """Revolve horizontal elliptical sections (elevation, X radius, Y radius)."""
-    angles = np.arange(sides) * math.tau / sides
+    angles = [math.radians(k * 45 + t) for k in range(8) for t in (-17.5, 17.5)]
     rings = [[(x + w*math.cos(t), y + d*math.sin(t), z) for t in angles]
              for z, w, d in levels]
     return loft(rings)
@@ -87,6 +87,24 @@ def write_glb(solid):
     # Trimming a round member can introduce a small corner at a junction.
     # Split that corner when its interpolated normal points through the surface.
     triangles = mesh.tri_verts.copy()
+    # A boolean intersection can leave sub-millimetre slivers. Collapse only
+    # short mesh edges; all shading corners at an endpoint move together.
+    points, owners = np.unique(positions, axis=0, return_inverse=True)
+    spatial = owners[triangles]
+    edges = np.sort(np.vstack((spatial[:, [0,1]], spatial[:, [1,2]], spatial[:, [2,0]])), axis=1)
+    short = edges[np.linalg.norm(points[edges[:,0]]-points[edges[:,1]], axis=1) < 0.0012]
+    parent = np.arange(len(points))
+    for a, b in short:
+        while parent[a] != a:
+            a = parent[a]
+        while parent[b] != b:
+            b = parent[b]
+        parent[max(a,b)] = min(a,b)
+    while np.any(parent != parent[parent]):
+        parent = parent[parent]
+    positions = points[parent[owners]]
+    corners = parent[spatial]
+    triangles = triangles[np.all(corners != np.roll(corners, 1, axis=1), axis=1)]
     pa, pb, pc = positions[triangles].astype(np.float64).transpose(1, 0, 2)
     face_normals = np.cross(pb-pa, pc-pa)
     face_normals /= np.maximum(np.linalg.norm(face_normals, axis=1, keepdims=True), 1e-20)
@@ -95,28 +113,21 @@ def write_glb(solid):
         positions = np.vstack((positions, positions[triangles[faces, corners]]))
         normals = np.vstack((normals, face_normals[faces]))
         triangles[faces, corners] = np.arange(len(faces)) + len(props)
-    # glTF's standard quantized normal format packs a unit vector into one
-    # aligned word. Positions remain ordinary float32 metre coordinates.
-    packed = np.zeros((len(normals), 4), dtype=np.int8)
-    packed[:, :3] = np.rint(normals * 127).astype(np.int8)
-    # Hard edges need separate corners. Reuse corners that became identical
-    # after encoding, including those created on either side of a boolean seam.
-    keys = np.hstack((positions, packed))
+    normals = normals.astype("<f4")
+    # Preserve seams while sharing identical position/normal pairs.
+    keys = np.hstack((positions, normals))
     _, first, remap = np.unique(keys, axis=0, return_index=True, return_inverse=True)
-    positions, packed = positions[first], packed[first]
+    positions, normals = positions[first], normals[first]
     if len(positions) >= 65536:
         raise ValueError("Index range exceeded")
     indices = remap[triangles].astype("<u2").ravel()
     views, data = [], bytearray()
-    for array, target in [(positions, 34962), (packed, 34962), (indices, 34963)]:
+    for array, target in [(positions, 34962), (normals, 34962), (indices, 34963)]:
         views.append(dict(buffer=0, byteOffset=len(data), byteLength=array.nbytes, target=target))
         data.extend(array.tobytes())
         data.extend(bytes(-len(data) % 4))
-    views[1]["byteStride"] = 4
     linear = [((c/255+0.055)/1.055)**2.4 for c in (244, 241, 236)]
     model = {
-        "extensionsUsed": ["KHR_mesh_quantization"],
-        "extensionsRequired": ["KHR_mesh_quantization"],
         "asset": {"version": "2.0"}, "scene": 0, "scenes": [{"nodes": [0]}],
         "nodes": [{"mesh": 0, "name": FACTS["name"]}],
         "meshes": [{"primitives": [{"attributes": {"POSITION": 0, "NORMAL": 1},
@@ -126,7 +137,7 @@ def write_glb(solid):
         "accessors": [
             dict(bufferView=0, componentType=5126, count=len(positions), type="VEC3",
                  min=positions.min(axis=0).tolist(), max=positions.max(axis=0).tolist()),
-            dict(bufferView=1, componentType=5120, normalized=True, count=len(packed), type="VEC3"),
+            dict(bufferView=1, componentType=5126, count=len(normals), type="VEC3"),
             dict(bufferView=2, componentType=5123, count=len(indices), type="SCALAR")],
         "bufferViews": views, "buffers": [{"byteLength": len(data)}]}
     metadata = json.dumps(model, separators=(",", ":"), allow_nan=False).encode()
@@ -134,7 +145,7 @@ def write_glb(solid):
     length = 28 + len(metadata) + len(data)
     glb = (struct.pack("<4sIII4s", b"glTF", 2, length, len(metadata), b"JSON") +
            metadata + struct.pack("<I4s", len(data), b"BIN\0") + data)
-    if len(glb) > 400_000 or len(indices) // 3 > (25_000 if FACTS["kind"] == "bridge" else 6_000):
+    if len(glb) > (1_500_000 if FACTS["kind"] == "bridge" else 400_000) or len(indices) // 3 > (25_000 if FACTS["kind"] == "bridge" else 6_000):
         raise ValueError(f"Mobile budget exceeded: {len(indices)//3} triangles, {len(glb)} bytes")
     (HERE / (FACTS["slug"] + ".glb")).write_bytes(glb)
     print(f"{len(indices)//3:,} triangles, {len(glb):,} bytes")
@@ -144,9 +155,9 @@ def build():
     base=FACTS["plans"]["base"]["outline"]
     x,y=FACTS["plans"]["shaft"]["centre"]
     high=64.008
-    plinth=mass(base,0,9.7536)-box(-4.4,4.4,-14,-7.4,1,7.1)
+    plinth=mass(base,0,9.7536)-box(-3.55,3.55,-14,-7.35,1,7.1)
     hard=[plinth]
-    for u in (-3.4,3.4):
+    for u in (-2.55,2.55):
         hard.append(md.Manifold.cylinder(6.45,0.78,circular_segments=16).translate((u,-9.75,0.8)))
     # Alternating channels follow the depth of the fluting to the belvedere.
     angles=np.arange(96)*math.tau/96
@@ -155,12 +166,12 @@ def build():
         rings.append([(x+(r-relief*(1-math.cos(24*t))/2)*math.cos(t),
                        y+(r-relief*(1-math.cos(24*t))/2)*math.sin(t),z) for t in angles])
     shaft=loft(rings)
-    outer=drum(x,y,[(48.8,5.3,5.3),(53.7,5.4,5.4),(54.5,5.9,5.9),
+    outer=drum(x,y,[(48.8,5.6,5.6),(53.7,5.6,5.6),(54.5,5.9,5.9),
                     (55.7,5.9,5.9),(56.1,5.55,5.55),(high,5.55,5.55)],64)
-    inside=md.Manifold.cylinder(20,4.6,circular_segments=64).translate((x,y,49.8))
+    inside=drum(x,y,[(49.8,4.6,4.6),(68.0,4.6,4.6)])
     crown=outer-inside
     for k in range(8):
-        for bottom,spring,width in [(50,52.1,1.09),(56.6,60.25,1.40)]:
+        for bottom,spring,width in [(50,52.1,1.09),(56.6,60.25,1.18)]:
             cut=arch_cut(0,bottom,spring,width,5.4,3.2)
             crown -= cut.rotate((0,0,k*45)).translate((x,y,0))
     # The concrete rim is hollow. Its inner edge lies inside the checkpoint radius.

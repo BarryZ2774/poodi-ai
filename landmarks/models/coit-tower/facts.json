@@ -13,7 +13,8 @@
       "what": "Overall height above the base",
       "real": 64.008,
       "model": 64.008,
-      "source": "https://sfrecpark.org/m/newsflash/Archive/Item/539?arcId=520"
+      "source": "https://sfrecpark.org/m/newsflash/Archive/Item/539?arcId=520",
+      "bbox": "height"
     },
     {
       "what": "Width across local axis",
