@@ -65,14 +65,14 @@ def drum(x, y, levels, sides=32):
 def arch_cut(x, bottom, spring, radius, station, depth):
     """Round-headed opening in a wall normal to the station axis."""
     arc = [(x+radius*math.cos(t), spring+radius*math.sin(t))
-           for t in np.linspace(0, math.pi, 9)]
+           for t in np.linspace(0, math.pi, 7)]
     return front_plate([(x-radius,bottom),(x+radius,bottom)]+arc, station, depth)
 
 
 def finish(hard, curved):
-    base = union(hard).as_original().simplify(0.002).calculate_normals(0, 0.5)
+    base = union(hard).as_original().simplify(0.018).calculate_normals(0, 0.5)
     round_parts = [s.calculate_normals(0, angle) for s, angle in curved]
-    write_glb(union([base, *round_parts]).simplify(0.002))
+    write_glb(union([base, *round_parts]).simplify(0.018))
 
 
 def write_glb(solid):
@@ -83,7 +83,7 @@ def write_glb(solid):
     props = mesh.vert_properties
     positions = (props[:, :3] @ basis.T).astype("<f4")
     normals = props[:, 3:6] @ basis.T
-    normals /= np.linalg.norm(normals, axis=1, keepdims=True)
+    normals /= np.maximum(np.linalg.norm(normals, axis=1, keepdims=True), 1e-20)
     # Trimming a round member can introduce a small corner at a junction.
     # Split that corner when its interpolated normal points through the surface.
     triangles = mesh.tri_verts.copy()
@@ -155,57 +155,82 @@ def build():
     plans=FACTS["plans"]
     hard,curved=[],[]
     for name in FACTS["ground_keys"]:
-        platform = section(plans[name]["outline"]).simplify(.95)
-        if name == "base":
-            # Blunt the narrow acute corner of the eastern stair landing.
-            points = platform.to_polygons()[0]
-            tip = np.argmin(np.linalg.norm(points - [31.4, -12.9], axis=1))
-            points[tip] += [-.85, .25]
-            platform = section(points)
-        hard.append(platform.extrude(.8))
+        # One solid landing per mapped footprint; close stair notches before
+        # rounding off the thin ends of the old individual stair landings.
+        platform=section(plans[name]["outline"]).simplify(1.15)
+        platform=platform.offset(1.1,md.JoinType.Miter).offset(-1.1,md.JoinType.Miter)
+        platform=platform.offset(-.61,md.JoinType.Miter).offset(.61,md.JoinType.Miter)
+        if name=="base":
+            platform+=md.CrossSection.batch_boolean([section(plans["pier"+str(i)]["outline"])
+                                                    for i in range(8)],md.OpType.Add)
+        hard.append(platform.simplify(.12).extrude(.98))
     for i in range(8):
         outline=plans["pier"+str(i)]["outline"]
         x,y=plans["pier"+str(i)]["centre"]
         theta=math.atan2(y,x)
-        hard.append(mass(outline,.6,3.1))
+        hard.append(mass(outline,.98,3.1))
         for sign in (-1,1):
             u=x-sign*1.8*math.sin(theta);v=y+sign*1.8*math.cos(theta)
             hard.append(drum(u,v,[(2.9,1.55,1.55),
-                                  (22.4,1.3,1.3),(23.6,2.1,2.1),(24.7,2.1,2.1)],6))
-        hard.append(mass(outline,24.7,26.4))
-    def ring(r,inside,low,high,n=24):
+                                  (18.8,1.3,1.3),(20.2,2.1,2.1),(21.4,2.1,2.1)],5))
+        hard.append(mass(outline,21.4,23))
+    def ring(r,inside,low,high,n=16):
         return (md.CrossSection.circle(r,n)-md.CrossSection.circle(inside,n)).extrude(high-low).translate((0,0,low))
     # Wide round arches bridge the gaps between the paired supports.
     theta=math.atan2(*reversed(plans["pier0"]["centre"]))
     angles=[theta+math.radians(i*45+22.5+d) for i in range(8) for d in (-20.5,20.5)]
     def belt(r):
         return section([(r*math.cos(t),r*math.sin(t)) for t in angles])
-    arcade=(belt(23.5)-belt(16.1)).extrude(7.1).translate((0,0,26.4))
+    arcade=(belt(23.5)-belt(16.1)).extrude(7.5).translate((0,0,23))
     for i in range(8):
-        cut=arch_cut(0,25.4,26.4,5.4,20,16)
+        cut=arch_cut(0,21.8,22.6,5.4,20,18)
         arcade-=cut.rotate((0,0,math.degrees(theta)-90+22.5+i*45))
-    hard.extend([arcade,ring(24.384,16,31.8,33.1),ring(18.6,15.4,32.8,36.2)])
-    hard.append(ring(19.1,15.8,34.1,35.05,24))
+    hard.extend([arcade,ring(24.384,16,30.1,31.5),ring(22.15,16.35,31.4,37.95)])
+    hard.append(ring(22.7,16.6,37,38.45))
+    hard.append(ring(19.6,15.5,38.25,40.7))
     # An open soffit follows the dome. The inner shell ends below its apex.
-    radii=[(35.9,17.8),(37.5,17.5),(40.7,16.2),(44.3,13.4),
-           (47.1,9.6),(48.8,5.2),(49.3776,.65)]
-    outer=drum(0,0,[(z,r,r) for z,r in radii],24)
-    inner=drum(0,0,[(35,16.6,16.6)]+[(z-1.1,r-1.05,r-1.05) for z,r in radii[1:-1]]+[(48.2,.65,.65)],24)
+    radii=[(40.55,17.8),(42.55,16.75),(45.3,13.8),(47.5,9.75),
+           (48.85,5.15),(49.3776,.7)]
+    outer=drum(0,0,[(z,r,r) for z,r in radii],20)
+    inner=drum(0,0,[(40.1,16.45,16.45)]+[(z-1.1,r-1.05,r-1.05) for z,r in radii[1:-1]]+[(48.2,.65,.65)],20)
     curved.append((outer-inner,24))
     paths={"north":[(-34.4,23),(-32.8,32),(-28.8,45),(-23.2,56),(-17.2,65),
                     (-8.8,73.8),(2,79),(16,83),(13,99),(11,110)],
            "south":[(-25.5,-32),(-20.3,-42.8),(-12.5,-52.8),(-5,-60.6),
                     (4.7,-67.6),(14,-72.9),(25.8,-76),(41.3,-73.6),(44.7,-89),(47,-99)]}
     for name,locations in paths.items():
-        hard.append(section(plans[name]["outline"]).simplify(1.2).extrude(2.2 if name=="north" else 3.2).translate((0,0,16.8)))
-        for end in (locations[0],locations[-1]):
-            u,v=end
-            hard.append(box(u-1.52,u+1.52,v-1.5,v+1.5,.76,17.85))
-            hard.append(box(u-2.05,u+2.05,v-1.95,v+1.95,17.85,19.0))
-        for x,y in locations[1:-1]:
-            hard.append(box(x-1.32,x+1.32,y-1.32,y+1.32,.75,1.75))
-            hard.append(drum(x,y,[(1.75,1.1,1.1),
-                                  (14.8,.93,.93),(15.8,1.65,1.65),(16.8,1.65,1.65)],8))
+        route=np.array(locations,dtype=float)
+        # The beam follows the column centres. Each solid corner is wide
+        # enough for the capitals instead of tapering to a polygonal sliver.
+        beams=[]
+        groups={0,3,6,7,9}
+        for i,(a,b) in enumerate(zip(route,route[1:])):
+            d=b-a
+            length=np.linalg.norm(d)
+            t=d/length
+            n=np.array([-t[1],t[0]])
+            beams.append(section([a-1.45*n-.7*t,b-1.45*n+.7*t,
+                                  b+1.45*n+.7*t,a+1.45*n-.7*t]))
+            intervals=round(length/6)
+            for j in range(intervals):
+                if j==0 and i in groups: continue
+                u,v=a+d*j/intervals
+                hard.append(drum(u,v,[(0,.95,.95),(14.9,.78,.78),
+                                      (16.2,1.22,1.22)],5))
+        hard.append(md.CrossSection.batch_boolean(beams,md.OpType.Add)
+                    .extrude(2.48).translate((0,0,16.2)))
+        for i in sorted(groups):
+            centre=route[i]
+            t=route[min(i+1,len(route)-1)]-route[max(0,i-1)]
+            t=t/np.linalg.norm(t)
+            n=np.array([-t[1],t[0]])
+            for along in (-1.46,1.46):
+                for across in (-1.38,1.38):
+                    u,v=centre+t*along+n*across
+                    hard.append(drum(u,v,[(0,.94,.94),(16.2,.84,.84)],5))
+            outline=section([centre+t*i+n*j for i,j in
+                             [(-2.7,-2.6),(2.7,-2.6),(2.7,2.6),(-2.7,2.6)]])
+            hard.append(outline.extrude(5.136).translate((0,0,16.2)))
     finish(hard,curved)
 
 

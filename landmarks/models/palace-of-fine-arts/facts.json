@@ -33,6 +33,27 @@
       "real": 48.768,
       "model": 48.768,
       "source": "https://npgallery.nps.gov/pdfhost/docs/NRHP/Text/04000659.pdf"
+    },
+    {
+      "what": "Both colonnades to the tops of the planter boxes",
+      "real": 21.336,
+      "model": 21.336,
+      "source": "https://www.usmodernist.org/AL/AL-1991-04.pdf",
+      "method": "Architectural Lighting, April 1991, project report describing a 70 ft colonnade."
+    },
+    {
+      "what": "Rotunda arch crown, estimated",
+      "real": 28,
+      "model": 28,
+      "source": "https://www.loc.gov/resource/hhh.ca0686.photos/?sp=6",
+      "method": "Approximate ratio to the published 162 ft height in the HABS lagoon view. Perspective and foliage obscure the exact ground plane."
+    },
+    {
+      "what": "Exterior dome springing, estimated",
+      "real": 40.55,
+      "model": 40.55,
+      "source": "https://www.loc.gov/resource/hhh.ca0686.photos/?sp=6",
+      "method": "Approximate ratio to the published 162 ft height in the HABS lagoon view. Perspective and foliage obscure the exact ground plane."
     }
   ],
   "plans": {
@@ -1659,8 +1680,10 @@
     }
   ],
   "simplified": [
-    "The rotunda floor, eight open pier groups and two curved colonnades use their mapped plans. Paired columns and stepped capitals replace the full sculptural groups.",
-    "The attic and roof use a moulded circular drum and a segmented shallow dome. Carved figures, urns, foliage and the lagoon are omitted."
+    "Broad piers, eight round arches, a deep frieze and a shallow open-soffit dome follow the HABS lagoon view.",
+    "In each wing, clusters of four columns surround a planter box and closer single columns carry the connecting beam. The north and south planter tops use the same published height. Individual carvings and vines are omitted.",
+    "Three continuous ground platforms follow the mapped outlines, blunting narrow steps. Each pier and shaft extends to the flat ground.",
+    "The separate exhibition hall stays with the map’s own building. This replacement covers the rotunda and colonnades."
   ],
   "osm_attribution": "Ground outline from OpenStreetMap, © OpenStreetMap contributors, ODbL.",
   "origin_of_work": "Written from published measurements for this project. No third-party mesh used.",
@@ -1672,5 +1695,9 @@
   "front_local_direction": [
     -1,
     0
+  ],
+  "colonnade_sources": [
+    "https://sfplanninggis.org/docs/landmarks_and_districts/LM88.pdf",
+    "https://www.loc.gov/resource/hhh.ca0686.photos/?sp=1"
   ]
 }
