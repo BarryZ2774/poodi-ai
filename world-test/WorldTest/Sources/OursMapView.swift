@@ -30,6 +30,7 @@ struct OursMapView: UIViewRepresentable {
             coordinator.apply(command.camera, animated: command.animated)
         }
         coordinator.setColourPlaces(colourPlaces)
+        coordinator.modelLayers.forEach { $0.highlighted = colourPlaces }
     }
 
     /// Fills the style template's placeholders with bundle file URLs and writes it to Caches.
@@ -68,6 +69,7 @@ struct OursMapView: UIViewRepresentable {
         private var appliedColour: Bool?
         private var usingFallback = false
         private var basePredicates: [String: NSPredicate] = [:]
+        private(set) var modelLayers: [ModelLayer] = []
 
         init(model: AppModel) { self.model = model }
 
@@ -147,6 +149,37 @@ struct OursMapView: UIViewRepresentable {
         func mapView(_ mapView: MLNMapView, didFinishLoading style: MLNStyle) {
             styleLoaded = false
             appliedColour = nil
+            addModels(to: style)
+        }
+
+        // MARK: Landmark models
+
+        /// Landmark models drawn by our own Metal layer, above the buildings and below the labels.
+        private func addModels(to style: MLNStyle) {
+            modelLayers = []
+            // Debug: "-testModelAt 37.7936,-122.3966" moves the test model, e.g. next to tall buildings.
+            var testAnchor = CLLocationCoordinate2D(latitude: 37.8267, longitude: -122.4230)
+            if let v = UserDefaults.standard.string(forKey: "testModelAt")?.split(separator: ",").compactMap({ Double($0) }), v.count == 2 {
+                testAnchor = CLLocationCoordinate2D(latitude: v[0], longitude: v[1])
+            }
+            let models: [(id: String, file: String, anchor: CLLocationCoordinate2D, heading: Double, altitude: Double)] = [
+                // Test model from tools/make_test_glb.py, standing on Alcatraz.
+                ("model-test-tower", "test-tower", testAnchor, 0, 0),
+            ]
+            let below = style.layer(withIdentifier: "label-water")
+            for m in models {
+                guard let url = Bundle.main.url(forResource: m.file, withExtension: "glb") else { continue }
+                do {
+                    let model = try GLBModel(url: url)
+                    let layer = ModelLayer(identifier: m.id, model: model, anchor: m.anchor, heading: m.heading, altitude: m.altitude)
+                    layer.highlighted = self.model.colourPlaces
+                    if let below { style.insertLayer(layer, below: below) } else { style.addLayer(layer) }
+                    modelLayers.append(layer)
+                    print("[WorldTest] Model \(m.file): \(model.triangleCount) triangles, \(model.maxY - model.minY) m tall")
+                } catch {
+                    print("[WorldTest] Model \(m.file) not shown: \(error)")
+                }
+            }
         }
 
         /// Feature state set before the first frame is dropped (the render source does not exist yet),

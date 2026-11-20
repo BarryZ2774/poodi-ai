@@ -30,9 +30,12 @@ struct ContentView: View {
                 Spacer()
 
                 VStack(spacing: 10) {
-                    HStack(spacing: 8) {
+                    HStack(spacing: 6) {
                         ForEach(CameraPreset.allCases) { preset in
                             Button(preset.title) { model.go(to: preset) }
+                                .font(.subheadline)
+                                .lineLimit(1)
+                                .fixedSize()
                                 .buttonStyle(.bordered)
                                 .tint(.primary)
                         }

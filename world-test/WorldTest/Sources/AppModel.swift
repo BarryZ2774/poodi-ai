@@ -14,7 +14,7 @@ struct SharedCamera: Equatable {
 }
 
 enum CameraPreset: String, CaseIterable, Identifiable {
-    case downtown, bridge, top
+    case downtown, bridge, top, model
     var id: String { rawValue }
 
     var title: String {
@@ -22,6 +22,7 @@ enum CameraPreset: String, CaseIterable, Identifiable {
         case .downtown: "Downtown"
         case .bridge: "Bridge"
         case .top: "Top"
+        case .model: "Model"
         }
     }
 
@@ -33,6 +34,8 @@ enum CameraPreset: String, CaseIterable, Identifiable {
         case .bridge: SharedCamera(latitude: 37.8170, longitude: -122.4775, zoom: 14.7, bearing: -40, pitch: 60)
         // Downtown and the north-east of the city from straight above.
         case .top: SharedCamera(latitude: 37.7880, longitude: -122.4130, zoom: 13.6, bearing: 0, pitch: 0)
+        // The test landmark model on Alcatraz, seen from the south-west.
+        case .model: SharedCamera(latitude: 37.8262, longitude: -122.4236, zoom: 15.9, bearing: 30, pitch: 60)
         }
     }
 }

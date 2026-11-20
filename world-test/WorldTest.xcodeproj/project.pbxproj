@@ -8,8 +8,11 @@
 
 /* Begin PBXBuildFile section */
 		2A91219D1F7DF5D563B5369B /* OursMapView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3642E753C10207F4ADF86C99 /* OursMapView.swift */; };
+		2D0C8893A363E2A8C9731F1C /* test-tower.glb in Resources */ = {isa = PBXBuildFile; fileRef = 4622403D3DC456EBBC91C333 /* test-tower.glb */; };
 		32616867EC71E1F623583F1F /* AppModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0854681344BF751FB89989FC /* AppModel.swift */; };
+		407A88955A9B55E4B46BC76A /* ModelLayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3DD7A4BCECEA9DC2373A227 /* ModelLayer.swift */; };
 		5ABC833BFB7E811BF861BA54 /* MapboxMaps in Frameworks */ = {isa = PBXBuildFile; productRef = C9F6D7A91EDBCDFA2208C3A2 /* MapboxMaps */; };
+		64407643F1D0AB2D3EFF1C33 /* GLBModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 024DAA083B74E24F32D52086 /* GLBModel.swift */; };
 		6F71C21C5BCD3AA0C91DC531 /* MapboxTab.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7BFF53732DAF819918A32908 /* MapboxTab.swift */; };
 		724C80F6F3B70574D7023E01 /* PerfMonitor.swift in Sources */ = {isa = PBXBuildFile; fileRef = C76F3CA397236BEA4D98AE7F /* PerfMonitor.swift */; };
 		755B95F8C9CFE2F5CA575BAA /* porcelain-style.json in Resources */ = {isa = PBXBuildFile; fileRef = 4FFD9D80ED21C5CE920F9C8A /* porcelain-style.json */; };
@@ -23,14 +26,15 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		024DAA083B74E24F32D52086 /* GLBModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GLBModel.swift; sourceTree = "<group>"; };
 		0854681344BF751FB89989FC /* AppModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppModel.swift; sourceTree = "<group>"; };
 		296F340CD9163745761745F6 /* places.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = places.json; sourceTree = "<group>"; };
 		361090864FDABD3F130587BA /* glyphs */ = {isa = PBXFileReference; lastKnownFileType = folder; name = glyphs; path = WorldTest/Resources/glyphs; sourceTree = SOURCE_ROOT; };
 		3642E753C10207F4ADF86C99 /* OursMapView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OursMapView.swift; sourceTree = "<group>"; };
 		3AC7A8EA14A85EA9A40B66B1 /* sf-base.pmtiles */ = {isa = PBXFileReference; path = "sf-base.pmtiles"; sourceTree = "<group>"; };
-		3B04CA3C66D6B4C5ED53686C /* Secrets.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Secrets.xcconfig; sourceTree = "<group>"; };
 		3F1DC00583E1147ECEC1584D /* App.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = App.xcconfig; sourceTree = "<group>"; };
 		41D811A7ED2DB9E05CC6F7E3 /* WorldTestApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorldTestApp.swift; sourceTree = "<group>"; };
+		4622403D3DC456EBBC91C333 /* test-tower.glb */ = {isa = PBXFileReference; path = "test-tower.glb"; sourceTree = "<group>"; };
 		4FFD9D80ED21C5CE920F9C8A /* porcelain-style.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "porcelain-style.json"; sourceTree = "<group>"; };
 		7BFF53732DAF819918A32908 /* MapboxTab.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapboxTab.swift; sourceTree = "<group>"; };
 		7FA9079A1E81BD03A1BF1139 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -38,6 +42,7 @@
 		A76B5C11D3722647C3BE7C60 /* Secrets.example.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Secrets.example.xcconfig; sourceTree = "<group>"; };
 		C3B48FF3105FC9C5209CAE3C /* WorldTest.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = WorldTest.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		C76F3CA397236BEA4D98AE7F /* PerfMonitor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PerfMonitor.swift; sourceTree = "<group>"; };
+		F3DD7A4BCECEA9DC2373A227 /* ModelLayer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModelLayer.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -58,7 +63,9 @@
 			children = (
 				0854681344BF751FB89989FC /* AppModel.swift */,
 				7FA9079A1E81BD03A1BF1139 /* ContentView.swift */,
+				024DAA083B74E24F32D52086 /* GLBModel.swift */,
 				7BFF53732DAF819918A32908 /* MapboxTab.swift */,
+				F3DD7A4BCECEA9DC2373A227 /* ModelLayer.swift */,
 				3642E753C10207F4ADF86C99 /* OursMapView.swift */,
 				C76F3CA397236BEA4D98AE7F /* PerfMonitor.swift */,
 				41D811A7ED2DB9E05CC6F7E3 /* WorldTestApp.swift */,
@@ -97,7 +104,6 @@
 			children = (
 				3F1DC00583E1147ECEC1584D /* App.xcconfig */,
 				A76B5C11D3722647C3BE7C60 /* Secrets.example.xcconfig */,
-				3B04CA3C66D6B4C5ED53686C /* Secrets.xcconfig */,
 			);
 			path = Config;
 			sourceTree = "<group>";
@@ -110,6 +116,7 @@
 				4FFD9D80ED21C5CE920F9C8A /* porcelain-style.json */,
 				3AC7A8EA14A85EA9A40B66B1 /* sf-base.pmtiles */,
 				9166B99409355E32157ECA1B /* sf-buildings.pmtiles */,
+				4622403D3DC456EBBC91C333 /* test-tower.glb */,
 			);
 			path = Resources;
 			sourceTree = "<group>";
@@ -185,6 +192,7 @@
 				755B95F8C9CFE2F5CA575BAA /* porcelain-style.json in Resources */,
 				E6B2DE474CEE0757D6496F33 /* sf-base.pmtiles in Resources */,
 				AE24F4D9B2A1FA429BC71380 /* sf-buildings.pmtiles in Resources */,
+				2D0C8893A363E2A8C9731F1C /* test-tower.glb in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -197,7 +205,9 @@
 			files = (
 				32616867EC71E1F623583F1F /* AppModel.swift in Sources */,
 				CFD66D6CB539368E9F7D1FB1 /* ContentView.swift in Sources */,
+				64407643F1D0AB2D3EFF1C33 /* GLBModel.swift in Sources */,
 				6F71C21C5BCD3AA0C91DC531 /* MapboxTab.swift in Sources */,
+				407A88955A9B55E4B46BC76A /* ModelLayer.swift in Sources */,
 				2A91219D1F7DF5D563B5369B /* OursMapView.swift in Sources */,
 				724C80F6F3B70574D7023E01 /* PerfMonitor.swift in Sources */,
 				929E932EFF84054A986D54D1 /* WorldTestApp.swift in Sources */,
