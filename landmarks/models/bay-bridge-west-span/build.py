@@ -248,6 +248,11 @@ def build():
     hard.append(box(-width/2,width/2,west,west+4,cap-2,cap))
     hard.append(brace(-9,1,9,cap-2,1.8,station,2.0))
     hard.append(box(-width/2,width/2,east-5,east,0,road(east)-.7))
+    # The two tails pass through the truss west of W1. Near the crop they
+    # enter separate concrete housings under the roadway on Rincon Hill.
+    cable_end = road(west)-depth-8
+    for x in (-9.4,9.4):
+        hard.append(pedestal(x,west+9,[(0,6,18,1),(cable_end+1,5.2,18,1)]))
     for s in (w2-side,east-7):
         for x in (-9.4,9.4):
             hard.append(box(x-1.55,x+1.55,s-2.2,s+2.2,road(s)-4.4,road(s)+2.15))
@@ -274,7 +279,10 @@ def build():
                 # Flare the last station into the side housing above the roadway.
                 t=max(0,1-(abs(s)-half_anchor)/55)
                 return x+math.copysign(2.7*t,x)
-            curved.append((tube([(cable_x(s),s,z) for s,z in pts],.85,6),73))
+            path = [(cable_x(s),s,z) for s,z in pts]
+            if a < 0:
+                path.insert(0,(x,west+12,cable_end))
+            curved.append((tube(path,.85,6),73))
             for u,v in zip(nodes,nodes[1:]):
                 hangers=np.linspace(u,v,round((v-u)/28)+1)[1:-1]
                 for s in hangers:
