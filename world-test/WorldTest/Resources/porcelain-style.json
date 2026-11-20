@@ -1,0 +1,252 @@
+{
+  "version": 8,
+  "name": "Porcelain",
+  "metadata": {
+    "about": "A quiet porcelain city. Placeholders in double underscores are filled in by OursMapView.swift at launch."
+  },
+  "glyphs": "__GLYPHS__/{fontstack}/{range}.pbf",
+  "light": {
+    "anchor": "map",
+    "color": "#FFFDF8",
+    "intensity": 0.18,
+    "position": [1.15, 225, 45]
+  },
+  "sources": {
+    "base": {
+      "type": "vector",
+      "url": "pmtiles://__BASE__",
+      "attribution": "© OpenStreetMap contributors"
+    },
+    "buildings": {
+      "type": "vector",
+      "url": "pmtiles://__BUILDINGS__",
+      "attribution": "© Overture Maps Foundation"
+    }
+  },
+  "layers": [
+    {
+      "id": "background",
+      "type": "background",
+      "paint": { "background-color": "#E9E5DE" }
+    },
+    {
+      "id": "earth",
+      "type": "fill",
+      "source": "base",
+      "source-layer": "earth",
+      "paint": { "fill-color": "#E9E5DE" }
+    },
+    {
+      "id": "parks",
+      "type": "fill",
+      "source": "base",
+      "source-layer": "landuse",
+      "filter": ["in", ["get", "kind"], ["literal", [
+        "park", "national_park", "nature_reserve", "protected_area", "garden", "golf_course",
+        "cemetery", "grass", "forest", "wood", "playground", "zoo", "pitch", "recreation_ground",
+        "village_green", "meadow", "scrub", "grassland", "allotments", "dog_park"
+      ]]],
+      "paint": { "fill-color": "#DDE3D6", "fill-antialias": true }
+    },
+    {
+      "id": "landcover",
+      "type": "fill",
+      "source": "base",
+      "source-layer": "landcover",
+      "filter": ["in", ["get", "kind"], ["literal", ["forest", "grassland", "scrub"]]],
+      "paint": { "fill-color": "#DDE3D6", "fill-opacity": 0.6 }
+    },
+    {
+      "id": "beach",
+      "type": "fill",
+      "source": "base",
+      "source-layer": "landuse",
+      "filter": ["in", ["get", "kind"], ["literal", ["beach", "sand"]]],
+      "paint": { "fill-color": "#EEEAE2" }
+    },
+    {
+      "id": "water",
+      "type": "fill",
+      "source": "base",
+      "source-layer": "water",
+      "filter": ["==", ["geometry-type"], "Polygon"],
+      "paint": { "fill-color": "#CFD9DE" }
+    },
+    {
+      "id": "piers",
+      "type": "fill",
+      "source": "base",
+      "source-layer": "landuse",
+      "filter": ["in", ["get", "kind"], ["literal", ["pier", "runway", "taxiway", "apron"]]],
+      "paint": { "fill-color": "#E9E5DE" }
+    },
+    {
+      "id": "roads-minor",
+      "type": "line",
+      "source": "base",
+      "source-layer": "roads",
+      "minzoom": 12,
+      "filter": ["all",
+        ["!=", ["get", "is_tunnel"], true],
+        ["in", ["get", "kind"], ["literal", ["minor_road", "other"]]]
+      ],
+      "layout": { "line-cap": "round", "line-join": "round" },
+      "paint": {
+        "line-color": "#F8F6F2",
+        "line-width": ["interpolate", ["exponential", 1.6], ["zoom"], 12, 0.4, 15, 3, 18, 18]
+      }
+    },
+    {
+      "id": "roads-path",
+      "type": "line",
+      "source": "base",
+      "source-layer": "roads",
+      "minzoom": 15,
+      "filter": ["all", ["!=", ["get", "is_tunnel"], true], ["==", ["get", "kind"], "path"]],
+      "paint": {
+        "line-color": "#F4F1EB",
+        "line-width": ["interpolate", ["exponential", 1.6], ["zoom"], 15, 0.6, 18, 3]
+      }
+    },
+    {
+      "id": "roads-major",
+      "type": "line",
+      "source": "base",
+      "source-layer": "roads",
+      "minzoom": 9,
+      "filter": ["all",
+        ["!=", ["get", "is_tunnel"], true],
+        ["in", ["get", "kind"], ["literal", ["major_road", "highway"]]]
+      ],
+      "layout": { "line-cap": "round", "line-join": "round" },
+      "paint": {
+        "line-color": "#FBFAF7",
+        "line-width": ["interpolate", ["exponential", 1.6], ["zoom"], 9, 0.5, 12, 1.2, 15, 6, 18, 30]
+      }
+    },
+    {
+      "id": "buildings",
+      "type": "fill-extrusion",
+      "source": "buildings",
+      "source-layer": "building",
+      "minzoom": 11,
+      "filter": ["all",
+        ["!=", ["get", "has_parts"], true],
+        ["!=", ["get", "is_underground"], true]
+      ],
+      "paint": {
+        "fill-extrusion-color": ["case", ["boolean", ["feature-state", "visited"], false], "#D9825B", "#F4F1EC"],
+        "fill-extrusion-height": ["coalesce", ["get", "height"], ["*", ["get", "num_floors"], 3.2], 6],
+        "fill-extrusion-base": ["coalesce", ["get", "min_height"], 0],
+        "fill-extrusion-vertical-gradient": true,
+        "fill-extrusion-opacity": 1
+      }
+    },
+    {
+      "id": "building-parts",
+      "type": "fill-extrusion",
+      "source": "buildings",
+      "source-layer": "building_part",
+      "minzoom": 11,
+      "filter": ["!=", ["get", "is_underground"], true],
+      "paint": {
+        "fill-extrusion-color": ["case", ["boolean", ["feature-state", "visited"], false], "#D9825B", "#F4F1EC"],
+        "fill-extrusion-height": ["coalesce", ["get", "height"],
+          ["+", ["coalesce", ["get", "min_height"], 0], ["*", ["coalesce", ["get", "num_floors"], 2], 3.2]]],
+        "fill-extrusion-base": ["coalesce", ["get", "min_height"], ["*", ["get", "min_floor"], 3.2], 0],
+        "fill-extrusion-vertical-gradient": true,
+        "fill-extrusion-opacity": 1
+      }
+    },
+    {
+      "id": "visited-fallback",
+      "type": "fill-extrusion",
+      "source": "buildings",
+      "source-layer": "building",
+      "minzoom": 11,
+      "layout": { "visibility": "none" },
+      "filter": ["all",
+        ["!=", ["get", "has_parts"], true],
+        ["in", ["get", "id"], ["literal", __VISITED_BUILDING_IDS__]]
+      ],
+      "paint": {
+        "fill-extrusion-color": "#D9825B",
+        "fill-extrusion-height": ["coalesce", ["get", "height"], ["*", ["get", "num_floors"], 3.2], 6],
+        "fill-extrusion-base": ["coalesce", ["get", "min_height"], 0],
+        "fill-extrusion-vertical-gradient": true
+      }
+    },
+    {
+      "id": "visited-parts-fallback",
+      "type": "fill-extrusion",
+      "source": "buildings",
+      "source-layer": "building_part",
+      "minzoom": 11,
+      "layout": { "visibility": "none" },
+      "filter": ["in", ["get", "building_id"], ["literal", __VISITED_BUILDING_IDS__]],
+      "paint": {
+        "fill-extrusion-color": "#D9825B",
+        "fill-extrusion-height": ["coalesce", ["get", "height"],
+          ["+", ["coalesce", ["get", "min_height"], 0], ["*", ["coalesce", ["get", "num_floors"], 2], 3.2]]],
+        "fill-extrusion-base": ["coalesce", ["get", "min_height"], ["*", ["get", "min_floor"], 3.2], 0],
+        "fill-extrusion-vertical-gradient": true
+      }
+    },
+    {
+      "id": "label-water",
+      "type": "symbol",
+      "source": "base",
+      "source-layer": "water",
+      "minzoom": 11,
+      "filter": ["all", ["==", ["geometry-type"], "Point"], ["in", ["get", "kind"], ["literal", ["bay", "ocean", "sea", "strait"]]]],
+      "layout": {
+        "text-field": ["coalesce", ["get", "name:en"], ["get", "name"]],
+        "text-font": ["NotoSans-Regular"],
+        "text-size": 11,
+        "text-letter-spacing": 0.2,
+        "text-max-width": 8
+      },
+      "paint": { "text-color": "#9AA7AD" }
+    },
+    {
+      "id": "label-neighbourhood",
+      "type": "symbol",
+      "source": "base",
+      "source-layer": "places",
+      "minzoom": 12.5,
+      "filter": ["in", ["get", "kind"], ["literal", ["neighbourhood", "macrohood"]]],
+      "layout": {
+        "text-field": ["upcase", ["coalesce", ["get", "name:en"], ["get", "name"]]],
+        "text-font": ["NotoSans-Regular"],
+        "text-size": ["interpolate", ["linear"], ["zoom"], 13, 9, 16, 11],
+        "text-letter-spacing": 0.14,
+        "text-max-width": 7,
+        "text-padding": 24
+      },
+      "paint": {
+        "text-color": "#9A958D",
+        "text-halo-color": "rgba(244, 241, 236, 0.85)",
+        "text-halo-width": 1.2
+      }
+    },
+    {
+      "id": "label-city",
+      "type": "symbol",
+      "source": "base",
+      "source-layer": "places",
+      "maxzoom": 12.5,
+      "filter": ["==", ["get", "kind"], "locality"],
+      "layout": {
+        "text-field": ["coalesce", ["get", "name:en"], ["get", "name"]],
+        "text-font": ["NotoSans-Regular"],
+        "text-size": 12,
+        "text-letter-spacing": 0.1
+      },
+      "paint": {
+        "text-color": "#8E8A84",
+        "text-halo-color": "rgba(244, 241, 236, 0.85)",
+        "text-halo-width": 1.2
+      }
+    }
+  ]
+}
