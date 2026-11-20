@@ -61,7 +61,7 @@ def drum(x, y, levels, sides=32):
 def arch_cut(x, bottom, spring, radius, station, depth):
     """Round-headed opening in a wall normal to the station axis."""
     arc = [(x+radius*math.cos(t), spring+radius*math.sin(t))
-           for t in np.linspace(0, math.pi, 13)]
+           for t in np.linspace(0, math.pi, 9)]
     return front_plate([(x-radius,bottom),(x+radius,bottom)]+arc, station, depth)
 
 
@@ -179,12 +179,25 @@ def build():
         for t in (np.arange(count)+.5)/count:
             xy=a+t*v
             for z in (1.5,5.8,10.1):
+                if np.array_equal(a,outline[-1]) and abs(t-.5)*length<3 and z<6:
+                    continue
                 walls-=box(-.82,.82,-1.1,1.1,z,z+1.15).rotate((0,0,angle)).translate((*xy,0))
+    edge=outline[0]-outline[-1]
+    angle=math.degrees(math.atan2(edge[1],edge[0]))
+    centre=(outline[0]+outline[-1])/2
+    portal=arch_cut(0,.68,3.3,2.23,0,9.2).rotate((0,0,angle))
+    walls-=portal.translate((*centre,0))
+    parapet=(outer-outer.offset(-1.8288,md.JoinType.Miter)).extrude(1.524).translate((0,0,13.716))
+    hard=[walls,parapet]
+    for u,v in [(-8.1,24.5),(17.6,-27)]:
+        penthouse=front_plate([(-1.9,13.65),(1.9,13.65),(1.9,15.6),
+                               (0,16.75),(-1.9,15.6)],0,4.5)
+        hard.append(penthouse.translate((u,v,0)))
     x,y=p["light"]["centre"]
     light=drum(x,y,[(13.3,2.05,2.05),(14.55,2.05,2.05),(14.55,1.54,1.54),
                     (18.1,1.25,1.25),(18.1,1.94,1.94),(18.85,1.94,1.94),
                     (18.85,1.38,1.38),(20.7,1.38,1.38),(21.9456,.4,.4)],9)
-    finish([walls,light],[])
+    finish([*hard,light],[])
 
 
 if __name__=="__main__":
